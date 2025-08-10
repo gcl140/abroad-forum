@@ -1,0 +1,42 @@
+            <div x-show="open" @click.away="open = false"
+                 class="absolute right-0 bottom-full mt-2 w-72 max-h-96 overflow-y-auto bg-gray-900 rounded-md shadow-lg py-2 z-50 border border-gray-800"
+                 x-transition:enter="transition ease-out duration-100"
+                 x-transition:enter-start="transform opacity-0 scale-95"
+                 x-transition:enter-end="transform opacity-100 scale-100"
+                 x-transition:leave="transition ease-in duration-75"
+                 x-transition:leave-start="transform opacity-100 scale-100"
+                 x-transition:leave-end="transform opacity-0 scale-95">
+
+                <p class="px-4 py-2 text-sm text-gray-400 font-semibold">Notifications</p>
+                <div class="border-t border-gray-700/50 mb-1"></div>
+                {% for notification in notifications %}
+                    <div
+                        class="block px-4 py-3 text-sm transition-all duration-150
+                        {% if notification.is_read %}
+                            bg-gray-900 text-gray-300
+                        {% else %}
+                            bg-gray-800 text-gray-100
+                        {% endif %}
+                        hover:bg-gray-700">
+                        
+                        <h3 class="text-base font-semibold underline 
+                            {% if notification.is_read %}
+                                text-gray-300
+                            {% else %}
+                                text-gray-200
+                            {% endif %}">
+                            {{ notification.title }}
+                        </h3>
+
+                        <p class="mt-1">{{ notification.message }}</p>
+                        
+                        <span class="block text-xs text-gray-500 mt-2">
+                            {{ notification.created_at|timesince }} ago
+                        </span>
+                    </div>
+                {% empty %}
+                    <p class="px-4 py-3 text-sm text-gray-500 text-center">
+                        No new notifications.
+                    </p>
+                {% endfor %}
+            </div>

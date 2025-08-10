@@ -1,0 +1,142 @@
+
+
+    <!-- Application Sections -->
+    <section id="applications" class="mt-24">
+                <div class="container mx-auto px-4 lg:px-8 relative z-10">
+            <h2 class="section-title text-transparent bg-clip-text bg-gradient-to-r from-white to-maroon text-4xl md:text-5xl font-extrabold text-center mb-16 uppercase">
+                WORK WITH US
+            </h2>
+                </div>
+        <div class="container mx-auto px-4 lg:px-8 relative z-10">
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-12">
+                <!-- Job Application -->
+                <div class="bg-white/5 backdrop-blur-sm border border-white/10 rounded-2xl p-8 hover:shadow-xl transition duration-500">
+                    <h2 class="text-3xl font-bold mb-6">Join Our Team</h2>
+                    <p class="text-gray-300 mb-6">We're always looking for passionate individuals to join our team of education consultants.</p>
+                    
+                    <form class="space-y-4">
+                        <div>
+                            <label class="block text-gray-400 mb-2">Full Name</label>
+                            <input type="text" class="w-full bg-white/10 border border-white/20 rounded-lg px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-maroon">
+                        </div>
+                        <div>
+                            <label class="block text-gray-400 mb-2">Email</label>
+                            <input type="email" class="w-full bg-white/10 border border-white/20 rounded-lg px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-maroon">
+                        </div>
+                        <div>
+                            <label class="block text-gray-400 mb-2">Phone</label>
+                            <input type="tel" class="w-full bg-white/10 border border-white/20 rounded-lg px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-maroon">
+                        </div>
+                        <div>
+                            <label class="block text-gray-400 mb-2">Resume</label>
+                            <div class="border-2 border-dashed border-white/20 rounded-lg p-4 text-center">
+                                <i class="fas fa-cloud-upload-alt text-3xl text-gray-400 mb-2"></i>
+                                <p class="text-gray-400">Drag & drop your resume here or click to browse</p>
+                            </div>
+                        </div>
+                        <div>
+                            <label class="block text-gray-400 mb-2">Cover Letter</label>
+                            <textarea class="w-full bg-white/10 border border-white/20 rounded-lg px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-maroon" rows="4"></textarea>
+                        </div>
+                        <button type="submit" class="w-full bg-gradient-to-r from-maroon to-red-900 text-white py-3 rounded-lg font-semibold hover:opacity-90 transition-opacity">
+                            Submit Application
+                        </button>
+                    </form>
+                </div>
+
+                <!-- General Application -->
+                <div class="bg-white/5 backdrop-blur-sm border border-white/10 rounded-2xl p-8 hover:shadow-xl transition duration-500">
+                    <h2 class="text-3xl font-bold mb-6">Apply With Us</h2>
+                    <p class="text-gray-300 mb-6">Start your study abroad journey by submitting your initial application with us.</p>
+                    
+                    <form class="space-y-4">
+                        <div>
+                            <label class="block text-gray-400 mb-2">Full Name</label>
+                            <input type="text" class="w-full bg-white/10 border border-white/20 rounded-lg px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-maroon">
+                        </div>
+                        <div>
+                            <label class="block text-gray-400 mb-2">Email</label>
+                            <input type="email" class="w-full bg-white/10 border border-white/20 rounded-lg px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-maroon">
+                        </div>
+                        <div>
+                            <label class="block text-gray-400 mb-2">Phone</label>
+                            <input type="tel" class="w-full bg-white/10 border border-white/20 rounded-lg px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-maroon">
+                        </div>
+                        <div>
+                            <label class="block text-gray-400 mb-2">Your Message</label>
+                            <textarea class="w-full bg-white/10 border border-white/20 rounded-lg px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-maroon" rows="6"></textarea>
+                        </div>
+                        <button type="submit" class="w-full bg-gradient-to-r from-maroon to-red-900 text-white py-3 rounded-lg font-semibold hover:opacity-90 transition-opacity">
+                            Submit Application
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </section>
+
+
+
+
+
+
+
+    
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Toggle Application Portal</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
+</head>
+<body class="bg-gray-100 text-gray-900 min-h-screen flex items-center justify-center p-4">
+
+  <div class="bg-white w-full max-w-md sm:p-6 p-4 rounded-lg shadow-md">
+    <h2 class="text-lg sm:text-xl font-bold mb-4 flex items-center gap-2">
+      <i class="fas fa-cogs text-blue-600"></i>
+      Manage Application Portal
+    </h2>
+
+    <form method="POST" onsubmit="return confirmToggle()" class="space-y-4">
+      {% csrf_token %}
+      {{ form.non_field_errors }}
+
+      <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 sm:gap-0">
+        <label for="id_is_portal_open" class="font-medium text-gray-800">
+          Application Portal
+        </label>
+        <div class="sm:ml-auto">
+          {{ form.is_portal_open }}
+        </div>
+      </div>
+
+      <button type="submit" class="w-full bg-blue-600 hover:bg-blue-700 text-white py-2 px-4 rounded flex items-center justify-center gap-2 transition duration-200">
+        <i class="fas fa-save"></i>
+        Save Changes
+      </button>
+    </form>
+
+    {% if messages %}
+    <div class="mt-4 space-y-2">
+      {% for message in messages %}
+      <div class="p-3 rounded bg-green-100 text-green-800 flex items-start gap-2 text-sm sm:text-base">
+        <i class="fas fa-check-circle mt-1 text-green-600"></i>
+        <div>{{ message }}</div>
+      </div>
+      {% endfor %}
+    </div>
+    {% endif %}
+  </div>
+
+  <script>
+    function confirmToggle() {
+      const checkbox = document.getElementById('id_is_portal_open');
+      const action = checkbox.checked ? 'open' : 'close';
+      return confirm(`Are you sure you want to ${action} the portal?`);
+    }
+  </script>
+</body>
+</html>

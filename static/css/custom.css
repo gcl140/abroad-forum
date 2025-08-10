@@ -1,0 +1,130 @@
+/* Fonts */
+body {
+    background-color: black;
+    font-family: 'Sen', sans-serif;
+}
+
+.font-saint {
+    font-family: 'Sarina', 'cursive';
+}
+
+/* Gradient text */
+.text-gradient {
+    background-image: linear-gradient(90deg, #ff457a, #800020);
+    background-clip: text;
+    -webkit-background-clip: text;
+    color: transparent;
+}
+
+/* Section title with underline */
+.section-title {
+    font-size: 2.25rem;
+    /* text-4xl */
+    font-weight: bold;
+    margin-bottom: 3rem;
+    position: relative;
+    display: inline-block;
+}
+
+@media (min-width: 768px) {
+    .section-title {
+        font-size: 3rem;
+        /* md:text-5xl */
+    }
+}
+
+.section-title::after {
+    content: '';
+    position: absolute;
+    bottom: -0.75rem;
+    right: 50%;
+    width: 33.3333%;
+    height: 1px;
+    background-color: maroon;
+    transform: translateX(50%);
+}
+
+/* Hover card */
+.card-hover {
+    transition: all 0.5s;
+}
+
+.card-hover:hover {
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+    /* shadow-2xl */
+    transform: translateY(-0.5rem);
+}
+
+/* Glow effect */
+.glow-effect {
+    box-shadow: 0 0 15px rgba(128, 0, 32, 0.5);
+}
+
+/* Nav link underline animation */
+.nav-link {
+    position: relative;
+}
+
+.nav-link::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 0;
+    height: 2px;
+    background-color: #800020;
+    transition: width 0.3s;
+}
+
+.nav-link:hover::after {
+    width: 100%;
+}
+
+/* Text stroke */
+.text-stroke {
+    -webkit-text-stroke: 1px white;
+    text-stroke: 1px white;
+    color: transparent;
+}
+
+.text-stroke-black {
+    -webkit-text-stroke: 1px black;
+    text-stroke: 1px black;
+    color: transparent;
+}
+
+.bg-maroon {
+    background-color: #800020;
+}
+
+.text-maroon {
+    color: #800020;
+}
+
+.border-maroon {
+    border-color: #800020;
+}
+
+.decoration-maroon {
+    text-decoration-color: #800020;
+}
+
+.bg-hero2 {
+    background-image: url('../images/blacks.jpg');
+}
+
+.bg-hero1 {
+    background-image: url('../images/hero2.jpg');
+}
+
+.bg-blacks {
+    background-image: url('../images/blacks.jpg');
+}
+
+/* .from-maroon {
+    background-image: linear-gradient(90deg, #80002042, #ff457a4d);
+} */
+
+/* .via-maroon/90 {
+    background-image: linear-gradient(90deg, #800020, #ff457a 90%);
+} */

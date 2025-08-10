@@ -1,0 +1,749 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ForumAbroad - Q&A Community</title>
+    <!-- Google Fonts - Sen -->
+    <link href="https://fonts.googleapis.com/css2?family=Sen:wght@400;700;800&display=swap" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        maroon: '#c4ad2bff',
+                        dark: '#121212',
+                        darker: '#0a0a0a',
+                    },
+                    fontFamily: {
+                        sen: ['Sen', 'sans-serif'],
+                    },
+                }
+            }
+        }
+    </script>
+    <style type="text/tailwindcss">
+        @layer utilities {
+            .scrollbar-hide::-webkit-scrollbar {
+                display: none;
+            }
+            .scrollbar-hide {
+                -ms-overflow-style: none;
+                scrollbar-width: none;
+            }
+        }
+    </style>
+</head>
+<body class="bg-dark text-gray-200 font-sen min-h-screen">
+    <!-- Main Container -->
+    <div class="container mx-auto px-2 py-4 flex flex-col lg:flex-row gap-4">
+        <!-- Left Sidebar - Navigation -->
+        <aside class="w-full lg:w-64 flex-shrink-0 bg-darker rounded-lg p-4 hidden lg:block sticky top-4 h-screen overflow-y-auto scrollbar-hide">
+            <div class="flex items-center justify-between mb-6">
+                <h1 class="text-2xl font-bold text-maroon">ForumAbroad</h1>
+                <button class="text-gray-400 hover:text-white md:hidden">
+                    <i class="fas fa-bars"></i>
+                </button>
+            </div>
+
+            <nav class="space-y-2">
+                <a href="#" class="flex items-center gap-3 p-2 rounded hover:bg-maroon hover:bg-opacity-20 text-maroon">
+                    <i class="fas fa-home w-5"></i>
+                    <span>Home</span>
+                </a>
+                <a href="#" class="flex items-center gap-3 p-2 rounded hover:bg-maroon hover:bg-opacity-20 text-gray-300 hover:text-white">
+                    <i class="fas fa-fire w-5"></i>
+                    <span>Popular</span>
+                </a>
+                <a href="#" class="flex items-center gap-3 p-2 rounded hover:bg-maroon hover:bg-opacity-20 text-gray-300 hover:text-white">
+                    <i class="fas fa-clock w-5"></i>
+                    <span>Recent</span>
+                </a>
+                {% comment %} <a href="#" class="flex items-center gap-3 p-2 rounded hover:bg-maroon hover:bg-opacity-20 text-gray-300 hover:text-white">
+                    <i class="fas fa-bookmark w-5"></i>
+                    <span>Saved</span>
+                </a> {% endcomment %}
+                <a href="#" class="flex items-center gap-3 p-2 rounded hover:bg-maroon hover:bg-opacity-20 text-gray-300 hover:text-white">
+                    <i class="fas fa-user w-5"></i>
+                    <span>Profile</span>
+                </a>
+                <a href="#" class="flex items-center gap-3 p-2 rounded hover:bg-maroon hover:bg-opacity-20 text-gray-300 hover:text-white">
+                    <i class="fas fa-cog w-5"></i>
+                    <span>Settings</span>
+                </a>
+            </nav>
+            
+        </aside>
+
+        <!-- Mobile Navigation -->
+        <div class="lg:hidden fixed bottom-0 left-0 right-0 bg-darker border-t border-gray-800 z-10">
+            <div class="flex justify-around py-3">
+                <a href="#" class="text-maroon flex flex-col items-center">
+                    <i class="fas fa-home"></i>
+                    <span class="text-xs mt-1">Home</span>
+                </a>
+                <a href="#" class="text-gray-400 flex flex-col items-center">
+                    <i class="fas fa-fire"></i>
+                    <span class="text-xs mt-1">Popular</span>
+                </a>
+                <a href="#" class="text-gray-400 flex flex-col items-center">
+                    <i class="fas fa-search"></i>
+                    <span class="text-xs mt-1">Search</span>
+                </a>
+                <a href="#" class="text-gray-400 flex flex-col items-center">
+                    <i class="fas fa-bell"></i>
+                    <span class="text-xs mt-1">Notifications</span>
+                </a>
+                <a href="#" class="text-gray-400 flex flex-col items-center">
+                    <i class="fas fa-user"></i>
+                    <span class="text-xs mt-1">Profile</span>
+                </a>
+            </div>
+        </div>
+
+        <!-- Main Content - Posts -->
+        <main class="flex-1 bg-darker rounded-lg p-4 lg:p-6">
+                        <!-- Create Post Card -->
+            <div class="bg-dark rounded-lg p-4 mb-6 border border-gray-800 sticky top-4">
+                <div class="flex items-center gap-3">
+                    <input type="text" placeholder="Search for anything..." class="flex-1 bg-gray-800 rounded-full px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-maroon focus:border-transparent">
+                    <div class="w-10 h-10 rounded-full bg-maroon flex items-center justify-center text-white">
+                        <i class="fas fa-search"></i>
+                    </div>
+                </div>
+            </div>
+            <!-- Sort Options -->
+            <div class="flex items-center justify-between mb-6">
+                <div class="flex items-center gap-2">
+                    <i class="fas fa-fire text-maroon"></i>
+                    <h2 class="font-bold text-lg">Hot Questions</h2>
+                </div>
+                <div class="flex items-center gap-2 text-sm">
+                    <button class="px-3 py-1 rounded-full bg-gray-800 hover:bg-gray-700">Latest</button>
+                    <button class="px-3 py-1 rounded-full bg-maroon text-white">Top</button>
+                    <button class="px-3 py-1 rounded-full bg-gray-800 hover:bg-gray-700">Controversial</button>
+                </div>
+            </div>
+            {% for post in posts %}
+<div class="bg-dark rounded-lg overflow-hidden mb-6 border border-gray-800">
+    <div class="flex">
+        <!-- Vote Controls -->
+        <div class="bg-gray-900 w-10 flex flex-col items-center py-3">
+            <button class="text-gray-400 hover:text-maroon">
+                <i class="fas fa-arrow-up"></i>
+            </button>
+            <span class="my-1 font-bold text-sm">{{ post.upvotes }}</span>
+            <button class="text-gray-400 hover:text-blue-400">
+                <i class="fas fa-arrow-down"></i>
+            </button>
+            <span class="my-1 font-bold text-sm">{{ post.downvotes }}</span>
+            <button class="mt-3 text-gray-400 hover:text-maroon">
+                <i class="fas fa-bookmark"></i>
+            </button>
+        </div>
+
+        <!-- Post Content -->
+        <div class="flex-1 p-4">
+            <div class="flex items-center gap-2 text-sm mb-2">
+                <div class="w-6 h-6 rounded-full bg-maroon text-white text-xs flex justify-center items-center">
+                    <i class="fas fa-user"></i>
+                </div>
+                <span class="text-gray-400">Posted by g../{{ post.author.nickname }}</span>
+                <span class="text-gray-500">•</span>
+                <span class="text-gray-400">{{ post.created_at|timesince }} ago</span>
+                <span class="text-gray-500">•</span>
+                <span class="text-maroon">g../{{ post.tag }}</span>
+            </div>
+
+            <h3 class="text-xl font-bold mb-2">{{ post.title }}</h3>
+            <p class="text-gray-300 mb-4">{{ post.content }}</p>
+
+            <div class="flex items-center gap-4 text-sm text-gray-400">
+                <button class="flex items-center gap-1 hover:text-maroon">
+                    <i class="far fa-comment"></i>
+                    <span>{{ post.replies.count }} replies</span>
+                </button>
+                <button class="flex items-center gap-1 hover:text-maroon">
+                    <i class="fas fa-share"></i>
+                    <span>Share</span>
+                </button>
+                <button class="flex items-center gap-1 hover:text-maroon">
+                    <i class="fas fa-ellipsis-h"></i>
+                    <span>More</span>
+                </button>
+            </div>
+
+            <!-- Comment Box -->
+            <div class="mt-4 border-t border-gray-800 pt-4">
+                <div class="flex items-center gap-3 mb-4">
+                    <div class="w-8 h-8 rounded-full bg-gray-700 text-white flex justify-center items-center">
+                        <i class="fas fa-user text-sm"></i>
+                    </div>
+                    <input type="text" placeholder="Reply..." class="flex-1 bg-gray-800 rounded-full px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-maroon">
+                </div>
+
+                <!-- Replies -->
+                {% for group in post.threaded_replies %}
+                    <div class="pl-2 border-l-2 border-maroon mb-4">
+                        <!-- Top-Level Reply -->
+                        <div class="flex items-center gap-2 text-xs mb-1">
+                            <div class="w-5 h-5 rounded-full bg-gray-600 text-white flex justify-center items-center">
+                                <i class="fas fa-user text-xs"></i>
+                            </div>
+                            <span class="text-gray-400">{{ group.reply.replyier.nickname }}</span>
+                            <span class="text-gray-500">•</span>
+                            <span class="text-gray-400">{{ group.reply.created_at|timesince }} ago</span>
+                        </div>
+                        <p class="text-sm text-gray-300 mb-2">{{ group.reply.content }}</p>
+
+                        <!-- Actions -->
+                        <div class="flex items-center gap-3 text-xs text-gray-400">
+                            <button class="flex items-center gap-1 hover:text-maroon">
+                                <i class="fas fa-arrow-up"></i>
+                                <span>{{ group.reply.upvotes }}</span>
+                            </button>
+                            <button class="flex items-center gap-1 hover:text-blue-400">
+                                <i class="fas fa-arrow-down"></i>
+                                <span>{{ group.reply.downvotes }}</span>
+                            </button>
+                            <button class="hover:text-maroon">Reply</button>
+                        </div>
+
+                        <!-- 2nd Level Replies -->
+                        {% for child_dict in group.children %}
+                        <div class="pl-4 mt-3 border-l-2 border-gray-700">
+                            <div class="flex items-center gap-2 text-xs mb-1">
+                                <div class="w-5 h-5 rounded-full bg-gray-600 text-white flex justify-center items-center">
+                                    <i class="fas fa-user text-xs"></i>
+                                </div>
+                                <span class="text-gray-400">{{ child_dict.reply.replyier.nickname }}</span>
+                                <span class="text-gray-500">•</span>
+                                <span class="text-gray-400">{{ child_dict.reply.created_at|timesince }} ago</span>
+                            </div>
+                            <p class="text-sm text-gray-300 mb-2">
+                                <span class="font-bold text-maroon text-xs">@{{ group.reply.replyier.nickname }}</span>
+                                {{ child_dict.reply.content }}
+                            </p>
+                            <div class="flex items-center gap-3 text-xs text-gray-400">
+                                <button class="flex items-center gap-1 hover:text-maroon">
+                                    <i class="fas fa-arrow-up"></i>
+                                    <span>{{ child_dict.reply.upvotes }}</span>
+                                </button>
+                                <button class="flex items-center gap-1 hover:text-blue-400">
+                                    <i class="fas fa-arrow-down"></i>
+                                    <span>{{ child_dict.reply.downvotes }}</span>
+                                </button>
+                                <button class="hover:text-maroon">Reply</button>
+                            </div>
+
+                            <!-- 3rd Level Replies -->
+                            {% for grandchild in child_dict.children %}
+                            {% comment %} <div class="pl-4 mt-3 border-l-2 border-gray-700"> {% endcomment %}
+                            <div class="mt-3">
+                                <div class="flex items-center gap-2 text-xs mb-1">
+                                    <div class="w-5 h-5 rounded-full bg-gray-600 text-white flex justify-center items-center">
+                                        <i class="fas fa-user text-xs"></i>
+                                    </div>
+                                    <span class="text-gray-400">{{ grandchild.replyier.nickname }}</span>
+                                    <span class="text-gray-500">•</span>
+                                    <span class="text-gray-400">{{ grandchild.created_at|timesince }} ago</span>
+                                </div>
+                                <p class="text-sm text-gray-300 mb-2">
+                                    <span class="font-bold text-maroon text-xs">@{{ child_dict.reply.replyier.nickname }}</span>
+                                    {{ grandchild.content }}
+                                </p>
+                                <div class="flex items-center gap-3 text-xs text-gray-400">
+                                    <button class="flex items-center gap-1 hover:text-maroon">
+                                        <i class="fas fa-arrow-up"></i>
+                                        <span>{{ grandchild.upvotes }}</span>
+                                    </button>
+                                    <button class="flex items-center gap-1 hover:text-blue-400">
+                                        <i class="fas fa-arrow-down"></i>
+                                        <span>{{ grandchild.downvotes }}</span>
+                                    </button>
+                                    <button class="hover:text-maroon">Reply</button>
+                                </div>
+                            </div>
+                            {% endfor %}
+                        </div>
+                        {% endfor %}
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endfor %}
+
+
+            <!-- Post 2 -->
+            <div class="bg-dark rounded-lg overflow-hidden mb-6 border border-gray-800">
+                <!-- Vote Controls -->
+                <div class="flex">
+                    <div class="bg-gray-900 w-10 flex flex-col items-center py-3">
+                        <button class="text-gray-400 hover:text-maroon">
+                            <i class="fas fa-arrow-up"></i>
+                        </button>
+                        <span class="my-1 font-bold text-sm">874</span>
+                        <button class="text-gray-400 hover:text-blue-400">
+                            <i class="fas fa-arrow-down"></i>
+                        </button>
+                        <button class="mt-3 text-gray-400 hover:text-maroon">
+                            <i class="far fa-bookmark"></i>
+                        </button>
+                    </div>
+                    
+                    <!-- Post Content -->
+                    <div class="flex-1 p-4">
+                        <div class="flex items-center gap-2 text-sm mb-2">
+                            <div class="w-6 h-6 rounded-full bg-blue-500 flex items-center justify-center text-white text-xs">
+                                <i class="fas fa-user"></i>
+                            </div>
+                            <span class="text-gray-400">Posted by u/node_ninja</span>
+                            <span class="text-gray-500">•</span>
+                            <span class="text-gray-400">8 hours ago</span>
+                            <span class="text-gray-500">•</span>
+                            <span class="text-blue-400">g../node</span>
+                        </div>
+                        
+                        <h3 class="text-xl font-bold mb-2">Node.js 18 vs 20 performance benchmarks - is it worth upgrading?</h3>
+                        <p class="text-gray-300 mb-4">
+                            I've been running some benchmarks comparing Node.js 18 LTS with the new Node.js 20 release. The performance improvements in the JavaScript engine are noticeable, but I'm curious about real-world application performance. Has anyone done extensive testing?
+                        </p>
+                        
+                        <div class="bg-gray-900 p-3 rounded mb-4">
+                            <pre class="text-sm overflow-x-auto">
+{`// Benchmark results
+Node.js 18: 12,345 ops/sec
+Node.js 20: 14,567 ops/sec (+18%)
+
+Memory usage:
+Node.js 18: 45MB
+Node.js 20: 38MB (-15%)`}
+                            </pre>
+                        </div>
+                        
+                        <div class="flex items-center gap-4 text-sm text-gray-400">
+                            <button class="flex items-center gap-1 hover:text-maroon">
+                                <i class="far fa-comment"></i>
+                                <span>167 comments</span>
+                            </button>
+                            <button class="flex items-center gap-1 hover:text-maroon">
+                                <i class="fas fa-share"></i>
+                                <span>Share</span>
+                            </button>
+                            <button class="flex items-center gap-1 hover:text-maroon">
+                                <i class="fas fa-ellipsis-h"></i>
+                                <span>More</span>
+                            </button>
+                        </div>
+                        
+                        <!-- Comments Section -->
+                        <div class="mt-4 border-t border-gray-800 pt-4">
+                            <div class="flex items-center gap-3 mb-4">
+                                <div class="w-8 h-8 rounded-full bg-gray-700 flex items-center justify-center text-white">
+                                    <i class="fas fa-user text-sm"></i>
+                                </div>
+                                <input type="text" placeholder="Add a comment..." class="flex-1 bg-gray-800 rounded-full px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-maroon focus:border-transparent">
+                            </div>
+                            
+                            <!-- Comment 1 -->
+                            <div class="pl-2 border-l-2 border-maroon mb-4">
+                                <div class="flex items-center gap-2 text-xs mb-1">
+                                    <div class="w-5 h-5 rounded-full bg-gray-600 flex items-center justify-center text-white">
+                                        <i class="fas fa-user text-xs"></i>
+                                    </div>
+                                    <span class="text-gray-400">perf_optimizer</span>
+                                    <span class="text-gray-500">•</span>
+                                    <span class="text-gray-400">7 hours ago</span>
+                                </div>
+                                <p class="text-sm text-gray-300 mb-2">
+                                    The memory improvements are significant for microservices. We saw a 20% reduction in our Kubernetes pod memory requests after upgrading.
+                                </p>
+                                <div class="flex items-center gap-3 text-xs text-gray-400">
+                                    <button class="flex items-center gap-1 hover:text-maroon">
+                                        <i class="fas fa-arrow-up"></i>
+                                        <span>35</span>
+                                    </button>
+                                    <button class="flex items-center gap-1 hover:text-blue-400">
+                                        <i class="fas fa-arrow-down"></i>
+                                    </button>
+                                    <button class="hover:text-maroon">Reply</button>
+                                </div>
+                            </div>
+                            
+                            <!-- Comment 2 -->
+                            <div class="pl-2 border-l-2 border-maroon">
+                                <div class="flex items-center gap-2 text-xs mb-1">
+                                    <div class="w-5 h-5 rounded-full bg-gray-600 flex items-center justify-center text-white">
+                                        <i class="fas fa-user text-xs"></i>
+                                    </div>
+                                    <span class="text-gray-400">legacy_maintainer</span>
+                                    <span class="text-gray-500">•</span>
+                                    <span class="text-gray-400">5 hours ago</span>
+                                </div>
+                                <p class="text-sm text-gray-300 mb-2">
+                                    Be careful with native modules - we had to recompile several of ours for Node 20 compatibility. The performance gains are nice but test thoroughly before upgrading production.
+                                </p>
+                                <div class="flex items-center gap-3 text-xs text-gray-400">
+                                    <button class="flex items-center gap-1 hover:text-maroon">
+                                        <i class="fas fa-arrow-up"></i>
+                                        <span>22</span>
+                                    </button>
+                                    <button class="flex items-center gap-1 hover:text-blue-400">
+                                        <i class="fas fa-arrow-down"></i>
+                                    </button>
+                                    <button class="hover:text-maroon">Reply</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Post 3 -->
+            <div class="bg-dark rounded-lg overflow-hidden mb-6 border border-gray-800">
+                <!-- Vote Controls -->
+                <div class="flex">
+                    <div class="bg-gray-900 w-10 flex flex-col items-center py-3">
+                        <button class="text-gray-400 hover:text-maroon">
+                            <i class="fas fa-arrow-up"></i>
+                        </button>
+                        <span class="my-1 font-bold text-sm">2.4k</span>
+                        <button class="text-gray-400 hover:text-blue-400">
+                            <i class="fas fa-arrow-down"></i>
+                        </button>
+                        <button class="mt-3 text-gray-400 hover:text-maroon">
+                            <i class="fas fa-bookmark"></i>
+                        </button>
+                    </div>
+                    
+                    <!-- Post Content -->
+                    <div class="flex-1 p-4">
+                        <div class="flex items-center gap-2 text-sm mb-2">
+                            <div class="w-6 h-6 rounded-full bg-yellow-500 flex items-center justify-center text-white text-xs">
+                                <i class="fas fa-user"></i>
+                            </div>
+                            <span class="text-gray-400">Posted by u/python_pro</span>
+                            <span class="text-gray-500">•</span>
+                            <span class="text-gray-400">12 hours ago</span>
+                            <span class="text-gray-500">•</span>
+                            <span class="text-yellow-400">g../python</span>
+                        </div>
+                        
+                        <h3 class="text-xl font-bold mb-2">Python 3.12 just released - what are the most exciting new features?</h3>
+                        <p class="text-gray-300 mb-4">
+                            Python 3.12 is out! From what I've read, there are some significant performance improvements and cool new features. What are you most excited about? Here's what stands out to me:
+                        </p>
+                        
+                        <ul class="list-disc pl-5 mb-4 text-gray-300 space-y-1">
+                            <li>Faster interpreter (up to 25% faster for some workloads)</li>
+                            <li>Improved error messages with suggestions</li>
+                            <li>New type annotation syntax</li>
+                            <li>Better asyncio performance</li>
+                        </ul>
+                        
+                        <div class="flex items-center gap-4 text-sm text-gray-400">
+                            <button class="flex items-center gap-1 hover:text-maroon">
+                                <i class="far fa-comment"></i>
+                                <span>421 comments</span>
+                            </button>
+                            <button class="flex items-center gap-1 hover:text-maroon">
+                                <i class="fas fa-share"></i>
+                                <span>Share</span>
+                            </button>
+                            <button class="flex items-center gap-1 hover:text-maroon">
+                                <i class="fas fa-ellipsis-h"></i>
+                                <span>More</span>
+                            </button>
+                        </div>
+                        
+                        <!-- Comments Section -->
+                        <div class="mt-4 border-t border-gray-800 pt-4">
+                            <div class="flex items-center gap-3 mb-4">
+                                <div class="w-8 h-8 rounded-full bg-gray-700 flex items-center justify-center text-white">
+                                    <i class="fas fa-user text-sm"></i>
+                                </div>
+                                <input type="text" placeholder="Add a comment..." class="flex-1 bg-gray-800 rounded-full px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-maroon focus:border-transparent">
+                            </div>
+                            
+                            <!-- Comment 1 -->
+                            <div class="pl-2 border-l-2 border-maroon mb-4">
+                                <div class="flex items-center gap-2 text-xs mb-1">
+                                    <div class="w-5 h-5 rounded-full bg-gray-600 flex items-center justify-center text-white">
+                                        <i class="fas fa-user text-xs"></i>
+                                    </div>
+                                    <span class="text-gray-400">speed_demon</span>
+                                    <span class="text-gray-500">•</span>
+                                    <span class="text-gray-400">11 hours ago</span>
+                                </div>
+                                <p class="text-sm text-gray-300 mb-2">
+                                    The performance improvements are real! Our data processing pipeline runs 18% faster with zero code changes. The new per-interpreter GIL will be huge for certain workloads.
+                                </p>
+                                <div class="flex items-center gap-3 text-xs text-gray-400">
+                                    <button class="flex items-center gap-1 hover:text-maroon">
+                                        <i class="fas fa-arrow-up"></i>
+                                        <span>87</span>
+                                    </button>
+                                    <button class="flex items-center gap-1 hover:text-blue-400">
+                                        <i class="fas fa-arrow-down"></i>
+                                    </button>
+                                    <button class="hover:text-maroon">Reply</button>
+                                </div>
+                                
+                                <!-- Reply to comment -->
+                                <div class="pl-4 mt-3 border-l-2 border-gray-700">
+                                    <div class="flex items-center gap-2 text-xs mb-1">
+                                        <div class="w-5 h-5 rounded-full bg-gray-600 flex items-center justify-center text-white">
+                                            <i class="fas fa-user text-xs"></i>
+                                        </div>
+                                        <span class="text-gray-400">data_scientist</span>
+                                        <span class="text-gray-500">•</span>
+                                        <span class="text-gray-400">9 hours ago</span>
+                                    </div>
+                                    <p class="text-sm text-gray-300 mb-2">
+                                        What kind of data processing are you doing? We're seeing about 12% improvement in our pandas/numpy workloads.
+                                    </p>
+                                    <div class="flex items-center gap-3 text-xs text-gray-400">
+                                        <button class="flex items-center gap-1 hover:text-maroon">
+                                            <i class="fas fa-arrow-up"></i>
+                                            <span>34</span>
+                                        </button>
+                                        <button class="flex items-center gap-1 hover:text-blue-400">
+                                            <i class="fas fa-arrow-down"></i>
+                                        </button>
+                                        <button class="hover:text-maroon">Reply</button>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- Comment 2 -->
+                            <div class="pl-2 border-l-2 border-maroon">
+                                <div class="flex items-center gap-2 text-xs mb-1">
+                                    <div class="w-5 h-5 rounded-full bg-gray-600 flex items-center justify-center text-white">
+                                        <i class="fas fa-user text-xs"></i>
+                                    </div>
+                                    <span class="text-gray-400">type_hacker</span>
+                                    <span class="text-gray-500">•</span>
+                                    <span class="text-gray-400">8 hours ago</span>
+                                </div>
+                                <p class="text-sm text-gray-300 mb-2">
+                                    The new type parameter syntax is a game changer for generic programming. Much cleaner than the old typing.TypeVar approach.
+                                    <pre class="bg-gray-900 p-2 rounded mt-2 text-xs overflow-x-auto">
+{`# Old way
+from typing import TypeVar, List
+T = TypeVar('T')
+def first(items: List[T]) -> T: ...
+
+# New in 3.12
+def first[T](items: list[T]) -> T: ...`}
+                                    </pre>
+                                </p>
+                                <div class="flex items-center gap-3 text-xs text-gray-400">
+                                    <button class="flex items-center gap-1 hover:text-maroon">
+                                        <i class="fas fa-arrow-up"></i>
+                                        <span>56</span>
+                                    </button>
+                                    <button class="flex items-center gap-1 hover:text-blue-400">
+                                        <i class="fas fa-arrow-down"></i>
+                                    </button>
+                                    <button class="hover:text-maroon">Reply</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Load More Button -->
+            <div class="text-center mt-6">
+                <button class="px-6 py-2 bg-gray-800 hover:bg-gray-700 rounded-full font-medium">
+                    Load More Questions
+                </button>
+            </div>
+        </main>
+
+<!-- Right Sidebar - Additional Info -->
+{% comment %} <aside class="w-full lg:w-80 flex-shrink-0 bg-darker rounded-lg p-4 hidden lg:block space-y-4 sticky top-0"> {% endcomment %}
+<aside class="w-full lg:w-80 flex-shrink-0 bg-darker rounded-lg p-4 hidden lg:block space-y-4 sticky top-4 h-screen overflow-y-auto scrollbar-hide">
+        {% comment %} <aside class="w-full lg:w-64 flex-shrink-0 bg-darker rounded-lg p-4 hidden lg:block sticky top-4 h-screen overflow-y-auto scrollbar-hide"> {% endcomment %}
+
+
+    <!-- Create Post Card -->
+    <div class="bg-dark rounded-lg border border-gray-800 overflow-hidden">
+        <div class="p-4 border-b border-gray-800">
+            <h3 class="font-bold text-lg text-center text-maroon">
+                Create New Post</h3>
+        </div>
+        <form method="post" enctype="multipart/form-data" class="p-4">
+            {% csrf_token %}
+            
+            <!-- Title -->
+            <div class="mb-3">
+                <input type="text" name="title" placeholder="Post title..." 
+                    class="w-full bg-gray-800 rounded-lg px-4 py-2 text-sm text-white 
+                    focus:outline-none focus:ring-2 focus:ring-maroon placeholder-gray-500">
+            </div>
+
+            <!-- Content -->
+            <div class="mb-3">
+                <textarea name="content" rows="3" placeholder="What's on your mind?" 
+                    class="w-full bg-gray-800 rounded-lg px-4 py-2 text-sm text-white 
+                    focus:outline-none focus:ring-2 focus:ring-maroon placeholder-gray-500"></textarea>
+            </div>
+
+            <!-- Link -->
+            <div class="mb-3">
+                
+                <input type="url" name="link" placeholder="Attach a link (optional)" 
+                    class="w-full bg-gray-800 rounded-lg px-4 py-2 text-sm text-white 
+                    focus:outline-none focus:ring-2 focus:ring-maroon placeholder-gray-500">
+            </div>
+
+            <!-- Tag Selector -->
+            <div class="mb-3">
+                <select name="tag" 
+                    class="w-full bg-gray-800 text-white px-4 py-2 rounded-lg text-sm 
+                    focus:outline-none focus:ring-2 focus:ring-maroon">
+                    <option value="">Select a tag</option>
+                    {% for key, label in form.tag.field.choices %}
+                        {% if key %}<option value="{{ key }}">{{ label }}</option>{% endif %}
+                    {% endfor %}
+                </select>
+            </div>
+
+            <!-- File Uploads -->
+            <div class="grid grid-cols-1 gap-3 mb-4">
+                <label class="block">
+                    <div class="text-xs text-gray-400 mb-1">Upload Image</div>
+                    <div class="flex items-center gap-2 bg-gray-800 rounded-lg px-3 py-2">
+                        <i class="fas fa-image text-maroon"></i>
+                        <input type="file" name="image" accept="image/*" 
+                            class="block w-full text-sm text-gray-300 file:hidden bg-transparent">
+                    </div>
+                </label>
+                <label class="block">
+                    <div class="text-xs text-gray-400 mb-1">Upload Video</div>
+                    <div class="flex items-center gap-2 bg-gray-800 rounded-lg px-3 py-2">
+                        <i class="fas fa-video text-maroon"></i>
+                        <input type="file" name="video" accept="video/*" 
+                            class="block w-full text-sm text-gray-300 file:hidden bg-transparent">
+                    </div>
+                </label>
+                <label class="block">
+                    <div class="text-xs text-gray-400 mb-1">Upload Document</div>
+                    <div class="flex items-center gap-2 bg-gray-800 rounded-lg px-3 py-2">
+                        <i class="fas fa-file-alt text-maroon"></i>
+                        <input type="file" name="docs" accept=".pdf,.doc,.docx,.ppt,.pptx" 
+                            class="block w-full text-sm text-gray-300 file:hidden bg-transparent">
+                    </div>
+                </label>
+            </div>
+
+            <!-- Submit Button -->
+            <button type="submit" 
+                class="w-full bg-maroon hover:bg-maroon-dark text-white py-2 px-4 rounded-lg font-medium">
+                <i class="fas fa-paper-plane mr-2"></i> Post
+            </button>
+        </form>
+    </div>
+
+    <!-- Community Info -->
+    <div class="bg-dark rounded-lg border border-gray-800 overflow-hidden">
+        <div class="p-4 border-b border-gray-800 flex items-center gap-3">
+            <div class="w-10 h-10 rounded-full bg-maroon flex items-center justify-center text-white">
+                <i class="fas fa-code"></i>
+            </div>
+            <div>
+                <h3 class="font-bold text-lg">ForumAbroad</h3>
+                <p class="text-xs text-gray-400">Programming Q&A Community</p>
+            </div>
+        </div>
+        <div class="p-4">
+            <p class="text-sm text-gray-300 mb-4">
+                A place for developers to ask questions, share knowledge, and discuss all things programming.
+            </p>
+            <div class="grid grid-cols-3 gap-2 text-center mb-4">
+                <div class="bg-gray-900 rounded p-2">
+                    <div class="font-bold text-maroon">1.2m</div>
+                    <div class="text-xs text-gray-400">Members</div>
+                </div>
+                <div class="bg-gray-900 rounded p-2">
+                    <div class="font-bold text-maroon">4.5k</div>
+                    <div class="text-xs text-gray-400">Online</div>
+                </div>
+                <div class="bg-gray-900 rounded p-2">
+                    <div class="font-bold text-maroon">2010</div>
+                    <div class="text-xs text-gray-400">Created</div>
+                </div>
+            </div>
+            <button class="w-full bg-maroon hover:bg-maroon-dark text-white py-2 px-4 rounded-lg text-sm font-medium">
+                Join Community
+            </button>
+        </div>
+    </div>
+
+            <!-- Rules -->
+            <div class="bg-dark rounded-lg p-4 mb-6 border border-gray-800">
+                <h3 class="font-bold text-lg mb-3">Community Rules</h3>
+                <ol class="list-decimal list-inside text-sm space-y-2">
+                    <li class="text-gray-300">Stay on topic - programming questions only</li>
+                    <li class="text-gray-300">Be respectful to others</li>
+                    <li class="text-gray-300">No spam or self-promotion</li>
+                    <li class="text-gray-300">Search before posting</li>
+                    <li class="text-gray-300">Format code properly</li>
+                </ol>
+            </div>
+
+            <!-- Trending Communities -->
+            <div class="bg-dark rounded-lg p-4 border border-gray-800">
+                <h3 class="font-bold text-lg mb-3">Trending Communities</h3>
+                <div class="space-y-3">
+                    <a href="#" class="flex items-center gap-3 p-2 rounded hover:bg-gray-800">
+                        <div class="w-8 h-8 rounded-full bg-blue-500"></div>
+                        <div>
+                            <div class="font-medium">g../reactjs</div>
+                            <div class="text-xs text-gray-400">1.4m members</div>
+                        </div>
+                    </a>
+                    <a href="#" class="flex items-center gap-3 p-2 rounded hover:bg-gray-800">
+                        <div class="w-8 h-8 rounded-full bg-yellow-500"></div>
+                        <div>
+                            <div class="font-medium">g../python</div>
+                            <div class="text-xs text-gray-400">1.2m members</div>
+                        </div>
+                    </a>
+                    <a href="#" class="flex items-center gap-3 p-2 rounded hover:bg-gray-800">
+                        <div class="w-8 h-8 rounded-full bg-green-500"></div>
+                        <div>
+                            <div class="font-medium">g../node</div>
+                            <div class="text-xs text-gray-400">850k members</div>
+                        </div>
+                    </a>
+                    <a href="#" class="flex items-center gap-3 p-2 rounded hover:bg-gray-800">
+                        <div class="w-8 h-8 rounded-full bg-purple-500"></div>
+                        <div>
+                            <div class="font-medium">g../webdev</div>
+                            <div class="text-xs text-gray-400">1.1m members</div>
+                        </div>
+                    </a>
+                    <a href="#" class="flex items-center gap-3 p-2 rounded hover:bg-gray-800">
+                        <div class="w-8 h-8 rounded-full bg-red-500"></div>
+                        <div>
+                            <div class="font-medium">g../learnprogramming</div>
+                            <div class="text-xs text-gray-400">2.3m members</div>
+                        </div>
+                    </a>
+                </div>
+                <button class="w-full mt-4 text-maroon text-sm font-medium">
+                    See All Communities
+                </button>
+            </div>
+        </aside>
+    </div>
+</body>
+</html>

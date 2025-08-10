@@ -1,0 +1,555 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>
+    {% block title %}
+    Q&A Community
+    {% endblock %} | ForumAbroad 
+    </title>
+    <!-- Google Fonts - Sen -->
+    <link href="https://fonts.googleapis.com/css2?family=Sen:wght@400;700;800&display=swap" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Favicon -->
+    <link rel="icon" href="{% static 'images/fav.png' %}">
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        maroon: '#c4ad2bff',
+                        dark: '#121212',
+                        darker: '#0a0a0a',
+                    },
+                    fontFamily: {
+                        sen: ['Sen', 'sans-serif'],
+                    },
+                }
+            }
+        }
+    </script>
+{% block extra_head %}
+{% endblock %}
+    <style type="text/tailwindcss">
+        @layer utilities {
+            .scrollbar-hide::-webkit-scrollbar {
+                display: none;
+            }
+            .scrollbar-hide {
+                -ms-overflow-style: none;
+                scrollbar-width: none;
+            }
+        }
+    </style>
+</head>
+<body class="bg-dark text-gray-200 font-sen min-h-screen">
+    <!-- Main Container -->
+    <div class="px-2 py-4 flex flex-col lg:flex-row gap-4">
+        <!-- Left Sidebar - Navigation -->
+        {% comment %} <aside id="mobileSidebar" class="w-72 lg:w-72 flex-shrink-0 bg-darker rounded-lg p-4 hidden lg:block sticky top-4 h-screen overflow-y-auto scrollbar-hide"> {% endcomment %}
+        <aside id="mobileSidebar" class="w-72 lg:w-72 flex-shrink-0 bg-darker rounded-lg p-4 hidden fixed lg:static top-0 left-0 h-screen overflow-y-auto scrollbar-hide z-40 lg:block lg:sticky lg:top-4">
+            <!-- Logo and Title -->
+     <div class="flex items-end justify-around mb-6">
+                <h1 class="text-2xl font-bold text-maroon">ForumAbroad</h1>                
+            </div>
+
+            <nav class="space-y-2">
+                <a href="{% url 'questions' %}" class="flex items-center gap-3 p-2 rounded hover:bg-maroon hover:bg-opacity-20 hover:text-dark text-maroon">
+                    <i class="fas fa-home w-5"></i>
+                    <span>Home</span>
+                </a>
+                <a href="{% url 'questions' %}?filter=popular" class="flex items-center gap-3 p-2 rounded hover:bg-maroon hover:bg-opacity-20 text-gray-300 hover:text-white">
+                    <i class="fas fa-fire w-5"></i>
+                    <span>Popular</span>
+                </a>
+
+                <a href="{% url 'questions' %}?filter=latest" class="flex items-center gap-3 p-2 rounded hover:bg-maroon hover:bg-opacity-20 text-gray-300 hover:text-white">
+                    <i class="fas fa-clock w-5"></i>
+                    <span>Recent</span>
+                </a>
+                {% comment %} <a href="#" class="flex items-center gap-3 p-2 rounded hover:bg-maroon hover:bg-opacity-20 text-gray-300 hover:text-white">
+                    <i class="fas fa-bookmark w-5"></i>
+                    <span>Saved</span>
+                </a> {% endcomment %}
+                                <a href="{% url 'add_post' %}" class="flex items-center gap-3 p-2 rounded hover:bg-maroon hover:bg-opacity-20 text-gray-300 hover:text-white">
+                    <i class="fas fa-plus animate-pulse text-maroon w-5"></i>
+                    <span>ASK</span>
+                </a>
+
+                <a href="{% url 'view_profile' user.id %}" class="flex items-center gap-3 p-2 rounded hover:bg-maroon hover:bg-opacity-20 text-gray-300 hover:text-white">
+                    <i class="fas fa-user w-5"></i>
+                    <span>Profile</span>
+                </a>
+            </nav>
+                        <!-- Rules -->
+            <div class="bg-dark rounded-lg p-4 my-6 border border-gray-800">
+                <h3 class="font-bold text-lg mb-3">Community Guidelines</h3>
+                <ol class="list-decimal list-inside text-sm space-y-2">
+                    <li class="text-gray-300">Keep it relevant – focus on studying abroad, applications, visas, scholarships, etc.</li>
+                    <li class="text-gray-300">Respect others – we're all trying to make it, let's support each other.</li>
+                    <li class="text-gray-300">No spam, fake info, or promotions – this platform is built on trust.</li>
+                    <li class="text-gray-300">Before you post, check if someone already asked it.</li>
+                    <li class="text-gray-300">Be clear and real – you’re helping more people than you think.</li>
+                </ol>
+            </div>
+
+            <!-- Trending Communities -->
+            <div class="bg-dark rounded-lg p-4 border border-gray-800 mb-6">
+                <h3 class="font-bold text-lg mb-3">Trending Communities</h3>
+                <div class="space-y-3">
+                    {% comment %} <a href="#" class="flex items-center gap-3 p-2 rounded hover:bg-gray-800">
+                        <div class="w-8 h-8 rounded-full bg-blue-500"></div>
+                        <div>
+                            <div class="font-medium">g../reactjs</div>
+                            <div class="text-xs text-gray-400">1.4m members</div>
+                        </div>
+                    </a>
+                    <a href="#" class="flex items-center gap-3 p-2 rounded hover:bg-gray-800">
+                        <div class="w-8 h-8 rounded-full bg-yellow-500"></div>
+                        <div>
+                            <div class="font-medium">g../python</div>
+                            <div class="text-xs text-gray-400">1.2m members</div>
+                        </div>
+                    </a>
+                    <a href="#" class="flex items-center gap-3 p-2 rounded hover:bg-gray-800">
+                        <div class="w-8 h-8 rounded-full bg-green-500"></div>
+                        <div>
+                            <div class="font-medium">g../node</div>
+                            <div class="text-xs text-gray-400">850k members</div>
+                        </div>
+                    </a>
+                    <a href="#" class="flex items-center gap-3 p-2 rounded hover:bg-gray-800">
+                        <div class="w-8 h-8 rounded-full bg-purple-500"></div>
+                        <div>
+                            <div class="font-medium">g../webdev</div>
+                            <div class="text-xs text-gray-400">1.1m members</div>
+                        </div>
+                    </a> {% endcomment %}
+                    <a href="#" class="flex items-center gap-3 p-2 rounded hover:bg-gray-800">
+                        <div class="w-8 h-8 rounded-full bg-red-500"></div>
+                        <div>
+                            <div class="font-medium">g../Feature</div>
+                            <div class="text-xs text-gray-400">COMING SOON!!!</div>
+                        </div>
+                    </a>
+                </div>
+                <button class="w-full mt-4 text-maroon text-sm font-medium">
+                    Still Cooking
+                </button>
+            </div>
+        </aside>
+
+        <!-- Mobile Navigation -->
+        <div class="lg:hidden fixed bottom-0 left-0 right-0 bg-darker border-t border-gray-800 z-10">
+            <div class="flex justify-around py-3">
+                <a href="#" class="text-maroon flex flex-col items-center">
+                    <i class="fas fa-home"></i>
+                    <span class="text-xs mt-1">Home</span>
+                </a>
+
+                <!-- Add this anywhere in your base.html -->
+                    <div x-data="{ searchOpen: false }">
+                        <!-- Search Icon Button -->
+                        <button @click="searchOpen = true" class="text-gray-400 flex flex-col items-center hover:text-maroon transition">
+                            <i class="fas fa-search"></i>
+                            <span class="text-xs mt-1">Search</span>
+                        </button>
+                    {% include 'partials/search_modal.html' %}
+                    </div>
+                <a href="{% url 'add_post' %}" class="text-gray-400 flex flex-col items-center">
+                    <i class="fas fa-plus sm text-maroon animate-pulse"></i>
+                    <span class="text-xs mt-1">ASK</span>
+                </a>
+
+                <div class="top-4 right-16">
+    <div class="w-10 h-10 rounded-full text-gray-400 flex items-center justify-center text-white shadow-lg">
+        <div class="relative" x-data="{ open: false }">
+            <button @click="open = !open" class="focus:outline-none">
+                {% if viewing_user.is_authenticated %}
+    <div class="relative w-10 h-10 rounded-full flex flex-col text-xs flex items-center justify-center shadow-lg text-gray-400">
+
+                         <i class="fas fa-bell text-base text-gray-400"></i> Alerts
+    {% if not unreadnotificationcount == 0 %}
+        <span class="absolute top-0 right-0 w-4 h-4 text-xs text-gray-200 flex items-center justify-center bg-red-600 rounded-full border-2 border-red-400">
+            {{unreadnotificationcount}}
+        </span>
+    {% endif %}
+    </div>
+                {% else %}
+                {% endif %}
+            </button>
+            {% include 'partials/notifications_dropdown_phone.html' %}
+        </div>
+    </div>
+</div>
+
+                <div class="">
+                    <div class="w-10 h-10 rounded-full flex items-center justify-center text-white shadow-lg">
+                        <div class="relative" x-data="{ open: false }">
+                <button @click="open = !open" class="flex items-center space-x-2 focus:outline-none">
+                        <a href="#" class="text-gray-400 flex flex-col items-center">
+                            <i class="fas fa-user"></i>
+                            <span class="text-xs mt-1">Profile</span>
+                        </a>
+                </button>
+
+            <!-- Dropdown that now pops down -->
+            <div x-show="open" @click.away="open = false"
+                class="absolute right-0 bottom-full mt-2 w-48 bg-gray-900 rounded-md shadow-lg py-1 z-50 border border-gray-800"
+                x-transition:enter="transition ease-out duration-100"
+                x-transition:enter-start="transform opacity-0 scale-95"
+                x-transition:enter-end="transform opacity-100 scale-100"
+                x-transition:leave="transition ease-in duration-75"
+                x-transition:leave-start="transform opacity-100 scale-100"
+                x-transition:leave-end="transform opacity-0 scale-95">
+                <a href="{% url 'view_profile' viewing_user.id %}" class="block px-4 py-2 text-sm text-gray-400 hover:bg-gray-100">Your Profile</a>
+                <a href="mailto:gftinity01@gmail.com" class="block px-4 py-2 text-sm text-gray-400 hover:bg-gray-100">Help Center</a>
+                <div class="border-t border-gray-500/10"></div>
+                <a href="{% url 'logout' %}" class="block px-4 py-2 text-sm text-gray-500 hover:bg-gray-100 hover:text-red-400">Sign out</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+            </div>
+        </div>
+
+        <!-- Main Content - Posts -->
+
+
+<div class="fixed z-50 hidden lg:block top-4 right-16">
+    <div class="w-10 h-10 rounded-full bg-maroon flex items-center justify-center text-white shadow-lg">
+        <div class="relative" x-data="{ open: false }">
+            <button @click="open = !open" class="focus:outline-none">
+                {% if viewing_user.is_authenticated %}
+    <div class="relative w-10 h-10 rounded-full bg-maroon flex items-center justify-center text-white shadow-lg">
+
+                         <i class="fas fa-bell text-base"></i>
+    {% if not unreadnotificationcount == 0 %}
+        <span class="absolute top-0 right-0 w-4 h-4 text-xs text-gray-200 flex items-center justify-center bg-red-600 rounded-full border-2 border-red-400">
+            {{unreadnotificationcount}}
+        </span>
+    {% endif %}
+    </div>
+                {% else %}
+                {% endif %}
+            </button>
+            {% include 'partials/notifications_dropdown.html' %}
+        </div>
+    </div>
+</div>
+    
+
+
+        <div class="fixed z-50 hidden lg:block  top-4 right-4 z-50">
+            <div class="w-10 h-10 rounded-full bg-maroon flex items-center justify-center text-white shadow-lg">
+                    {% if viewing_user.profile_picture %}
+                    {% comment %} <img src="{{ viewing_user.profile_picture.url }}" alt="Profile Picture" class="w-10 h-10 rounded-full object-cover border-2 border-maroon"> {% endcomment %}
+                    <div class="relative" x-data="{ open: false }">
+                    <button @click="open = !open" class="flex items-center space-x-2 focus:outline-none">
+                    <img src="{{ viewing_user.profile_picture.url }}" alt="Profile Picture" class="w-10 h-10 rounded-full object-cover border-2 border-maroon">
+                    </button>
+
+                    <div x-show="open" @click.away="open = false"
+                        class="absolute right-0 mt-2 w-48 bg-gray-900 rounded-md shadow-lg py-1 z-50 border border-gray-800"
+                        x-transition:enter="transition ease-out duration-100"
+                        x-transition:enter-start="transform opacity-0 scale-95"
+                        x-transition:enter-end="transform opacity-100 scale-100"
+                        x-transition:leave="transition ease-in duration-75"
+                        x-transition:leave-start="transform opacity-100 scale-100"
+                        x-transition:leave-end="transform opacity-0 scale-95">
+                        <a href="{% url 'view_profile' viewing_user.id %}"
+                            class="block px-4 py-2 text-sm text-gray-400 hover:bg-gray-100">Your Profile</a>
+                        <a href="mailto:gftinity01@gmail.com"
+                            class="block px-4 py-2 text-sm text-gray-400 hover:bg-gray-100">Help
+                            Center</a>
+                        <div class="border-t border-gray-500/10"></div>
+                        <a href="{% url 'logout' %}"
+                            class="block px-4 py-2 text-sm text-gray-500 hover:bg-gray-100 hover:text-red-400">Sign
+                            out</a>
+                    </div>
+                </div>
+                    {% else %}
+                    <i class="fas fa-user"></i>
+                    {% endif %}
+                    
+                </div>
+        </div>
+
+<div id="sidebarToggle" class="fixed z-50 block lg:hidden top-4 left-4 cursor-pointer">
+  <div class="w-10 h-10 rounded-full bg-maroon flex items-center justify-center text-white shadow-lg">
+    <i id="toggleIcon"  class="fas fa-bars"></i>
+  </div>
+</div>
+
+        <main class="flex-1 bg-darker rounded-lg p-4 lg:p-6 relative">
+            <div class="bg-dark rounded-lg p-2 mb-6 border border-gray-800 sticky top-4 z-50 hidden lg:block">
+    <form method="get" action="{% url 'search_content' %}" class="flex items-center gap-3">
+        <input 
+            type="text" 
+            name="q" 
+            value="{{ query|default:'' }}" 
+            placeholder="Search posts, replies, and notifications..." 
+            class="flex-1 bg-gray-800 text-white rounded-full px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-maroon focus:border-transparent"
+        >
+        <button type="submit" class="w-10 h-10 rounded-full bg-maroon flex items-center justify-center text-white hover:bg-maroon-dark transition">
+            <i class="fas fa-search"></i>
+        </button>
+    </form>
+</div>
+
+            {% block content %}
+
+            {% endblock %}
+        </main>
+
+<!-- Right Sidebar - Additional Info -->
+{% comment %} <aside class="w-full lg:w-80 flex-shrink-0 bg-darker rounded-lg p-4 hidden lg:block space-y-4 sticky top-0"> {% endcomment %}
+<aside class="w-full lg:w-80 flex-shrink-0 bg-darker rounded-lg p-4 hidden lg:block space-y-4 sticky top-4 h-screen overflow-y-auto scrollbar-hide">
+        {% comment %} <aside class="w-full lg:w-64 flex-shrink-0 bg-darker rounded-lg p-4 hidden lg:block sticky top-4 h-screen overflow-y-auto scrollbar-hide"> {% endcomment %}
+
+
+    <!-- Create Post Card -->
+     {% if not request.path == '/discuss/add-post/' %}
+
+     {% include 'yuzzaz/partials/add_post_modal_sec.html' %}
+
+    {% else %}
+<!-- Rules -->
+<div class="bg-dark rounded-lg p-4 my-6 border border-gray-800">
+    <h3 class="font-bold text-lg mb-3 text-white">Posting Guidelines</h3>
+        <ol class="list-decimal list-inside text-sm space-y-2 text-gray-300">
+        <li>Stick to the topic — studying abroad, applications, scholarships, visas, etc.</li>
+        <li>Be clear and specific — include details like deadlines, programs, or your background.</li>
+        <li>No spam, ads, or irrelevant links — this space is for real help only.</li>
+        <li>Be kind and respectful — everyone here is figuring things out.</li>
+        <li>Check if your question already exists — use the search bar first.</li>
+        <li>Write helpful titles — avoid vague stuff like “Help plz.”</li>
+        <li>Share verified info — or ask clearly if you're unsure about something.</li>
+        <li>If it’s personal (e.g. finances or rejection letters), feel free to go anonymous.</li>
+    </ol>
+</div>
+    {% endif %}
+    <!-- Community Info -->
+<div class="bg-dark rounded-lg border border-gray-800 overflow-hidden">
+    <div class="p-4 border-b border-gray-800 flex items-center gap-3">
+        <div class="w-10 h-10 rounded-full bg-maroon flex items-center justify-center text-white">
+            <i class="fas fa-globe-africa"></i>
+        </div>
+        <div>
+            <h3 class="font-bold text-lg">ForumAbroad</h3>
+            <p class="text-xs text-gray-400">Your gateway to global education</p>
+        </div>
+    </div>
+    <div class="p-4">
+        <p class="text-sm text-gray-300 mb-4">
+            🌍 *Big dreams deserve real answers.* ForumAbroad is where students across Tanzania come to ask, share, and learn everything about studying abroad — from applications and scholarships to life in the US. No fluff. Just honest help, from people who’ve been there or are going there.
+        </p>
+        <div class="grid grid-cols-3 gap-2 text-center mb-4">
+            <div class="bg-gray-900 rounded p-2">
+                <div class="font-bold text-maroon">{{ everyone_count }}</div>
+                <div class="text-xs text-gray-400">Members</div>
+            </div>
+            <div class="bg-gray-900 rounded p-2">
+                <div class="font-bold text-maroon">{{ online_count }}</div>
+                <div class="text-xs text-gray-400">Online</div>
+            </div>
+            <div class="bg-gray-900 rounded p-2">
+                <div class="font-bold text-maroon">2025</div>
+                <div class="text-xs text-gray-400">Created</div>
+            </div>
+        </div>
+        <button class="w-full bg-maroon hover:bg-maroon-dark text-white py-2 px-4 rounded-lg text-sm font-medium" onclick="location.href='{% if user.is_authenticated %}{% url 'add_post' %}{% else %}{% url 'login' %}{% endif %}'">
+            {% if user.is_authenticated %}
+            Ask your question!
+            {% else %}
+            Login to ask a question!
+            {% endif %}
+        </button>
+    </div>
+</div>
+
+
+
+        </aside>
+    </div>
+
+        <button id="back-to-top"
+        class="fixed bottom-16 left-8 w-12 h-12 bg-maroon text-white rounded-full shadow-lg flex items-center justify-center opacity-0 invisible transition-all duration-300 z-50">
+        <i class="fas fa-arrow-up"></i>
+    </button>
+    <!-- Toast Messages -->
+    {% if messages %}
+    <div class="fixed top-4 right-4 space-y-3 z-50 w-full max-w-xs">
+        {% for message in messages %}
+        <div class="overflow-hidden rounded-lg shadow-lg mb-4 animate-fade-in-up">
+            <div class="{% if message.tags == 'success' %}bg-gray-600
+                {% elif message.tags == 'error' %}bg-gray-600
+                {% elif message.tags == 'warning' %}bg-gray-600
+                {% elif message.tags == 'info' %}bg-gray-600
+                {% else %}bg-gray-800{% endif %}
+                px-4 py-3 text-white">
+                <div class="flex items-start">
+                    <div class="flex-shrink-0 pt-0.5">
+                        {% if message.tags == 'success' %}
+                        <i class="fas fa-check-circle"></i>
+                        {% elif message.tags == 'error' %}
+                        <i class="fas fa-exclamation-circle"></i>
+                        {% elif message.tags == 'warning' %}
+                        <i class="fas fa-exclamation-triangle"></i>
+                        {% elif message.tags == 'info' %}
+                        <i class="fas fa-info-circle"></i>
+                        {% else %}
+                        <i class="fas fa-bell"></i>
+                        {% endif %}
+                    </div>
+                    <div class="ml-3 w-0 flex-1 pt-0.5">
+                        <p class="text-sm font-medium">
+                            {{ message }}
+                        </p>
+                    </div>
+                    <div class="ml-4 flex-shrink-0 flex">
+                        <button
+                            class="bg-transparent rounded-md inline-flex text-white hover:text-gray-300 focus:outline-none"
+                            onclick="this.closest('.overflow-hidden').remove()">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <div class="bg-black/20 h-1 w-full">
+                <div class="{% if message.tags == 'success' %}bg-green-300
+                  {% elif message.tags == 'error' %}bg-red-300
+                  {% elif message.tags == 'warning' %}bg-yellow-300
+                  {% elif message.tags == 'info' %}bg-blue-300
+                  {% else %}bg-gray-300{% endif %}
+                  h-full animate-progress"></div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const toastMessages = document.querySelectorAll('.animate-fade-in-up');
+
+            toastMessages.forEach(toast => {
+                // Auto-dismiss after 5 seconds
+                setTimeout(() => {
+                    toast.style.opacity = '0';
+                    setTimeout(() => toast.remove(), 300);
+                }, 10000);
+
+                // Pause animation on hover
+                toast.addEventListener('mouseenter', () => {
+                    const progressBar = toast.querySelector('.animate-progress');
+                    progressBar.style.animationPlayState = 'paused';
+                });
+
+                // Resume animation when mouse leaves
+                toast.addEventListener('mouseleave', () => {
+                    const progressBar = toast.querySelector('.animate-progress');
+                    progressBar.style.animationPlayState = 'running';
+                });
+            });
+        });
+    </script>
+    <style>
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes progress {
+            from {
+                width: 100%;
+            }
+
+            to {
+                width: 0%;
+            }
+        }
+
+        .animate-fade-in-up {
+            animation: fadeInUp 0.3s ease-out forwards;
+        }
+
+        .animate-progress {
+            animation: progress 10s linear forwards;
+        }
+    </style>
+    {% endif %}
+
+    <script>
+  const sidebarToggle = document.getElementById("sidebarToggle");
+  const mobileSidebar = document.getElementById("mobileSidebar");
+const toggleIcon = document.getElementById("toggleIcon");
+
+sidebarToggle.addEventListener("click", () => {
+  mobileSidebar.classList.toggle("hidden");
+  // Swap icon
+  if (mobileSidebar.classList.contains("hidden")) {
+    toggleIcon.classList.remove("fa-times");
+    toggleIcon.classList.add("fa-bars");
+  } else {
+    toggleIcon.classList.remove("fa-bars");
+    toggleIcon.classList.add("fa-times");
+  }
+});
+  // Optional: close sidebar on outside click
+  document.addEventListener("click", (e) => {
+    if (
+      !mobileSidebar.contains(e.target) &&
+      !sidebarToggle.contains(e.target) &&
+      !mobileSidebar.classList.contains("hidden")
+    ) {
+      mobileSidebar.classList.add("hidden");
+    }
+  });
+
+
+        // Back to Top Button
+        const backToTopButton = document.getElementById('back-to-top');
+
+        window.addEventListener('scroll', () => {
+            if (window.pageYOffset > 300) {
+                backToTopButton.classList.remove('opacity-0', 'invisible');
+                backToTopButton.classList.add('opacity-100', 'visible');
+            } else {
+                backToTopButton.classList.add('opacity-0', 'invisible');
+                backToTopButton.classList.remove('opacity-100', 'visible');
+            }
+        });
+
+        backToTopButton.addEventListener('click', () => {
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        });
+</script>
+    <script>    // Initialize Alpine.js for dropdown functionality
+        document.addEventListener('alpine:init', () => {
+            Alpine.data('dropdown', () => ({
+                open: false,
+                toggle() {
+                    this.open = !this.open
+                }
+            }))
+        });
+    </script>
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+
+<script src="https://cdn.jsdelivr.net/npm/htmx.org@2.0.6/dist/htmx.min.js"></script>
+</body>
+
+</html>

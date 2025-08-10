@@ -1,0 +1,185 @@
+{% extends "discussion/base.html" %}
+{% load static %}
+{% load widget_tweaks %}
+
+{% block title %}
+Ask a Question
+{% endblock %}
+
+
+{% block content %}
+{% load widget_tweaks %}
+
+
+<div class="bg-dark rounded-lg border border-gray-800 overflow-hidden">
+    <div class="p-4 border-b border-gray-800">
+        <h3 class="font-bold text-lg text-center text-maroon">
+            <i class="fas fa-plus-circle mr-2"></i>Create New Post
+        </h3>
+    </div>
+    <form method="post" enctype="multipart/form-data" class="p-4">
+        {% csrf_token %}
+        
+        <!-- Title -->
+        <div class="mb-3">
+            {% render_field form.title class=form.title.field.widget.attrs.class %}
+            {% if form.title.errors %}
+                <div class="text-red-500 text-xs mt-1">{{ form.title.errors }}</div>
+            {% endif %}
+        </div>
+
+        <!-- Content -->
+        <div class="mb-3">
+            {% render_field form.content class=form.content.field.widget.attrs.class %}
+            {% if form.content.errors %}
+                <div class="text-red-500 text-xs mt-1">{{ form.content.errors }}</div>
+            {% endif %}
+        </div>
+
+        <!-- Link -->
+        <div class="mb-3">
+            {% render_field form.link class=form.link.field.widget.attrs.class %}
+            {% if form.link.errors %}
+                <div class="text-red-500 text-xs mt-1">{{ form.link.errors }}</div>
+            {% endif %}
+        </div>
+
+        <!-- Tag Selector -->
+        <div class="mb-3">
+            {% render_field form.tag class=form.tag.field.widget.attrs.class %}
+            {% if form.tag.errors %}
+                <div class="text-red-500 text-xs mt-1">{{ form.tag.errors }}</div>
+            {% endif %}
+        </div>
+
+        <!-- File Uploads -->
+        <div class="grid grid-cols-1 gap-3 mb-4">
+            <!-- Image Upload -->
+            <label class="block">
+                <div class="text-xs text-gray-400 mb-1">Upload Image</div>
+                <div class="flex items-center gap-2 bg-gray-800 rounded-lg px-3 py-2 cursor-pointer hover:bg-gray-700 transition">
+                    <i class="fas fa-image text-maroon"></i>
+                    <span class="text-sm text-gray-300 truncate" id="image-filename">
+                        {% if form.instance.image %} 
+                            {{ form.instance.image.name|cut:"posts/" }}
+                        {% else %}
+                            No file selected
+                        {% endif %}
+                    </span>
+                    {% render_field form.image class="hidden" id="image-upload" %}
+                </div>
+                {% if form.image.errors %}
+                    <div class="text-red-500 text-xs mt-1">{{ form.image.errors }}</div>
+                {% endif %}
+            </label>
+
+            <!-- Video Upload -->
+            <label class="block">
+                <div class="text-xs text-gray-400 mb-1">Upload Video</div>
+                <div class="flex items-center gap-2 bg-gray-800 rounded-lg px-3 py-2 cursor-pointer hover:bg-gray-700 transition">
+                    <i class="fas fa-video text-maroon"></i>
+                    <span class="text-sm text-gray-300 truncate" id="video-filename">
+                        {% if form.instance.video %} 
+                            {{ form.instance.video.name|cut:"posts/" }}
+                        {% else %}
+                            No file selected
+                        {% endif %}
+                    </span>
+                    {% render_field form.video class="hidden" id="video-upload" %}
+                </div>
+                {% if form.video.errors %}
+                    <div class="text-red-500 text-xs mt-1">{{ form.video.errors }}</div>
+                {% endif %}
+            </label>
+
+            <!-- Document Upload -->
+            <label class="block">
+                <div class="text-xs text-gray-400 mb-1">Upload Document</div>
+                <div class="flex items-center gap-2 bg-gray-800 rounded-lg px-3 py-2 cursor-pointer hover:bg-gray-700 transition">
+                    <i class="fas fa-file-alt text-maroon"></i>
+                    <span class="text-sm text-gray-300 truncate" id="docs-filename">
+                        {% if form.instance.docs %} 
+                            {{ form.instance.docs.name|cut:"posts/" }}
+                        {% else %}
+                            No file selected
+                        {% endif %}
+                    </span>
+                    {% render_field form.docs class="hidden" id="docs-upload" %}
+                </div>
+                {% if form.docs.errors %}
+                    <div class="text-red-500 text-xs mt-1">{{ form.docs.errors }}</div>
+                {% endif %}
+            </label>
+        </div>
+
+        <!-- Submit Button -->
+        <button type="submit" class="w-full bg-maroon hover:bg-maroon-dark text-white py-2 px-4 rounded-lg font-medium transition">
+            <i class="fas fa-paper-plane mr-2"></i> Post
+        </button>
+    </form>
+</div>
+
+<script>
+    // File upload filename display
+    document.getElementById('image-upload').addEventListener('change', function(e) {
+        const fileName = e.target.files[0]?.name || 'No file selected';
+        document.getElementById('image-filename').textContent = fileName;
+    });
+
+    document.getElementById('video-upload').addEventListener('change', function(e) {
+        const fileName = e.target.files[0]?.name || 'No file selected';
+        document.getElementById('video-filename').textContent = fileName;
+    });
+
+    document.getElementById('docs-upload').addEventListener('change', function(e) {
+        const fileName = e.target.files[0]?.name || 'No file selected';
+        document.getElementById('docs-filename').textContent = fileName;
+    });
+</script>
+
+<script>
+    // Modal Functions
+    function openModal() {
+        const modal = document.getElementById('profile-modal');
+        modal.classList.remove('hidden');
+        document.body.style.overflow = 'hidden';
+    }
+    
+    function closeModal() {
+        const modal = document.getElementById('profile-modal');
+        modal.classList.add('hidden');
+        window.history.back(); // Reload to reflect changes
+        document.body.style.overflow = 'auto';
+    }
+    
+    // Profile Picture Preview
+    document.getElementById('profile-picture-input').addEventListener('change', function(e) {
+        const file = e.target.files[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = function(event) {
+                const preview = document.getElementById('profile-picture-preview');
+                if (preview.tagName === 'IMG') {
+                    preview.src = event.target.result;
+                } else {
+                    // If it's the placeholder div, replace with image
+                    const newImg = document.createElement('img');
+                    newImg.id = 'profile-picture-preview';
+                    newImg.className = 'profile-picture-preview';
+                    newImg.src = event.target.result;
+                    preview.parentNode.replaceChild(newImg, preview);
+                }
+            }
+            reader.readAsDataURL(file);
+        }
+    });
+    
+    // Close modal when clicking outside
+    {% comment %} document.querySelector('.modal-overlay').addEventListener('click', closeModal); {% endcomment %}
+    
+    // Prevent modal close when clicking inside modal content
+    document.querySelector('.modal-content').addEventListener('click', function(e) {
+        e.stopPropagation();
+    });
+</script>
+{% endblock %}

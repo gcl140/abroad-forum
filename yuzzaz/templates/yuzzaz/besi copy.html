@@ -1,0 +1,751 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>
+        {% block title %} North & Beyond | Study Abroad{% endblock %}
+    </title>
+    <link rel="shortcut icon" href="../../../static/images/NB ENDITA RED (1).png" type="image/x-icon">
+    <!-- <link rel="shortcut icon" href="https://static.wixstatic.com/media/3dc1db_fe21d4e499dc4b46a771b19bcee36940~mv2.png/v1/fill/w_124,h_124,al_c,q_85,usm_0.66_1.00_0.01,enc_avif,quality_auto/Artboard-1-copy-21.png" type="image/x-icon"> -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Sen:wght@400..800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- <script src="https://cdn.tailwindcss.com"></script> -->
+    <link rel="stylesheet" href="{% static 'css/tailwind.css' %}">
+
+    <script src="https://unpkg.com/scrollreveal"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Sarina&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        maroon: '#800020',
+                        dark: '#121212',
+                        light: '#f8f9fa',
+                    },
+                    fontFamily: {
+                        karla: ['Sen', 'sans-serif'],
+                        saint: ['Sarina', 'cursive'],
+                    },
+                    animation: {
+                        'float': 'float 6s ease-in-out infinite',
+                        'pulse-slow': 'pulse 4s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+                    },
+                    keyframes: {
+                        float: {
+                            '0%, 100%': { transform: 'translateY(0)' },
+                            '50%': { transform: 'translateY(-20px)' },
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style type="text/tailwindcss">
+        @layer utilities {
+            .text-gradient {
+                background-clip: text;
+                -webkit-background-clip: text;
+                color: transparent;
+                background-image: linear-gradient(90deg, #ff457a, #800020);
+            }
+            .section-title {
+                @apply text-4xl md:text-5xl font-bold mb-12 relative inline-block;
+                
+            }.section-title::after {
+                content: '';
+                position: absolute;
+                bottom: -0.75rem;
+                right: 50%;
+                width: 33.3333%;
+                height: 1px;
+                background-color: #ff4e4e5d; 
+            }
+            .card-hover {
+                @apply transition-all duration-500 hover:shadow-2xl hover:-translate-y-2;
+            }
+            .glow-effect {
+                box-shadow: 0 0 15px rgba(128, 0, 32, 0.5);
+            }
+            .nav-link {
+                @apply relative after:absolute after:bottom-0 after:left-0 after:w-0 after:h-0.5 after:bg-maroon after:transition-all after:duration-300 hover:after:w-full;
+            }
+        }
+    </style>
+    <style type="text/tailwindcss">
+        @layer utilities {
+      .text-stroke {
+        -webkit-text-stroke: 1px white;
+        text-stroke: 1px maroon;
+      }
+      .text-stroke-black {
+        -webkit-text-stroke: 1px black;
+        text-stroke: 1px black;
+      }
+    }
+    </style>
+    <style>
+        body {
+            background-color: black;
+        }
+    </style>
+
+</head>
+{% load django_browser_reload %}
+{% django_browser_reload_script %}
+
+<body class="font-karla bg-light text-dark antialiased overflow-x-hidden">
+    <!-- Navigation -->
+    <nav class="bg-dark text-white sticky top-0 z-50 shadow-lg backdrop-filter backdrop-blur-lg bg-opacity-90">
+        <div class="container mx-auto px-4 lg:px-8 py-4 flex justify-between items-center">
+            <div class="flex items-center space-x-2">
+                <span class="text-maroon font-bold text-2xl">
+                    <!-- <img src="https://static.wixstatic.com/media/3dc1db_fe21d4e499dc4b46a771b19bcee36940~mv2.png/v1/fill/w_124,h_124,al_c,q_85,usm_0.66_1.00_0.01,enc_avif,quality_auto/Artboard-1-copy-21.png" -->
+                    <img src="../../../static/images/NB ENDITA RED (1).png" style="height: 40px !important;" height="60"
+                        alt="">
+                </span>
+
+                <div class="flex flex-col items-start sm:items-center space-x-0">
+                    <span class="font-bold text-xl hidden sm:inline">NORTH & BEYOND</span>
+                    <!-- <span class="font-bold text-xs text-gray-400 hidden sm:inline font-saint">Go beyond the norm</span> -->
+                </div>
+            </div>
+
+            <div class="hidden md:flex items-center space-x-6 text-white text-sm font-medium">
+                <a href="{% url 'landing' %}#"
+                    class="hover:text-gray-400 transition duration-200 pr-4 border-r border-gray-700">Home</a>
+                <a href="{% url 'company_profile' %}"
+                    class="hover:text-gray-400 transition duration-200 pr-4 border-r border-gray-700">Profile</a>
+                <a href="{% url 'landing' %}#services"
+                    class="hover:text-gray-400 transition duration-200 pr-4 border-r border-gray-700">Services</a>
+                <a href="{% url 'landing' %}#contact" class="hover:text-gray-400 transition duration-200">Contact</a>
+                {% if user.is_authenticated %}
+                <div class="relative" x-data="{ open: false }">
+                    <button @click="open = !open" class="flex items-center space-x-2 focus:outline-none">
+                        <img src="{% if user.profile_picture %}{{ user.profile_picture.url }}{% else %}{% static 'images/default-profile.jpg' %}{% endif %}"
+                            alt="User" class="w-8 h-8 rounded-full object-cover">
+                        <span class="md:inline text-sm font-medium">Hi, {{user.first_name}}</span>
+                        <i class="fas fa-chevron-down text-xs hidden md:inline"></i>
+                    </button>
+
+                    <div x-show="open" @click.away="open = false"
+                        class="absolute right-0 mt-2 w-48 bg-gray-900 rounded-md shadow-lg py-1 z-50 border border-gray-800"
+                        x-transition:enter="transition ease-out duration-100"
+                        x-transition:enter-start="transform opacity-0 scale-95"
+                        x-transition:enter-end="transform opacity-100 scale-100"
+                        x-transition:leave="transition ease-in duration-75"
+                        x-transition:leave-start="transform opacity-100 scale-100"
+                        x-transition:leave-end="transform opacity-0 scale-95">
+                        <a href="{% url 'profile' %}"
+                            class="block px-4 py-2 text-sm text-gray-400 hover:bg-gray-100">Your Profile</a>
+                        {% if user.is_staff %}
+                        <a href="{% url 'staff_dashboard' %}"
+                            class="block px-4 py-2 text-sm text-gray-400 hover:bg-gray-100">Actions</a>
+                        {% endif %}
+                        <a href="mailto:gftinity01@gmail.com"
+                            class="block px-4 py-2 text-sm text-gray-400 hover:bg-gray-100">Help
+                            Center</a>
+                        <div class="border-t border-gray-500/10"></div>
+                        <a href="{% url 'logout' %}"
+                            class="block px-4 py-2 text-sm text-gray-500 hover:bg-gray-100 hover:text-red-400">Sign
+                            out</a>
+                    </div>
+                </div>
+                {% else %}
+                <a href="{% url 'login' %}"
+                    class="hover:text-gray-400 text-red-400transition duration-200 pl-4 border-l border-gray-700">Join
+                    Us</a>
+                {% endif %}
+            </div>
+
+            <button id="mobile-menu-button" class="md:hidden text-white focus:outline-none">
+                <i class="fas fa-bars text-2xl transition-all duration-200"></i>
+            </button>
+
+        </div>
+
+        <!-- Mobile Menu -->
+        <div id="mobile-menu" class="hidden md:hidden bg-dark bg-opacity-95 absolute w-full left-0 px-4 pb-4 shadow-lg">
+            <div class="flex flex-col space-y-4">
+                <a href="{% url 'landing' %}" class="text-white py-2 border-b border-gray-700">Home</a>
+                <a href="{% url 'company_profile' %}" class="text-white py-2 border-b border-gray-700">Profile</a>
+                <a href="{% url 'landing' %}#services" class="text-white py-2 border-b border-gray-700">Services</a>
+                <a href="{% url 'landing' %}#contact" class="text-white py-2 border-b border-gray-700">Contact</a>
+                {% if not user.is_authenticated %}
+                <a href="{% url 'login' %}" class="text-red-400 py-2 border-b border-gray-700 uppercase">Join Us</a>
+                {% else %}
+                <a href="{% url 'profile' %}" class="text-white py-2 border-b border-gray-700">Your Profile</a>
+                <a href="{% url 'logout' %}" class="text-red-400 py-2 border-b border-gray-700">Sign Out</a>
+                {% if user.is_staff %}
+                <a href="{% url 'staff_dashboard' %}" class="text-white py-2 border-b border-gray-700">Actions</a>
+                {% endif %}
+                {% endif %}
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+
+    {% block content %}
+    {% endblock %}
+
+
+    <!-- CONTACT SECTION -->
+    <!-- Contact Section -->
+    <footer class="bg-dark text-white">
+        <!-- Contact Section -->
+        <section id="contact" class="py-16 border-b border-gray-800">
+            <div class="container mx-auto px-6">
+                <h2 class="text-3xl font-bold mb-12 text-center">
+                    <span class="border-b-2 border-maroon pb-2">CONTACT US</span>
+                </h2>
+
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                    <div class="bg-dark border-2 border-gray-900 p-8 rounded-lg">
+                        <div class="flex items-center mb-6">
+                            <div class="bg-maroon p-2 rounded-full mr-4 flex items-center justify-center w-10 h-10">
+                                <i class="fas fa-paper-plane text-white text-lg"></i>
+                            </div>
+                            <h3 class="text-xl font-bold">
+                                <span class="underline underline-offset-8 decoration-maroon">GET IN TOUCH</span>
+
+                            </h3>
+                        </div>
+                        <form method="POST" action="{% url 'contact' %}" class="space-y-6">
+                            {% csrf_token %}
+
+                            <div>
+                                <label for="id_full_name" class="block mb-1 text-sm font-medium text-white">Your
+                                    Name</label>
+                                <input type="text" name="full_name" id="id_full_name" placeholder="John Doe"
+                                    class="w-full bg-transparent border-b border-gray-600 text-white py-2 focus:outline-none focus:border-maroon placeholder-gray-400"
+                                    value="{{ form.full_name.value|default:'' }}">
+                                {% if form.full_name.errors %}
+                                <p class="text-red-500 text-sm">{{ form.full_name.errors.0 }}</p>
+                                {% endif %}
+                            </div>
+
+                            <div>
+                                <label for="id_email" class="block mb-1 text-sm font-medium text-white">Your
+                                    Email</label>
+                                <input type="email" name="email" id="id_email" placeholder="johndoe@example.com"
+                                    class="w-full bg-transparent border-b border-gray-600 text-white py-2 focus:outline-none focus:border-maroon placeholder-gray-400"
+                                    value="{{ form.email.value|default:'' }}">
+                                {% if form.email.errors %}
+                                <p class="text-red-500 text-sm">{{ form.email.errors.0 }}</p>
+                                {% endif %}
+                            </div>
+
+                            <div>
+                                <label for="id_message" class="block mb-1 text-sm font-medium text-white">Your
+                                    Message</label>
+                                <textarea name="message" id="id_message" rows="4" placeholder="Message"
+                                    class="w-full bg-transparent border-b border-gray-600 text-white py-2 focus:outline-none focus:border-maroon placeholder-gray-400 resize-none">{{ form.message.value|default:'' }}</textarea>
+                                {% if form.message.errors %}
+                                <p class="text-red-500 text-sm">{{ form.message.errors.0 }}</p>
+                                {% endif %}
+                            </div>
+
+                            <button type="submit"
+                                class="w-full bg-maroon hover:bg-red-900 text-white font-bold py-3 px-4 rounded transition duration-300 flex items-center justify-center">
+                                <i class="fas fa-paper-plane mr-2"></i> Send Message
+                            </button>
+                        </form>
+
+                        <div class="text-sm">
+                            <h4 class="font-bold text-base text-red-600 mt-4 animate-pulse">Apply for an Internship</h4>
+                            <p class="mb-2">
+                                <i class="fa fa-chevron-right text-red-400 text-xs opacity-30 mr-2"></i>
+                                Gain hands-on experience and mentorship by joining our internship program
+                            </p>
+
+                            <a href="{% if user.is_authenticated %}{% url 'job_apply' %}{% else %}{% url 'login' %}{% endif %}"
+                                class="text-white hover:text-red-400 hover:underline flex items-center">
+                                <i class="fas fa-play mr-2"></i>
+                                {% if user.is_authenticated %}Apply Now!{% else %}Login to Apply{% endif %}
+                            </a>
+                        </div>
+
+                    </div>
+
+
+                    <!-- Contact Info Column -->
+                    <div class="bg-dark border-2 border-gray-900 p-8 rounded-lg">
+                        <div class="flex items-center mb-6">
+                            <div class="bg-maroon p-2 rounded-full mr-4 flex items-center justify-center w-10 h-10">
+                                <i class="fas fa-phone-alt text-white text-lg"></i>
+                            </div>
+
+                            <h3 class="text-xl font-bold">CONTACT INFO</h3>
+                        </div>
+
+                        <div class="space-y-6 text-sm text-gray-300">
+                            <!-- Phone -->
+                            <div>
+                                <h4 class="font-bold text-lg text-white mb-2 flex items-center">
+                                    <i class="fas fa-phone mr-3 text-maroon"></i>
+                                    <span class="underline underline-offset-8 decoration-maroon">Phone</span>
+                                </h4>
+
+                                <div class="space-y-1">
+                                    <a href="tel:+255742203202" class="hover:text-white block">
+                                        <i class="fa fa-chevron-right text-red-400 text-xs opacity-30 mr-2"></i> DSM: +255
+                                        742 203 202 </a>
+                                    <a href="tel:+255757553552" class="hover:text-white block">
+                                        <i class="fa fa-chevron-right text-red-400 text-xs opacity-30 mr-2"></i>
+                                        DSM: +255 757 553 552 </a>
+                                    <a href="tel:+255793553552" class="hover:text-white block">
+                                        <i class="fa fa-chevron-right text-red-400 text-xs opacity-30 mr-2"></i>
+                                        ARUSHA: +255 793 553 552</a>
+                                    <a href="tel:+2482523784" class="hover:text-white block">
+                                        <i class="fa fa-chevron-right text-red-400 text-xs opacity-30 mr-2"></i>
+                                        SEYCHELLES: +248 252 3784</a>
+                                </div>
+                            </div>
+
+                            <!-- Email -->
+                            <div>
+                                <h4 class="font-bold text-lg text-white mb-2 flex items-center">
+                                    <i class="fas fa-envelope mr-3 text-maroon"></i>
+                                    <span class="underline underline-offset-8 decoration-maroon">Email</span>
+                                </h4>
+                                <div class="space-y-1">
+                                    <a href="mailto:info@northbeyond.com" class="hover:text-white block">
+                                        <i class="fa fa-chevron-right text-red-400 text-xs opacity-30 mr-2"></i>
+                                        info@northbeyond.com</a>
+                                    <a href="mailto:counselor@northbeyond.com" class="hover:text-white block">
+                                        <i class="fa fa-chevron-right text-red-400 text-xs opacity-30 mr-2"></i>
+                                        counselor@northbeyond.com</a>
+                                    <a href="mailto:arusha@northbeyond.com" class="hover:text-white block">
+                                        <i class="fa fa-chevron-right text-red-400 text-xs opacity-30 mr-2"></i>
+                                        arusha@northbeyond.com</a>
+                                    <a href="mailto:seychelles@northbeyond.com" class="hover:text-white block">
+                                        <i class="fa fa-chevron-right text-red-400 text-xs opacity-30 mr-2"></i>
+                                        seychelles@northbeyond.com</a>
+                                </div>
+                            </div>
+
+
+                            <!-- Social Media -->
+                            <div>
+                                <h4 class="font-bold text-lg text-white mb-3 flex items-center">
+                                    <i class="fas fa-share-alt mr-3 text-maroon"></i>
+                                    <span class="underline underline-offset-8 decoration-maroon">Social Media</span>
+                                </h4>
+                                <div class="space-y-3">
+                                    <a href="https://www.instagram.com/north.and.beyond/" target="_blank"
+                                        class="flex items-center hover:text-white">
+                                        <div
+                                            class="bg-maroon w-8 h-8 rounded-full flex items-center justify-center mr-3">
+                                            <i class="fab fa-instagram text-white"></i>
+                                        </div>
+                                        north.and.beyond
+                                    </a>
+                                    <a href="http://wa.me/255742203202" class="flex items-center hover:text-white" target="_blank">
+                                        <div
+                                            class="bg-maroon w-8 h-8 rounded-full flex items-center justify-center mr-3">
+                                            <i class="fab fa-whatsapp text-white"></i>
+                                        </div>
+                                        northandbeyond
+                                    </a>
+                                    <a href="https://x.com/_northandbeyond?t=JT08J6NQ7XYkzk3GzFVs7g&s=08" class="flex items-center hover:text-white">
+                                        <div
+                                            class="bg-maroon w-8 h-8 rounded-full flex items-center justify-center mr-3" target="_blank">
+                                            <i class="fab fa-twitter text-white"></i>
+                                        </div>
+                                        _northandbeyond
+                                    </a>
+                                    <a href="https://www.tiktok.com/@north.and.beyond" target="_blank"
+                                        class="flex items-center hover:text-white">
+                                        <div
+                                            class="bg-maroon w-8 h-8 rounded-full flex items-center justify-center mr-3">
+                                            <i class="fab fa-tiktok text-white"></i>
+                                        </div>
+                                        north.and.beyond
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+
+                    <!-- Locations Column -->
+                    <div class="bg-dark border-2 border-gray-900 p-8 rounded-lg">
+                        <div class="flex items-center mb-6">
+                            <div class="bg-maroon p-2 rounded-full mr-4 flex items-center justify-center w-10 h-10">
+                                <i class="fas fa-map-marker-alt text-white text-lg"></i>
+                            </div>
+
+                            <h3 class="text-xl font-bold">
+                                <span class="underline underline-offset-8 decoration-maroon">OUR LOCATIONS</span>
+
+                            </h3>
+                        </div>
+
+                        <div class="space-y-6 text-sm text-gray-300">
+                            <!-- Dar es Salaam Office -->
+                            <div>
+                                <h4 class="font-bold text-lg text-white mb-1">Dar es Salaam Office</h4>
+                                <p class="mb-2">
+                                    <i class="fa fa-chevron-right text-red-400 text-xs opacity-30 mr-2"></i>
+
+                                    Toure Drive, Inside Golden Tulip Hotel<br>Oysterbay, Dar es Salaam, Tanzania
+                                </p>
+                                
+                                <div class="w-[300px] h-[170px] rounded-xl overflow-hidden border-2 border-maroon shadow-lg mt-4">
+                                    <iframe
+                                      src="https://www.google.com/maps/embed?pb=!1m14!1m8!1m3!1d3962.109845406887!2d39.2821424!3d-6.7564574!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x185c4d028e18fabb%3A0xb5777b88fcd2168a!2sGolden%20Tulip%20Dar%20Es%20Salaam!5e0!3m2!1sen!2stz!4v1752137935100!5m2!1sen!2stz"
+                                      class="w-full h-full font-karla"
+                                      style="border:0;"
+                                      allowfullscreen=""
+                                      loading="lazy"
+                                      referrerpolicy="no-referrer-when-downgrade">
+                                    </iframe>
+                                  </div>
+                                  
+                            </div>
+
+                            <!-- Sea Cliff Office -->
+                            <div>
+                                <h4 class="font-bold text-lg text-white mb-1">Seychelles Office</h4>
+                                <p class="mb-2">
+                                    <i class="fa fa-chevron-right text-red-400 text-xs opacity-30 mr-2"></i>
+
+                                    Seychelles<br>Seychelles
+                                </p>
+                                <a href="https://maps.app.goo.gl/Qvx2JTyho1aLjueN8" target="_blank"
+                                    class="text-red-300 hover:text-red-400 hover:underline flex items-center">
+                                    <i class="fas fa-map-marker-alt mr-2"></i> View on Map
+                                </a>
+                            </div>
+
+                            <!-- Arusha Office -->
+                            <div>
+                                <h4 class="font-bold text-lg text-white mb-1">Arusha Office</h4>
+                                <p class="mb-2">
+                                    <i class="fa fa-chevron-right text-red-400 text-xs opacity-30 mr-2"></i>
+
+                                    Denso Building, Kipanga St<br>Arusha 23103, Tanzania
+                                </p>
+                                <a href="https://maps.app.goo.gl/Nk9emjx3MUgiewVcA" target="_blank"
+                                    class="text-red-300 hover:text-red-400 hover:underline flex items-center">
+                                    <i class="fas fa-map-marker-alt mr-2"></i> View on Map
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </section>
+
+        <!-- Footer Bottom -->
+        <div class="py-8">
+            <div class="container mx-auto px-6">
+                <div class="flex flex-col md:flex-row justify-between items-center">
+                    <!-- Logo and Tagline -->
+                    <div class="mb-6 md:mb-0 flex items-center">
+                        <img src="https://static.wixstatic.com/media/3dc1db_fe21d4e499dc4b46a771b19bcee36940~mv2.png/v1/fill/w_124,h_124,al_c,q_85,usm_0.66_1.00_0.01,enc_avif,quality_auto/Artboard-1-copy-21.png"
+                            alt="North & Beyond Logo" class="h-12 mr-4">
+                        <div>
+                            <h3 class="text-xl font-bold">NORTH & BEYOND</h3>
+                            <p class="text-gray-400 italic font-saint">Go beyond the Norm!</p>
+                        </div>
+                    </div>
+
+                    <!-- Copyright and Links -->
+                    <div class="text-center md:text-right">
+                        <p class="text-gray-400 mb-2">
+                            © {{year}} North and Beyond.
+                            <br>All rights reserved.
+                        </p>
+                        <div class="flex justify-center md:justify-end space-x-4">
+                            Developed by <a href="tel:+255758523353" class="ml-2 text-gray-400 hover:text-white">GCL</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </footer>
+    <!-- Back to Top Button -->
+    <button id="back-to-top"
+        class="fixed bottom-8 left-8 w-12 h-12 bg-maroon text-white rounded-full shadow-lg flex items-center justify-center opacity-0 invisible transition-all duration-300 z-50">
+        <i class="fas fa-arrow-up"></i>
+    </button>
+    <!-- Toast Messages -->
+    {% if messages %}
+    <div class="fixed top-4 right-4 space-y-3 z-50 w-full max-w-xs">
+        {% for message in messages %}
+        <div class="overflow-hidden rounded-lg shadow-lg mb-4 animate-fade-in-up">
+            <div class="{% if message.tags == 'success' %}bg-green-600
+                {% elif message.tags == 'error' %}bg-red-600
+                {% elif message.tags == 'warning' %}bg-yellow-600
+                {% elif message.tags == 'info' %}bg-blue-600
+                {% else %}bg-gray-800{% endif %} 
+                px-4 py-3 text-white">
+                <div class="flex items-start">
+                    <div class="flex-shrink-0 pt-0.5">
+                        {% if message.tags == 'success' %}
+                        <i class="fas fa-check-circle"></i>
+                        {% elif message.tags == 'error' %}
+                        <i class="fas fa-exclamation-circle"></i>
+                        {% elif message.tags == 'warning' %}
+                        <i class="fas fa-exclamation-triangle"></i>
+                        {% elif message.tags == 'info' %}
+                        <i class="fas fa-info-circle"></i>
+                        {% else %}
+                        <i class="fas fa-bell"></i>
+                        {% endif %}
+                    </div>
+                    <div class="ml-3 w-0 flex-1 pt-0.5">
+                        <p class="text-sm font-medium">
+                            {{ message }}
+                        </p>
+                    </div>
+                    <div class="ml-4 flex-shrink-0 flex">
+                        <button
+                            class="bg-transparent rounded-md inline-flex text-white hover:text-gray-300 focus:outline-none"
+                            onclick="this.closest('.overflow-hidden').remove()">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <div class="bg-black/20 h-1 w-full">
+                <div class="{% if message.tags == 'success' %}bg-green-300
+                  {% elif message.tags == 'error' %}bg-red-300
+                  {% elif message.tags == 'warning' %}bg-yellow-300
+                  {% elif message.tags == 'info' %}bg-blue-300
+                  {% else %}bg-gray-300{% endif %} 
+                  h-full animate-progress"></div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const toastMessages = document.querySelectorAll('.animate-fade-in-up');
+
+            toastMessages.forEach(toast => {
+                // Auto-dismiss after 5 seconds
+                setTimeout(() => {
+                    toast.style.opacity = '0';
+                    setTimeout(() => toast.remove(), 300);
+                }, 10000);
+
+                // Pause animation on hover
+                toast.addEventListener('mouseenter', () => {
+                    const progressBar = toast.querySelector('.animate-progress');
+                    progressBar.style.animationPlayState = 'paused';
+                });
+
+                // Resume animation when mouse leaves
+                toast.addEventListener('mouseleave', () => {
+                    const progressBar = toast.querySelector('.animate-progress');
+                    progressBar.style.animationPlayState = 'running';
+                });
+            });
+        });
+    </script>
+    <style>
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes progress {
+            from {
+                width: 100%;
+            }
+
+            to {
+                width: 0%;
+            }
+        }
+
+        .animate-fade-in-up {
+            animation: fadeInUp 0.3s ease-out forwards;
+        }
+
+        .animate-progress {
+            animation: progress 10s linear forwards;
+        }
+    </style>
+    {% endif %}
+    <script>
+        // Mobile Menu Toggle
+        const mobileMenuButton = document.getElementById('mobile-menu-button');
+        const mobileMenu = document.getElementById('mobile-menu');
+        const icon = mobileMenuButton.querySelector('i');
+
+        function toggleMenu() {
+            const isHidden = mobileMenu.classList.toggle('hidden');
+            icon.classList.toggle('fa-bars', isHidden);
+            icon.classList.toggle('fa-times', !isHidden);
+        }
+
+        // Toggle menu on button click
+        mobileMenuButton.addEventListener('click', toggleMenu);
+
+        // Close menu on outside click
+        document.addEventListener('click', (e) => {
+            const isClickInside = mobileMenu.contains(e.target) || mobileMenuButton.contains(e.target);
+            if (!isClickInside && !mobileMenu.classList.contains('hidden')) {
+                mobileMenu.classList.add('hidden');
+                icon.classList.remove('fa-times');
+                icon.classList.add('fa-bars');
+            }
+        });
+
+
+        // Back to Top Button
+        const backToTopButton = document.getElementById('back-to-top');
+
+        window.addEventListener('scroll', () => {
+            if (window.pageYOffset > 300) {
+                backToTopButton.classList.remove('opacity-0', 'invisible');
+                backToTopButton.classList.add('opacity-100', 'visible');
+            } else {
+                backToTopButton.classList.add('opacity-0', 'invisible');
+                backToTopButton.classList.remove('opacity-100', 'visible');
+            }
+        });
+
+        backToTopButton.addEventListener('click', () => {
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        });
+
+        // Scroll Reveal Animations
+        ScrollReveal().reveal('.section-title', {
+            delay: 200,
+            distance: '20px',
+            origin: 'left',
+            easing: 'ease-in-out'
+        });
+
+        ScrollReveal().reveal('nav', {
+            delay: 100,
+            duration: 1000,
+            easing: 'ease-in-out'
+        });
+
+        ScrollReveal().reveal('#profile, #services, #contact', {
+            delay: 200,
+            distance: '40px',
+            origin: 'bottom',
+            interval: 100,
+            easing: 'ease-in-out'
+        });
+
+        // Service cards hover effect enhancement
+        const serviceCards = document.querySelectorAll('.card-hover');
+        serviceCards.forEach(card => {
+            card.addEventListener('mouseenter', () => {
+                card.querySelector('div.absolute').classList.add('opacity-20');
+            });
+            card.addEventListener('mouseleave', () => {
+                card.querySelector('div.absolute').classList.remove('opacity-20');
+            });
+        });
+
+
+    </script>
+    <script>
+        const counters = document.querySelectorAll('.counter');
+        const speed = 100;
+
+        const animateCounters = () => {
+            counters.forEach(counter => {
+                const update = () => {
+                    const target = +counter.getAttribute('data-target');
+                    const count = +counter.innerText;
+
+                    const inc = Math.ceil(target / speed);
+                    if (count < target) {
+                        counter.innerText = count + inc;
+                        setTimeout(update, 20);
+                    } else {
+                        counter.innerText = target;
+                    }
+                };
+                update();
+            });
+        };
+
+        let animated = false;
+        window.addEventListener('scroll', () => {
+            const section = document.querySelector('.counter')?.parentElement?.parentElement;
+            if (!animated && section?.getBoundingClientRect().top < window.innerHeight) {
+                animateCounters();
+                animated = true;
+            }
+        });
+    </script>
+    <script>
+        // Counter animation
+        document.addEventListener('DOMContentLoaded', function () {
+            const counters = document.querySelectorAll('.counter');
+            const speed = 200;
+
+            counters.forEach(counter => {
+                const target = +counter.getAttribute('data-target');
+                const count = +counter.innerText;
+                const increment = target / speed;
+
+                if (count < target) {
+                    const updateCount = () => {
+                        const count = +counter.innerText;
+                        const newCount = Math.ceil(count + increment);
+
+                        if (newCount < target) {
+                            counter.innerText = newCount;
+                            setTimeout(updateCount, 1);
+                        } else {
+                            counter.innerText = target;
+                        }
+                    };
+
+                    // Start counting when element is in view
+                    const observer = new IntersectionObserver((entries) => {
+                        if (entries[0].isIntersecting) {
+                            updateCount();
+                            observer.unobserve(counter);
+                        }
+                    }, { threshold: 0.5 });
+
+                    observer.observe(counter);
+                } else {
+                    counter.innerText = target;
+                }
+            });
+        });
+    </script>
+    <script>    // Initialize Alpine.js for dropdown functionality
+        document.addEventListener('alpine:init', () => {
+            Alpine.data('dropdown', () => ({
+                open: false,
+                toggle() {
+                    this.open = !this.open
+                }
+            }))
+        });
+    </script>
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+</body>
+
+</html>

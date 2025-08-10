@@ -1,0 +1,165 @@
+{% extends "discussion/base2.html" %}
+{% load static %}
+
+{% block title %}Search Results{% endblock %}
+
+{% block content %}
+<div class="container mx-auto px-4 py-8">
+    <div class="max-w-4xl mx-auto">
+        <!-- Search Box -->
+
+            <form method="get" action="{% url 'search_content' %}" class="flex lg:hidden mb-6">
+                <input type="text" name="q" value="{{ query }}" 
+                       placeholder="Search posts, replies, and notifications..."
+                       class="flex-1 bg-gray-800 text-white px-4 py-2 rounded-l-lg focus:outline-none focus:ring-2 focus:ring-maroon">
+                <button type="submit" 
+                        class="bg-maroon hover:bg-maroon-dark text-white px-4 py-2 rounded-r-lg">
+                    <i class="fas fa-search"></i>
+                </button>
+            </form>
+        {% if query %}
+            <!-- Search Results Summary -->
+            <div class="mb-6">
+                <h2 class="text-xl font-semibold text-white">
+                    Search Results for "{{ query }}"
+                </h2>
+                <p class="text-gray-400">
+                    Found {{ posts.count|add:replies.count|add:reply_to_replies.count|add:reply_to_another_replies.count|add:notifications.count }} results
+                </p>
+            </div>
+
+            <!-- Posts Results -->
+            {% if posts %}
+            <div class="mb-8">
+                <h3 class="text-lg font-medium text-maroon mb-4 flex items-center">
+                    <i class="fas fa-newspaper mr-2"></i> Posts
+                </h3>
+                <div class="space-y-4">
+                    {% for post in posts %}
+                    <div class="bg-gray-800 rounded-lg p-4 hover:bg-gray-700 transition">
+                        <a href="{% url 'post_detail' post.id %}" class="block">
+                            <h4 class="text-white font-medium">{{ post.title }}</h4>
+                            <p class="text-gray-400 text-sm mt-1">{{ post.content|truncatechars:150 }}</p>
+                            <div class="flex items-center mt-2 text-xs text-gray-500">
+                                <span>Posted by {{ post.author.nickname }}</span>
+                                <span class="mx-2">•</span>
+                                <span>{{ post.created_at|timesince }} ago</span>
+                                {% if post.tag %}
+                                <span class="mx-2">•</span>
+                                <span class="bg-gray-700 px-2 py-1 rounded">{{ post.get_tag_display }}</span>
+                                {% endif %}
+                            </div>
+                        </a>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+            {% endif %}
+
+            <!-- Replies Results -->
+            {% if replies %}
+            <div class="mb-8">
+                <h3 class="text-lg font-medium text-maroon mb-4 flex items-center">
+                    <i class="fas fa-reply mr-2"></i> Replies
+                </h3>
+                <div class="space-y-4">
+                    {% for reply in replies %}
+                    <div class="bg-gray-800 rounded-lg p-4 hover:bg-gray-700 transition">
+                        <a href="{% url 'post_detail' reply.post.id %}" class="block">
+                            <h4 class="text-white font-medium">Reply to: {{ reply.post.title }}</h4>
+                            <p class="text-gray-400 text-sm mt-1">{{ reply.content|truncatechars:150 }}</p>
+                            <div class="flex items-center mt-2 text-xs text-gray-500">
+                                <span>Posted by {{ reply.replyier.nickname }}</span>
+                                <span class="mx-2">•</span>
+                                <span>{{ reply.created_at|timesince }} ago</span>
+                                {% if reply.tag %}
+                                <span class="mx-2">•</span>
+                                <span class="bg-gray-700 px-2 py-1 rounded">{{ reply.get_tag_display }}</span>
+                                {% endif %}
+                            </div>
+                        </a>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+            {% endif %}
+
+            <!-- Nested Replies Results -->
+            {% if reply_to_replies %}
+            <div class="mb-8">
+                <h3 class="text-lg font-medium text-maroon mb-4 flex items-center">
+                    <i class="fas fa-comments mr-2"></i> Threaded Replies
+                </h3>
+                <div class="space-y-4">
+                    {% for reply in reply_to_replies %}
+                    <div class="bg-gray-800 rounded-lg p-4 hover:bg-gray-700 transition">
+            {% if reply.parent.reply.post.id or reply.reply.post %}
+            <a href="{% if reply.parent.reply.post.id %}{% url 'post_detail' reply.parent.reply.post.id %}{% else %}{% url 'post_detail' reply.reply.post.id %}{% endif %}" class="block text-gray-400 hover:underline">
+              View Original Post [{% if reply.parent.reply.post.id %}{{reply.parent.reply.post.title | truncatechars:20}}{% else %}{{ reply.reply.post.title | truncatechars:20}}{% endif %}]
+            </a>
+          {% else %}
+            <span class="text-red-400">Original post not found</span>
+          {% endif %}
+                        <h4 class="text-white font-medium">Reply in: {{ reply.post.title }}</h4>
+                            <p class="text-gray-400 text-sm mt-1">{{ reply.content|truncatechars:150 }}</p>
+                            <div class="flex items-center mt-2 text-xs text-gray-500">
+                                <span>Posted by {{ reply.replyier.nickname }}</span>
+                                <span class="mx-2">•</span>
+                                <span>{{ reply.created_at|timesince }} ago</span>
+                                {% if reply.tag %}
+                                <span class="mx-2">•</span>
+                                <span class="bg-gray-700 px-2 py-1 rounded">{{ reply.get_tag_display }}</span>
+                                {% endif %}
+                            </div>
+                        </a>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+            {% endif %}
+
+            <!-- Notifications Results -->
+            {% if notifications and request.user.is_authenticated %}
+            <div class="mb-8">
+                <h3 class="text-lg font-medium text-maroon mb-4 flex items-center">
+                    <i class="fas fa-bell mr-2"></i> Notifications
+                </h3>
+                <div class="space-y-4">
+                    {% for notification in notifications %}
+                    <div class="bg-gray-800 rounded-lg p-4 hover:bg-gray-700 transition">
+                        <div class="block">
+                            <h4 class="text-white font-medium">{{ notification.title }}</h4>
+                            <p class="text-gray-400 text-sm mt-1">{{ notification.message|truncatechars:150 }}</p>
+                            <div class="flex items-center mt-2 text-xs text-gray-500">
+                                <span>{{ notification.created_at|timesince }} ago</span>
+                                <span class="mx-2">•</span>
+                                <span class="{% if notification.is_read %}text-green-400{% else %}text-maroon{% endif %}">
+                                    {% if notification.is_read %}Read{% else %}Unread{% endif %}
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+            {% endif %}
+
+            <!-- No Results -->
+            {% if not posts and not replies and not reply_to_replies and not reply_to_another_replies and not notifications %}
+            <div class="text-center py-12">
+                <i class="fas fa-search text-4xl text-gray-500 mb-4"></i>
+                <h3 class="text-xl text-gray-400">No results found for "{{ query }}"</h3>
+                <p class="text-gray-500 mt-2">Try different keywords or check your spelling</p>
+            </div>
+            {% endif %}
+        {% else %}
+            <!-- Empty Search State -->
+            <div class="text-center py-12">
+                <i class="fas fa-search text-4xl text-gray-500 mb-4"></i>
+                <h3 class="text-xl text-gray-400">Search posts, replies, and notifications</h3>
+                <p class="text-gray-500 mt-2">Enter your search query above to find content</p>
+            </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

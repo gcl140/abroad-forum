@@ -1,0 +1,215 @@
+{% extends "discussion/base.html" %}
+{% load static %}
+{% block title %}@{{viewing_user.nickname}}{% endblock %}
+
+{% block content %}
+<main class="container mx-auto px-4 py-8">
+    <div class="max-w-4xl mx-auto bg-gray-900 rounded-lg shadow-md overflow-hidden">
+        <!-- Profile Header -->
+        <div class="p-6 text-white" style="background-image: linear-gradient(to right, #c4ad2bff, {{ color }});">
+            <div class="flex items-center space-x-6">
+                <!-- Profile Picture -->
+                <div class="relative">
+                    {% if viewing_user.profile_picture %}
+                        <img src="{{ viewing_user.profile_picture.url }}" alt="Profile" class="w-24 h-24 rounded-full border-4 border-white object-cover">
+                    {% else %}
+                        <div class="w-24 h-24 rounded-full border-4 border-white bg-gray-200 flex items-center justify-center">
+                            <i class="fas fa-user text-4xl text-gray-500"></i>
+                        </div>
+                    {% endif %}
+                    {% if is_own_profile %}
+                        <button class="absolute bottom-0 right-0 bg-white text-blue-600 rounded-full p-1 shadow-md hover:bg-gray-100">
+                            <i class="fas fa-camera text-sm"></i>
+                        </button>
+                    {% endif %}
+                </div>
+                
+                <!-- User Info -->
+                <div class="flex-1">
+                    <div class="flex justify-between items-start">
+                        <div>
+                            <h1 class="text-2xl font-bold">{{ viewing_user.get_full_name|default:viewing_user.nickname }}</h1>
+                            <p class="text-blue-100">@{{ viewing_user.nickname }}</p>
+                        </div>
+                        {% if is_own_profile %}
+                            <a href="{% url 'login' %}" class="bg-white text-blue-600 px-4 py-2 rounded-md font-medium hover:bg-blue-50 transition">
+                                <i class="fas fa-edit mr-2"></i>Edit Profile
+                            </a>
+                        {% else %}
+                            <button class="bg-white text-blue-600 px-4 py-2 rounded-md font-medium hover:bg-blue-50 transition">
+                                <i class="fas fa-envelope mr-2"></i>Message
+                            </button>
+                        {% endif %}
+                    </div>
+                    
+                    <div class="mt-4 flex flex-wrap gap-4">
+                        <div class="flex items-center">
+                            <i class="fas fa-map-marker-alt mr-2"></i>
+                            <span>San Francisco, CA</span>
+                        </div>
+                        <div class="flex items-center">
+                            <i class="fas fa-link mr-2"></i>
+                            <a href="#" class="hover:underline">example.com</a>
+                        </div>
+                        <div class="flex items-center">
+                            <i class="fas fa-calendar-alt mr-2"></i>
+                            <span>Joined: {{ viewing_user.date_joined|date:"F Y" }}</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Profile Body -->
+        <div class="p-6">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <!-- Left Column -->
+                <div class="md:col-span-2">
+                    <!-- About Section -->
+                    <div class="mb-8">
+                        <h2 class="text-xl font-semibold mb-4 border-b border-gray-700 pb-2">About</h2>
+                        <p class="text-gray-500">
+                            {{ user_profile.bio|default:"This gee has not yet added a bio." }}
+                        </p>
+                    </div>
+                                        <!-- Contact Info -->
+                    <div class="my-6">
+                        <h2 class="text-xl font-semibold mb-4 border-b border-gray-700 pb-2">Contact</h2>
+
+                        <div class="space-y-2">
+                            <div class="flex items-center">
+                                <i class="fas fa-envelope text-gray-500 mr-2"></i>
+                                <a href="mailto:{{ viewing_user.email }}" class="hover:underline">
+                                <span>{{ viewing_user.email }}</span>
+                                </a>
+                            </div>
+                            {% if viewing_user.telephone %}
+                            <div class="flex items-center">
+                                <i class="fas fa-phone text-gray-500 mr-2"></i>
+                                <span>{{ viewing_user.telephone }}</span>
+                            </div>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <!-- Recent Activity -->
+                    <div>
+                        <h2 class="text-xl font-semibold mb-4 border-b border-gray-700 pb-2">Recent Activity</h2>
+                        <div class="space-y-4">
+                            <!-- Activity Item -->
+                             {% for post in recent_posts %}
+                            <div class="border-l-4 border-blue-500 pl-4 py-2">
+                                <div class="flex justify-between text-sm text-gray-500 mb-1">
+                                    <span>Asked a question</span>
+                                    <span>2 hours ago</span>
+                                    <span>{{ post.created_at|timesince }} ago</span>
+                                </div>
+                                <p class="font-medium">{{ post.title }}</p>
+                                <div class="text-sm text-gray-600 mt-1">{{ post.content|truncatewords:15 }}</div>
+                            </div>
+                            {% empty %}
+                            <div class="border-l-4 border-blue-500 pl-4 py-2">
+                                <div class="flex justify-between text-sm text-gray-500 mb-1">
+                                    <span>No recent questions</span>
+                                    <span></span>
+                                </div>
+                                <p class="font-medium"></p>
+                                <div class="text-sm text-gray-600 mt-1"></div>
+                            </div>
+                            {% endfor %}
+
+                            <!-- Activity Item -->
+                             {% for reply in recent_replies %}
+                            <div class="border-l-4 border-green-500 pl-4 py-2">
+                                <div class="flex justify-between text-sm text-gray-500 mb-1">
+                                    <span>Replied to a question</span>
+                                    <span>{{ reply.created_at|timesince }} ago</span>
+                                </div>
+                                <p class="font-medium">{{ reply.title }}</p>
+                                <div class="text-sm text-gray-600 mt-1">{{ reply.post.content }}{{ reply.content|truncatewords:15 }}</div>
+                            </div>
+                            {% empty %}
+                            <div class="border-l-4 border-green-500 pl-4 py-2">
+                                <div class="flex justify-between text-sm text-gray-500 mb-1">
+                                    <span>No recent replies</span>
+                                    <span></span>
+                                </div>
+                                <p class="font-medium"></p>
+                                <div class="text-sm text-gray-600 mt-1"></div>
+                            </div>
+                            {% endfor %}
+                            {% for child_reply in recent_child_replies %}
+                            <div class="border-l-4 border-yellow-500 pl-4 py-2">
+                                <div class="flex justify-between text-sm text-gray-500 mb-1">
+                                    <span>Replied to a reply</span>
+                                    <span>{{ child_reply.created_at|timesince }} ago</span>
+                                </div>
+                                <p class="font-medium">{{ child_reply.title }}</p>
+                                <div class="text-sm text-gray-600 mt-1">
+                                    @<a href="{% url 'view_profile' child_reply.parent.replyier.id %}" class="hover:underline hover:text-gray-500 text-maroon hover:font-bold">{{ child_reply.parent.replyier.nickname }}</a>
+                                    [{{ child_reply.parent.content | truncatechars:15 }}] {{ child_reply.reply.content }}{{ child_reply.content|truncatewords:15 }}</div>
+                            </div>
+                            {% empty %}
+                            <div class="border-l-4 border-yellow-500 pl-4 py-2">
+                                <div class="flex justify-between text-sm text-gray-500 mb-1">
+                                    <span>No recent replies</span>
+                                    <span></span>
+                                </div>
+                                <p class="font-medium"></p>
+                                <div class="text-sm text-gray-600 mt-1"></div>
+                            </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Right Column -->
+                <div class="space-y-6">
+                    <!-- Badges -->
+                    <div class="bg-gray-800 p-4 rounded-lg">
+                        <h3 class="font-semibold text-gray-200 mb-3 underline">Badges</h3>
+                        <div class="space-y-2">
+                            {% for badge in viewing_user.badges %}
+                            <div class="flex items-center">
+                                {% if badge == 'Gold' %}
+                                    <i class="fas fa-award text-yellow-500 mr-2"></i>
+                                {% elif badge == 'Silver' %}
+                                    <i class="fas fa-award text-gray-900 mr-2"></i>
+                                {% else %}
+                                    <i class="fas fa-award text-amber-700 mr-2"></i>
+                                {% endif %}
+                                <span>{{ badge }} Contributor</span>
+                            </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                    
+
+                                        <div class="mb-8 bg-gray-800 p-4 rounded-lg">
+                        <h2 class="text-xl font-semibold mb-4 border-b border-gray-700 pb-2">Stats</h2>
+                        <div class="grid grid-cols-2 gap-4 md:grid-cols-1">
+                            <div class="bg-gray-600 p-4 rounded-lg text-center">
+                                <div class="text-3xl font-bold text-blue-600">{{ viewing_user.questions_asked }}</div>
+                                <div class="text-gray-300">Questions</div>
+                            </div>
+                            <div class="bg-gray-600 p-4 rounded-lg text-center">
+                                <div class="text-3xl font-bold text-green-600">{{ viewing_user.answers_posted }}</div>
+                                <div class="text-gray-300">Answers</div>
+                            </div>
+                            <div class="bg-gray-600 p-4 rounded-lg text-center">
+                                <div class="text-3xl font-bold text-purple-600">{{ viewing_user.reputation }}</div>
+                                <div class="text-gray-300">Reputation</div>
+                            </div>
+                            <div class="bg-gray-600 p-4 rounded-lg text-center">
+                                <div class="text-3xl font-bold text-yellow-600">{{ viewing_user.badges|length }}</div>
+                                <div class="text-gray-300">Badges</div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+{% endblock %}
