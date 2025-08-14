@@ -11,4 +11,8 @@ urlpatterns = [
 
     #test
     path('add_reply/<int:post_id>/', views.add_reply, name='add_reply'),
+    path('get_replies_count/<int:post_id>/', views.get_replies_count, name='get_replies_count'),
+    path("toggle-upvote/<int:post_id>/", views.toggle_upvote, name="toggle_upvote"),
+    path('reply/<int:reply_id>/upvote/', views.toggle_reply_upvote, name='toggle_reply_upvote'),
+    # path('reply/<int:group_id>/upvote/', views.toggle_reply_upvote, name='toggle_reply_upvote'),
 ]

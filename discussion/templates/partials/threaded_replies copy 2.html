@@ -1,27 +1,19 @@
+{% for group in post.threaded_replies %}
 <div class="pl-2 border-l-2 border-maroon mb-4">
         <!-- Top-Level Reply -->
         <div class="flex items-center gap-2 text-xs mb-1">
           <div class="w-5 h-5 rounded-full bg-gray-600 text-white flex justify-center items-center">
-                             {% if group.replyier.profile_picture %}
-                        <img src="{{ group.replyier.profile_picture.url }}" alt="{{ group.replyier.nickname }}" class="w-full h-full rounded-full border-2 border-maroon object-cover">
-                        {% else %}
-                        <i class="fas fa-user"></i>
-                        {% endif %}
-
+            <i class="fas fa-user text-xs"></i>
           </div>
-          <span class="text-gray-400">
-            <a href="{% url 'view_profile' group.replyier.id %}" class="hover:underline hover:text-maroon hover:font-bold">
-              {{ group.replyier.nickname }}
-            </a>
-          </span>
+          <span class="text-gray-400">{{ group.replyier.nickname }}</span>
           <span class="text-gray-500">•</span>
           <span class="text-gray-400">{{ group.created_at|timesince }} ago</span>
         </div>
         
         <div class="space-y-3">
             <!-- Content -->
-            <p class="text-sm text-gray-300 whitespace-pre-line" id="reply-{{ group.id }}">{{ group.content }}</p>
-
+            <p class="text-sm text-gray-300 whitespace-pre-line">{{ group.content }}</p>
+            
                 <!-- Tag -->
             {% if group.tag %}
             <span class="inline-block px-2 py-1 text-xs rounded-full 
@@ -72,7 +64,7 @@
                 </svg>
                 <div>
                     <a href="{{ group.docs.url }}" download 
-                      class="text-sm text-blue-400 hover:underline block">{{ group.docs.name|cut:"posts/"|cut:"replies/"|truncatechars:50 }}</a>
+                      class="text-sm text-blue-400 hover:underline block">{{ group.docs.name|cut:"posts/"|cut:"replies/"|truncatechars:30 }}</a>
                     <span class="text-xs text-gray-500">{{ group.docs.size|filesizeformat }}</span>
                 </div>
             </div>
@@ -80,11 +72,15 @@
         </div>
           <!-- Actions -->
           <div class="flex items-center gap-3 text-xs text-gray-400 mt-2">
-
-            <div id="upvote-reply-btn-{{ group.id }}">
-              {% include "partials/reply_upvote_button.html" %}
-                </div>
-            <button class="hover:text-maroon">Replyy</button>
+            <button class="flex items-center gap-1 hover:text-maroon">
+              <i class="fas fa-arrow-up"></i>
+              <span>{{ group.upvotes }}</span>
+            </button>
+            <button class="flex items-center gap-1 hover:text-blue-400">
+              <i class="fas fa-arrow-down"></i>
+              <span>{{ group.downvotes }}</span>
+            </button>
+            <button class="hover:text-maroon">Reply</button>
           </div>
 
           <!-- 2nd Level Replies -->
@@ -92,23 +88,28 @@
           <div class="pl-4 mt-3 border-l-2 border-gray-700">
             <div class="flex items-center gap-2 text-xs mb-1">
               <div class="w-5 h-5 rounded-full bg-gray-600 text-white flex justify-center items-center">
-                      {% if child_dict.replyier.profile_picture %}
-                        <img src="{{ child_dict.replyier.profile_picture.url }}" alt="{{ child_dict.replyier.nickname }}" class="w-full h-full rounded-full border-2 border-maroon object-cover">
-                        {% else %}
-                        <i class="fas fa-user"></i>
-                        {% endif %}
+                <i class="fas fa-user text-xs"></i>
               </div>
-              <span class="text-gray-400"><a href="{% url 'view_profile' child_dict.replyier.id %}" class="hover:underline hover:text-maroon hover:font-bold">{{ child_dict.replyier.nickname }}</a></span>
+              <span class="text-gray-400">{{ child_dict.replyier.nickname }}</span>
               <span class="text-gray-500">•</span>
               <span class="text-gray-400">{{ child_dict.created_at|timesince }} ago</span>
             </div>
-            <p class="text-sm text-gray-300 mb-2" id="grandchild-reply-{{ child_dict.id }}">
+            <p class="text-sm text-gray-300 mb-2">
               {% comment %} <span class="font-bold text-maroon text-xs">@{{ child_dict.reply.replyier.nickname }}</span> {% endcomment %}
-              <span class="font-bold text-maroon text-xs">@<a href="{% url 'view_profile' child_dict.reply.replyier.id %}" class="hover:underline hover:text-maroon hover:font-bold">{{ child_dict.repliedto }}</a></span>
-              [<a href="#reply-{{ group.id }}">{{ child_dict.reply.content |truncatechars:10 }}</a>] {{ child_dict.content}}
+              <span class="font-bold text-maroon text-xs">@{{ child_dict.repliedto }}</span>
+              [{{ child_dict.reply.content |truncatechars:10 }}] {{ child_dict.content}}
             </p>
                 <!-- Tag -->
-    <div>
+            {% if child_dict.tag %}
+            <span class="inline-block px-2 py-1 text-xs rounded-full 
+                        {% if child_dict.tag == 'question' %}bg-blue-900 text-blue-300
+                        {% elif child_dict.tag == 'discussion' %}bg-purple-900 text-purple-300
+                        {% elif child_dict.tag == 'announcement' %}bg-yellow-900 text-yellow-300
+                        {% else %}bg-gray-800 text-gray-400{% endif %}">
+                {{ child_dict.tag }}
+            </span>
+            {% endif %}
+
             <!-- Link -->
             {% if child_dict.link %}
             <div class="bg-gray-900 p-3 rounded-lg mt-2 border border-gray-800">
@@ -148,13 +149,11 @@
                 </svg>
                 <div>
                     <a href="{{ child_dict.docs.url }}" download 
-                      class="text-sm text-blue-400 hover:underline block">{{ child_dict.docs.name|cut:"posts/"|cut:"replies/"|truncatechars:50 }}</a>
+                      class="text-sm text-blue-400 hover:underline block">{{ child_dict.docs.name|cut:"posts/"|cut:"replies/"|truncatechars:30 }}</a>
                     <span class="text-xs text-gray-500">{{ child_dict.docs.size|filesizeformat }}</span>
                 </div>
             </div>
             {% endif %}
-
-    </div>
             <div class="flex items-center gap-3 text-xs text-gray-400">
               <button class="flex items-center gap-1 hover:text-maroon">
                 <i class="fas fa-arrow-up"></i>
@@ -172,29 +171,34 @@
             <div class="mt-3">
               <div class="flex items-center gap-2 text-xs mb-1">
                 <div class="w-5 h-5 rounded-full bg-gray-600 text-white flex justify-center items-center">
-
-                  {% if grandchild.replyier.profile_picture %}
-                        <img src="{{ grandchild.replyier.profile_picture.url }}" alt="{{ grandchild.replyier.nickname }}" class="w-full h-full rounded-full border-2 border-maroon object-cover">
-                        {% else %}
-                        <i class="fas fa-user"></i>
-                        {% endif %}
-
+                  <i class="fas fa-user text-xs"></i>
                 </div>
-                <span class="text-gray-400"><a href="{% url 'view_profile' grandchild.replyier.id %}" class="hover:underline hover:text-maroon hover:font-bold">{{ grandchild.replyier.nickname }}</a></span>
+                <span class="text-gray-400">{{ grandchild.replyier.nickname }}</span>
                 <span class="text-gray-500">•</span>
                 <span class="text-gray-400">{{ grandchild.created_at|timesince }} ago</span>
               </div>
               <p class="text-sm text-gray-300 mb-2">
                 {% comment %} <span class="font-bold text-maroon text-xs">@{{ grandchild.reply.replyier.nickname }}</span> {% endcomment %}
                 {% if grandchild.reply %}
-                <span class="font-bold text-maroon text-xs">@<a href="{% url 'view_profile' grandchild.replyier.id %}" class="hover:underline hover:text-maroon hover:font-bold">{{ grandchild.replyier.nickname }}llll{{ grandchild.repliedto }}</a></span>
+                <span class="font-bold text-maroon text-xs">@{{ grandchild.repliedto }}</span>
                 [{{ grandchild.reply.content |truncatechars:10 }}] {{ grandchild.content }}
                 {% else %}
-                {% comment %} <span class="font-bold text-maroon text-xs">@{{ grandchild.repliedto }}</span> {% endcomment %}
-                <span class="font-bold text-maroon text-xs">@<a href="{% url 'view_profile' grandchild.parent.replyier.id %}" class="hover:underline hover:text-maroon hover:font-bold">{{ grandchild.repliedto }}</a></span>
-                [<a href="#grandchild-reply-{{ child_dict.id }}">{{ grandchild.parent.content |truncatechars:10 }}</a>] {{ grandchild.content }}
+                <span class="font-bold text-maroon text-xs">@{{ grandchild.repliedto }}</span>
+                [{{ grandchild.parent.content |truncatechars:10 }}] {{ grandchild.content }}
                 {% endif %}
               </p>
+
+                      <!-- Tag -->
+            {% if grandchild.tag %}
+            <span class="inline-block px-2 py-1 text-xs rounded-full 
+                        {% if grandchild.tag == 'question' %}bg-blue-900 text-blue-300
+                        {% elif grandchild.tag == 'discussion' %}bg-purple-900 text-purple-300
+                        {% elif grandchild.tag == 'announcement' %}bg-yellow-900 text-yellow-300
+                        {% else %}bg-gray-800 text-gray-400{% endif %}">
+                {{ grandchild.tag }}
+            </span>
+            {% endif %}
+
             <!-- Link -->
             {% if grandchild.link %}
             <div class="bg-gray-900 p-3 rounded-lg mt-2 border border-gray-800">
@@ -234,7 +238,7 @@
                 </svg>
                 <div>
                     <a href="{{ grandchild.docs.url }}" download 
-                      class="text-sm text-blue-400 hover:underline block">{{ grandchild.docs.name|cut:"posts/"|cut:"replies/"|truncatechars:50 }}</a>
+                      class="text-sm text-blue-400 hover:underline block">{{ grandchild.docs.name|cut:"posts/"|cut:"replies/"|truncatechars:30 }}</a>
                     <span class="text-xs text-gray-500">{{ grandchild.docs.size|filesizeformat }}</span>
                 </div>
             </div>
@@ -255,3 +259,4 @@
           </div>
           {% endfor %}
 </div>
+{% endfor %}

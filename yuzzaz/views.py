@@ -147,10 +147,11 @@ def login(request):
                 messages.warning(request, "Your account is not activated. Please check your email or resend the activation link.")
                 return redirect('activation_sent')
 
-            auth_login(request, user)
+            # auth_login(request, user)
+            auth_login(request, user, backend='django.contrib.auth.backends.ModelBackend')
             messages.success(request, "You have successfully logged in.")
             if user.is_staff:
-                return redirect('staff_dashboard')
+                return redirect('landing')
             else:
                 return redirect('landing')  # Standard redirect — adjust to your default user landing page
 

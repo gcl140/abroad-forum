@@ -1,0 +1,23 @@
+<form 
+    hx-post="{% url 'add_reply' post.id %}"         
+    hx-target="#replies-container-{{post.id}}"
+    hx-swap="afterbegin"
+    hx-trigger="submit"
+    hx-on::after-request="if(event.detail.successful) this.reset()"
+    class="flex items-center gap-3 mb-4"
+    method="POST"
+>
+    {% csrf_token %}
+    <input 
+        type="text" 
+        placeholder="Reply..." 
+        name="reply" 
+        class="flex-1 bg-gray-800 rounded-full px-4 py-2 text-sm text-white focus:outline-none focus:ring-2 focus:ring-maroon"
+    >
+    <button 
+        type="submit" id="submit-reply"
+        class="w-8 h-8 rounded-full bg-gray-700 text-white flex justify-center items-center hover:bg-gray-600 transition"
+    >
+        <i class="fas fa-paper-plane text-sm"></i>
+    </button>
+</form>

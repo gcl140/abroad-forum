@@ -4,7 +4,11 @@
           <div class="w-5 h-5 rounded-full bg-gray-600 text-white flex justify-center items-center">
             <i class="fas fa-user text-xs"></i>
           </div>
-          <span class="text-gray-400">{{ group.replyier.nickname }}</span>
+          <span class="text-gray-400">
+            <a href="{% url 'view_profile' group.replyier.id %}" class="hover:underline hover:text-maroon hover:font-bold">
+              {{ group.replyier.nickname }}
+            </a>
+          </span>
           <span class="text-gray-500">•</span>
           <span class="text-gray-400">{{ group.created_at|timesince }} ago</span>
         </div>
@@ -63,7 +67,7 @@
                 </svg>
                 <div>
                     <a href="{{ group.docs.url }}" download 
-                      class="text-sm text-blue-400 hover:underline block">{{ group.docs.name|cut:"posts/"|cut:"replies/"|truncatechars:30 }}</a>
+                      class="text-sm text-blue-400 hover:underline block">{{ group.docs.name|cut:"posts/"|cut:"replies/"|truncatechars:50 }}</a>
                     <span class="text-xs text-gray-500">{{ group.docs.size|filesizeformat }}</span>
                 </div>
             </div>
@@ -79,7 +83,10 @@
               <i class="fas fa-arrow-down"></i>
               <span>{{ group.downvotes }}</span>
             </button>
-            <button class="hover:text-maroon">Reply</button>
+            <div id="upvote-reply-btn-{{ group.id }}">
+    {% include "partials/reply_upvote_button.html" %}
+</div>
+            <button class="hover:text-maroon">Replyy</button>
           </div>
 
           <!-- 2nd Level Replies -->
@@ -148,7 +155,7 @@
                 </svg>
                 <div>
                     <a href="{{ child_dict.docs.url }}" download 
-                      class="text-sm text-blue-400 hover:underline block">{{ child_dict.docs.name|cut:"posts/"|cut:"replies/"|truncatechars:30 }}</a>
+                      class="text-sm text-blue-400 hover:underline block">{{ child_dict.docs.name|cut:"posts/"|cut:"replies/"|truncatechars:50 }}</a>
                     <span class="text-xs text-gray-500">{{ child_dict.docs.size|filesizeformat }}</span>
                 </div>
             </div>
@@ -237,7 +244,7 @@
                 </svg>
                 <div>
                     <a href="{{ grandchild.docs.url }}" download 
-                      class="text-sm text-blue-400 hover:underline block">{{ grandchild.docs.name|cut:"posts/"|cut:"replies/"|truncatechars:30 }}</a>
+                      class="text-sm text-blue-400 hover:underline block">{{ grandchild.docs.name|cut:"posts/"|cut:"replies/"|truncatechars:50 }}</a>
                     <span class="text-xs text-gray-500">{{ grandchild.docs.size|filesizeformat }}</span>
                 </div>
             </div>

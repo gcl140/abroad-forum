@@ -1,0 +1,149 @@
+<form 
+    hx-post="{% url 'add_reply' post.id %}"         
+    hx-target="#replies-container-{{post.id}}"
+    hx-swap="afterbegin"
+    hx-trigger="submit"
+    hx-on::after-request="if(event.detail.successful) this.reset()"
+    method="POST"
+    enctype="multipart/form-data"
+    class="mb-4"
+>
+    {% csrf_token %}
+    
+    <!-- Main input row -->
+    <div class="grid grid-cols-1 gap-2 sm:grid-cols-[1fr_auto] sm:gap-3 w-full">
+        <!-- Text input -->
+        <input 
+            type="text" 
+            placeholder="Reply..." 
+            name="reply" 
+            class="flex-1 bg-gray-800 rounded-full px-4 py-2 text-sm text-white focus:outline-none focus:ring-2 focus:ring-maroon"
+        >
+
+        <!-- Attachment buttons -->
+        <div class="flex justify-center space-x-4">
+            <button type="button" onclick="toggleReplyAttachment('image')" class="w-8 h-8 rounded-full bg-gray-700 text-white flex justify-center items-center hover:bg-gray-600 transition">
+                <i class="fas fa-image"></i>
+            </button>
+            <button type="button" onclick="toggleReplyAttachment('video')" class="w-8 h-8 rounded-full bg-gray-700 text-white flex justify-center items-center hover:bg-gray-600 transition">
+                <i class="fas fa-video"></i>
+            </button>
+            <button type="button" onclick="toggleReplyAttachment('docs')" class="w-8 h-8 rounded-full bg-gray-700 text-white flex justify-center items-center hover:bg-gray-600 transition">
+                <i class="fas fa-file-alt"></i>
+            </button>
+            <button type="button" onclick="toggleReplyAttachment('link')" class="w-8 h-8 rounded-full bg-gray-700 text-white flex justify-center items-center hover:bg-gray-600 transition">
+                <i class="fas fa-link"></i>
+            </button>
+            <button 
+                type="submit" 
+                class="w-8 h-8 rounded-full bg-maroon text-white flex justify-center items-center hover:bg-maroon-dark transition"
+            >
+                <i class="fas fa-paper-plane text-sm"></i>
+            </button>
+        </div>
+    </div>
+
+    <!-- Attachment sections (initially hidden) -->
+    <div id="reply-image-attachment" class="mb-3 hidden mt-2">
+        <label class="block">
+            <div class="text-xs text-gray-400 mb-1">Upload Image</div>
+            <div class="flex items-center gap-2 bg-gray-800 rounded-lg px-3 py-2 cursor-pointer hover:bg-gray-700 transition">
+                <i class="fas fa-image text-maroon"></i>
+                <span class="text-sm text-gray-300 truncate" id="reply-image-filename">No file selected</span>
+                <input type="file" name="image" accept="image/*" class="hidden" id="reply-image-upload">
+            </div>
+        </label>
+
+                <label class="block">
+            <div class="text-xs text-gray-400 mb-1">Upload Image 2 (Optional)</div>
+            <div class="flex items-center gap-2 bg-gray-800 rounded-lg px-3 py-2 cursor-pointer hover:bg-gray-700 transition">
+                <i class="fas fa-image text-maroon"></i>
+                <span class="text-sm text-gray-300 truncate" id="reply-image2-filename">No file selected</span>
+                <input type="file" name="image2" accept="image/*" class="hidden" id="reply-image-upload">
+            </div>
+        </label>
+    </div>
+
+    <div id="reply-video-attachment" class="mb-3 hidden mt-2">
+        <label class="block">
+            <div class="text-xs text-gray-400 mb-1">Upload Video</div>
+            <div class="flex items-center gap-2 bg-gray-800 rounded-lg px-3 py-2 cursor-pointer hover:bg-gray-700 transition">
+                <i class="fas fa-video text-maroon"></i>
+                <span class="text-sm text-gray-300 truncate" id="reply-video-filename">No file selected</span>
+                <input type="file" name="video" accept="video/*" class="hidden" id="reply-video-upload">
+            </div>
+        </label>
+    </div>
+
+    <div id="reply-docs-attachment" class="mb-3 hidden mt-2">
+        <label class="block">
+            <div class="text-xs text-gray-400 mb-1">Upload Document</div>
+            <div class="flex items-center gap-2 bg-gray-800 rounded-lg px-3 py-2 cursor-pointer hover:bg-gray-700 transition">
+                <i class="fas fa-file-alt text-maroon"></i>
+                <span class="text-sm text-gray-300 truncate" id="reply-docs-filename">No file selected</span>
+                <input type="file" name="docs" accept=".pdf,.doc,.docx,.ppt,.pptx" class="hidden" id="reply-docs-upload">
+            </div>
+        </label>
+    </div>
+
+    <div id="reply-link-attachment" class="mb-3 hidden mt-2">
+        <div class="text-xs text-gray-400 mb-1">Attach a link</div>
+        <input type="url" name="link" placeholder="https://example.com"
+               class="w-full bg-gray-800 rounded-lg px-4 py-2 text-white focus:outline-none focus:ring-2 focus:ring-maroon placeholder-gray-500">
+    </div>
+</form>
+
+<script>
+    // Toggle reply attachments
+    function toggleReplyAttachment(type) {
+        const attachmentTypes = ['image', 'video', 'docs', 'link'];
+
+        attachmentTypes.forEach(t => {
+            const section = document.getElementById(`reply-${t}-attachment`);
+            const hasValue =
+                (t === 'image' && document.getElementById('reply-image-upload').files.length > 0) ||
+                (t === 'video' && document.getElementById('reply-video-upload').files.length > 0) ||
+                (t === 'docs' && document.getElementById('reply-docs-upload').files.length > 0) ||
+                (t === 'link' && document.querySelector('#reply-link-attachment input').value.trim() !== '');
+
+            // Only hide if it doesn't have a value AND it's not the selected type
+            if (!hasValue && t !== type) {
+                section.classList.add('hidden');
+            } else {
+                section.classList.remove('hidden');
+            }
+        });
+    }
+
+    // File input handlers for reply form
+    document.addEventListener("DOMContentLoaded", function() {
+        const replyFileInputs = [
+            { inputId: "reply-image-upload", labelId: "reply-image-filename" },
+            { inputId: "reply-video-upload", labelId: "reply-video-filename" },
+            { inputId: "reply-docs-upload", labelId: "reply-docs-filename" }
+        ];
+
+        replyFileInputs.forEach(({ inputId, labelId }) => {
+            const input = document.getElementById(inputId);
+            const label = document.getElementById(labelId);
+
+            if (input && label) {
+                input.addEventListener("change", function() {
+                    const file = input.files[0];
+                    label.textContent = file ? file.name : "No file selected";
+                    if (file) toggleReplyAttachment(inputId.split('-')[1]); // Show the section if file selected
+                });
+            }
+        });
+
+        // Handle link input changes
+        const linkInput = document.querySelector('#reply-link-attachment input');
+        if (linkInput) {
+            linkInput.addEventListener('input', function() {
+                if (this.value.trim() !== '') {
+                    toggleReplyAttachment('link');
+                }
+            });
+        }
+    });
+</script>

@@ -1,7 +1,11 @@
 {% load static %}
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="scroll-smooth">
 <head>
+    <!-- Add this in your <head> -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css" />
+<script src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
+
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>
@@ -46,6 +50,79 @@
             }
         }
     </style>
+<style>
+@keyframes flash-highlight-border {
+  0% {
+    box-shadow: 0 0 0 0px rgba(255, 215, 0, 0.9),
+               0 0 0 0px rgba(255, 215, 0, 0.7) inset;
+    border: 2px solid rgba(255, 215, 0, 0.9);
+    transform: scale(1);
+    filter: brightness(100%);
+  }
+  25% {
+    box-shadow: 0 0 15px 8px rgba(255, 215, 0, 0.7),
+               0 0 10px 4px rgba(255, 215, 0, 0.5) inset;
+    transform: scale(1.03);
+    filter: brightness(120%);
+  }
+  50% {
+    box-shadow: 0 0 20px 12px rgba(255, 215, 0, 0.5),
+               0 0 15px 6px rgba(255, 215, 0, 0.3) inset;
+    transform: scale(1.01);
+  }
+  75% {
+    box-shadow: 0 0 10px 6px rgba(255, 215, 0, 0.3),
+               0 0 5px 3px rgba(255, 215, 0, 0.2) inset;
+    filter: brightness(110%);
+  }
+  100% {
+    box-shadow: none;
+    border: 2px solid transparent;
+    transform: scale(1);
+    filter: brightness(100%);
+  }
+}
+
+.flash-once {
+  animation: flash-highlight-border 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+  border-radius: 6px;
+  padding: 6px;
+  background-clip: padding-box;
+  will-change: transform, box-shadow, filter; /* GPU acceleration */
+  backface-visibility: hidden; /* Prevent flickering */
+  transform: translateZ(0); /* Force hardware acceleration */
+}
+
+/* Optional: Add particle effects that work with your existing structure */
+.flash-once::before {
+  content: "";
+  position: absolute;
+  top: -10px;
+  left: 50%;
+  width: 6px;
+  height: 6px;
+  background: rgba(255, 215, 0, 0.8);
+  border-radius: 50%;
+  opacity: 0;
+  pointer-events: none;
+  animation: particle-float 1s ease-out forwards;
+}
+
+@keyframes particle-float {
+  0% {
+    transform: translate(-50%, 0) scale(0);
+    opacity: 0;
+  }
+  20% {
+    opacity: 1;
+  }
+  100% {
+    transform: translate(-50%, -40px) scale(1.5);
+    opacity: 0;
+  }
+}
+</style>
+
 </head>
 <body class="bg-dark text-gray-200 font-sen min-h-screen">
     <!-- Main Container -->
@@ -536,6 +613,9 @@ sidebarToggle.addEventListener("click", () => {
         backToTopButton.addEventListener('click', () => {
             window.scrollTo({ top: 0, behavior: 'smooth' });
         });
+
+
+
 </script>
     <script>    // Initialize Alpine.js for dropdown functionality
         document.addEventListener('alpine:init', () => {

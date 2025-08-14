@@ -107,6 +107,11 @@ class Post(models.Model):
     @property
     def threaded_replies(self):
         return self.replies.all().order_by('created_at')
+    
+    def has_user_upvoted(self, user):
+        if user.is_authenticated:
+            return self.user_interactions.filter(user=user, interaction_type='upvote').exists()
+        return False
 
     
     class Meta:
@@ -158,6 +163,11 @@ class Reply(models.Model):
     @property
     def riplies(self):
         return self.reply_interactions.filter(interaction_type='reply').count()
+    
+    def has_user_upvoted(self, user):
+        if user.is_authenticated:
+            return self.reply_interactions.filter(user=user, interaction_type='upvote').exists()
+        return False
     
     def __str__(self):
         return f"Reply by {self.replyier.nickname} on {self.post.title} at {self.created_at.strftime('%Y-%m-%d %H:%M:%S')}"
@@ -231,6 +241,7 @@ class ReplytoAReply(models.Model):
         # parent_info = self.reply.content[:20] if self.reply else self.parent.content[:20]
         parent_info = self.parent.content[:20] if self.parent else self.reply.content[:20]
         return f"Reply {self.content} to {parent_info} by {self.replyier.nickname} on {self.created_at.strftime('%Y-%m-%d %H:%M:%S')}"
+
 
 class ReplytoReplyInteraction(models.Model):
     INTERACTION_TYPES = (

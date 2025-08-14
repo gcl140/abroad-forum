@@ -1,0 +1,13 @@
+<button
+   hx-post="{% url 'toggle_reply_upvote' group.id %}"
+    hx-target="#upvote-reply-btn-{{ group.id }}"
+    hx-swap="innerHTML"
+    hx-trigger="click"
+    hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'
+    id="reply-btn-{{ group.id }}"
+    class="flex items-center gap-1 hover:text-maroon
+           {% if group.has_user_upvoted %}text-maroon{% else %}text-gray-400 hover:text-maroon{% endif %}">
+              <i class="fas fa-arrow-up"></i>
+
+    <span class="text-sm font-semibold">{{ group.upvotes }}</span>
+</button>

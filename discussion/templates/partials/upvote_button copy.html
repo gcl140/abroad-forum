@@ -1,0 +1,33 @@
+{% comment %} <button 
+    hx-post="{% url 'toggle_upvote' post.id %}" 
+    hx-target="#upvote-btn-{{ post.id }}" 
+    hx-swap="outerHTML"
+    hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'
+    class="flex items-center gap-1 {% if user_has_upvoted %}text-blue-500{% endif %}"
+>
+{{ post.upvotes }}
+</button> {% endcomment %}
+<button
+  hx-post="{% url 'toggle_upvote' post.id %}"
+  hx-target="#upvote-btn-{{ post.id }}"
+  hx-swap="outerHTML"
+  hx-trigger="click"
+  hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'
+  class="flex flex-row sm:flex-row lg:flex-col items-center justify-center gap-1
+         {% if user_has_upvoted %}text-blue-500{% else %}text-gray-400 hover:text-blue-500{% endif %}"
+  style="min-width: 3rem;"
+>
+  <i class="fas fa-arrow-up text-lg"></i>
+  <span class="text-sm font-semibold">{{ post.upvotes }}</span>
+</button>
+
+
+{% comment %} 
+<button 
+    hx-post="{% url 'toggle_upvote' post.id %}" 
+    hx-target="#upvote-btn-{{ post.id }}" 
+    hx-swap="outerHTML"
+    class="text-gray-400 hover:text-maroon"
+>
+    <i class="fas fa-arrow-up"></i> {{ post.upvotes }}
+</button> {% endcomment %}

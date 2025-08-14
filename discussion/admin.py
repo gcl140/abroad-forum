@@ -159,6 +159,7 @@ class ReplyAdmin(admin.ModelAdmin):
         ('Media & Links', {
             'fields': (
                 'image', 
+                'image2', 
                 'video', 
                 'docs', 
                 'link',

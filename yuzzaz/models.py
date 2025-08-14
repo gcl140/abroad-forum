@@ -7,12 +7,12 @@ class CustomUser(AbstractUser):
     telephone = models.CharField(max_length=15)  # Add telephone field
     profile_picture = models.ImageField(upload_to='profile_pictures/', blank=True, null=True)
 
-    GENDER_CHOICES = {
-        'Male': 'Male',
-        'Female': 'Female',
-        'Other': 'Other',
-        'Prefer not to say': 'Prefer not to say',
-    }
+    GENDER_CHOICES = [
+        ('Male', 'Male'),
+        ('Female', 'Female'),
+        ('Other', 'Other'),
+        ('Prefer not to say', 'Prefer not to say'),
+    ]
     gender = models.CharField(max_length=50, choices=GENDER_CHOICES, default='Prefer not to say')
     bio = models.TextField(blank=True, null=True)
     school = models.CharField(max_length=100, blank=True, null=True)

@@ -1,0 +1,14 @@
+
+<button
+  hx-post="{% url 'toggle_upvote' post.id %}"
+  hx-target="#upvote-btn-{{ post.id }}"
+  hx-swap="innerHTML"
+  hx-trigger="click"
+  hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'
+  class="flex flex-row sm:flex-row lg:flex-col items-center justify-center gap-1
+         {% if post.user_has_upvoted %}text-maroon{% else %}text-gray-400 hover:text-maroon{% endif %}"
+  style="min-width: 3rem;"
+>
+  <i class="fas fa-arrow-up text-lg"></i>
+  <span class="text-sm font-semibold">{{ post.upvotes }}</span>
+</button>
