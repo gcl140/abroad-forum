@@ -37,8 +37,21 @@
         </select>
 </div>
 <div id="questions-container">
-  {% include "partials/question_list_items.html" %}
+{% include "partials/thequestions.html" %}
 </div>
+            <!-- Load More Button -->
 
+{% if posts.has_next %}
+            <div class="text-center my-8">
+                <button 
+                hx-get="?page={{ posts.next_page_number }}" 
+                hx-trigger="click" 
+                hx-target="#questions-container" 
+                hx-swap="beforeend"
+                class="px-6 py-2 bg-gray-800 hover:bg-gray-700 rounded-full font-medium">
+                    Load More Questions
+                </button>
+            </div>
+            {% endif %}
 
             {% endblock %}

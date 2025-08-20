@@ -3,7 +3,12 @@
     hx-target="#replies-container-{{post.id}}"
     hx-swap="afterbegin"
     hx-trigger="submit"
-    hx-on::after-request="if(event.detail.successful) this.reset()"
+      hx-on::after-request="
+    if (event.detail.successful) {
+      this.reset();
+      toggleReplies('{{post.id}}');   // ✅ call your toggleReplies JS function
+    }
+  "
     method="POST"
     enctype="multipart/form-data"
     class="mb-4"
@@ -154,4 +159,23 @@ document.addEventListener("DOMContentLoaded", function() {
         }
     });
 });
+
+function toggleReplies(postId) {
+  const btn = document.querySelector(`[data-target="replies-container-${postId}"]`);
+  if (!btn) return;
+
+  const container = document.getElementById(`replies-container-${postId}`);
+  const label = btn.querySelector(".label");
+  const icon = btn.querySelector("i.fas");
+
+  if (container.classList.contains("hidden")) {
+    container.classList.remove("hidden");
+    if (label) label.classList.add("text-maroon");
+    if (icon) {
+      icon.classList.remove("fa-chevron-down");
+      icon.classList.add("fa-chevron-up");
+    }
+  }
+}
+
 </script>

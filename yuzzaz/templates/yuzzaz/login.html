@@ -336,7 +336,7 @@
                 <!-- Google Auth Button -->
                 <a
                   {% comment %} href="{% url 'social:begin' 'google-oauth2' %}?next={% url 'profile' %}" {% endcomment %}
-                  href="{% if not user.is_authenticated %}{% url 'social:begin' 'google-oauth2' %}?next={% url 'profile' %}{% else %}{% url 'set_user_type_and_login' %}{% endif %}"
+                  href="{% if not user.is_authenticated %}{% url 'social:begin' 'google-oauth2' %}?next={% url 'questions' %}{% else %}{% url 'set_user_type_and_login' %}{% endif %}"
                   
                   {% comment %} href="{% url 'logout-then-google' %}?next={{ request.path }}" {% endcomment %}
                 >

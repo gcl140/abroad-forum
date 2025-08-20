@@ -1,17 +1,14 @@
 <form 
-    hx-post="{% url 'add_reply_to_reply' group.id %}"         
-    hx-target="#replies-to-reply-container-{{group.id}}"
-    hx-swap="afterbegin"
+    hx-target="#grandchild-replies2-container-{{ grandchild.id }}"
+    hx-post="{% if grandchild %}{% url 'add_reply_to_a_reply' grandchild.id %}{% else %}{% url 'add_reply_to_a_reply' child_dict.id %}{% endif %}"         
+    hx-swap="beforeend"
     hx-trigger="submit"
-    {% comment %} hx-on::after-request="if(event.detail.successful) this.reset()" {% endcomment %}
-    hx-on::after-request="if(event.detail.successful) this.reset(); toggleReplyForm('{{ group.id }}')"
+    hx-on::after-request="if(event.detail.successful) { this.reset(); toggleReplyParent2Form('{{ grandchild.id }}'); }"
     method="POST"
     enctype="multipart/form-data"
-    class="mb-4"
-    id="reply-to-reply-form-{{ group.id }}"
+    id="reply-to-reply2-form-{{ grandchild.id }}"
 >
     {% csrf_token %}
-    
     <!-- Main input row -->
     <div class="grid grid-cols-1 gap-2 sm:grid-cols-[1fr_auto] sm:gap-3 w-full">
         <!-- Text input -->
@@ -24,16 +21,16 @@
 
         <!-- Attachment buttons -->
         <div class="flex justify-center space-x-4">
-            <button type="button" onclick="toggleReplyAttachment('image', {{ group.id }})" class="w-8 h-8 rounded-full bg-gray-700 text-white flex justify-center items-center hover:bg-gray-600 transition">
+            <button type="button" onclick="toggleReplyAttachment('image', {{ grandchild.id }})" class="w-8 h-8 rounded-full bg-gray-700 text-white flex justify-center items-center hover:bg-gray-600 transition">
                 <i class="fas fa-image"></i>
             </button>
-            <button type="button" onclick="toggleReplyAttachment('video', {{ group.id }})" class="w-8 h-8 rounded-full bg-gray-700 text-white flex justify-center items-center hover:bg-gray-600 transition">
+            <button type="button" onclick="toggleReplyAttachment('video', {{ grandchild.id }})" class="w-8 h-8 rounded-full bg-gray-700 text-white flex justify-center items-center hover:bg-gray-600 transition">
                 <i class="fas fa-video"></i>
             </button>
-            <button type="button" onclick="toggleReplyAttachment('docs', {{ group.id }})" class="w-8 h-8 rounded-full bg-gray-700 text-white flex justify-center items-center hover:bg-gray-600 transition">
+            <button type="button" onclick="toggleReplyAttachment('docs', {{ grandchild.id }})" class="w-8 h-8 rounded-full bg-gray-700 text-white flex justify-center items-center hover:bg-gray-600 transition">
                 <i class="fas fa-file-alt"></i>
             </button>
-            <button type="button" onclick="toggleReplyAttachment('link', {{ group.id }})" class="w-8 h-8 rounded-full bg-gray-700 text-white flex justify-center items-center hover:bg-gray-600 transition">
+            <button type="button" onclick="toggleReplyAttachment('link', {{ grandchild.id }})" class="w-8 h-8 rounded-full bg-gray-700 text-white flex justify-center items-center hover:bg-gray-600 transition">
                 <i class="fas fa-link"></i>
             </button>
             <button 
@@ -46,13 +43,13 @@
     </div>
 
     <!-- Attachment sections (initially hidden) -->
-    <div id="reply-image-attachment-{{ group.id }}" class="mb-3 hidden mt-2">
+    <div id="reply-image-attachment-{{ grandchild.id }}" class="mb-3 hidden mt-2">
         <label class="block">
             <div class="text-xs text-gray-400 mb-1">Upload Image</div>
             <div class="flex items-center gap-2 bg-gray-800 rounded-lg px-3 py-2 cursor-pointer hover:bg-gray-700 transition">
                 <i class="fas fa-image text-maroon"></i>
-                <span class="text-sm text-gray-300 truncate" id="reply-image-filename-{{ group.id }}">No file selected</span>
-                <input type="file" name="image" accept="image/*" class="hidden" id="reply-image-upload-{{ group.id }}">
+                <span class="text-sm text-gray-300 truncate" id="reply-image-filename-{{ grandchild.id }}">No file selected</span>
+                <input type="file" name="image" accept="image/*" class="hidden" id="reply-image-upload-{{ grandchild.id }}">
             </div>
         </label>
 
@@ -60,39 +57,39 @@
             <div class="text-xs text-gray-400 mb-1">Upload Image 2 (Optional)</div>
             <div class="flex items-center gap-2 bg-gray-800 rounded-lg px-3 py-2 cursor-pointer hover:bg-gray-700 transition">
                 <i class="fas fa-image text-maroon"></i>
-                <span class="text-sm text-gray-300 truncate" id="reply-image2-filename-{{ group.id }}">No file selected</span>
-                <input type="file" name="image2" accept="image/*" class="hidden" id="reply-image2-upload-{{ group.id }}">
+                <span class="text-sm text-gray-300 truncate" id="reply-image2-filename-{{ grandchild.id }}">No file selected</span>
+                <input type="file" name="image2" accept="image/*" class="hidden" id="reply-image2-upload-{{ grandchild.id }}">
             </div>
         </label>
     </div>
 
-    <div id="reply-video-attachment-{{ group.id }}" class="mb-3 hidden mt-2">
+    <div id="reply-video-attachment-{{ grandchild.id }}" class="mb-3 hidden mt-2">
         <label class="block">
             <div class="text-xs text-gray-400 mb-1">Upload Video</div>
             <div class="flex items-center gap-2 bg-gray-800 rounded-lg px-3 py-2 cursor-pointer hover:bg-gray-700 transition">
                 <i class="fas fa-video text-maroon"></i>
-                <span class="text-sm text-gray-300 truncate" id="reply-video-filename-{{ group.id }}">No file selected</span>
-                <input type="file" name="video" accept="video/*" class="hidden" id="reply-video-upload-{{ group.id }}">
+                <span class="text-sm text-gray-300 truncate" id="reply-video-filename-{{ grandchild.id }}">No file selected</span>
+                <input type="file" name="video" accept="video/*" class="hidden" id="reply-video-upload-{{ grandchild.id }}">
             </div>
         </label>
     </div>
 
-    <div id="reply-docs-attachment-{{ group.id }}" class="mb-3 hidden mt-2">
+    <div id="reply-docs-attachment-{{ grandchild.id }}" class="mb-3 hidden mt-2">
         <label class="block">
             <div class="text-xs text-gray-400 mb-1">Upload Document</div>
             <div class="flex items-center gap-2 bg-gray-800 rounded-lg px-3 py-2 cursor-pointer hover:bg-gray-700 transition">
                 <i class="fas fa-file-alt text-maroon"></i>
-                <span class="text-sm text-gray-300 truncate" id="reply-docs-filename-{{ group.id }}">No file selected</span>
-                <input type="file" name="docs" accept=".pdf,.doc,.docx,.ppt,.pptx" class="hidden" id="reply-docs-upload-{{ group.id }}">
+                <span class="text-sm text-gray-300 truncate" id="reply-docs-filename-{{ grandchild.id }}">No file selected</span>
+                <input type="file" name="docs" accept=".pdf,.doc,.docx,.ppt,.pptx" class="hidden" id="reply-docs-upload-{{ grandchild.id }}">
             </div>
         </label>
     </div>
 
-    <div id="reply-link-attachment-{{ group.id }}" class="mb-3 hidden mt-2">
+    <div id="reply-link-attachment-{{ grandchild.id }}" class="mb-3 hidden mt-2">
         <div class="text-xs text-gray-400 mb-1">Attach a link</div>
         <input type="url" name="link" placeholder="https://example.com"
                class="w-full bg-gray-800 rounded-lg px-4 py-2 text-white focus:outline-none focus:ring-2 focus:ring-maroon placeholder-gray-500"
-               id="reply-link-input-{{ group.id }}">
+               id="reply-link-input-{{ grandchild.id }}">
     </div>
 </form>
 
@@ -108,6 +105,7 @@ function toggleReplyAttachment(type, postId) {
         
         const hasValue = 
             (t === 'image' && document.getElementById(`reply-image-upload-${postId}`)?.files.length > 0) ||
+            (t === 'image' && document.getElementById(`reply-image2-upload-${postId}`)?.files.length > 0) ||
             (t === 'video' && document.getElementById(`reply-video-upload-${postId}`)?.files.length > 0) ||
             (t === 'docs' && document.getElementById(`reply-docs-upload-${postId}`)?.files.length > 0) ||
             (t === 'link' && document.getElementById(`reply-link-input-${postId}`)?.value.trim() !== '');
@@ -123,7 +121,7 @@ function toggleReplyAttachment(type, postId) {
 // Initialize all reply forms
 document.addEventListener("DOMContentLoaded", function() {
     // Find all reply forms (by common attribute)
-    document.querySelectorAll('[id^="reply-to-reply-form-"]').forEach(form => {
+    document.querySelectorAll('[id^="reply-to-reply2-form-"]').forEach(form => {
         const postId = form.id.split('-').pop();
         
         // File input handlers

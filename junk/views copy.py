@@ -16,9 +16,6 @@ from django.db.models import Q
 from django.shortcuts import get_object_or_404, render
 from django.http import HttpResponse
 from .models import Post, UserPostInteraction
-from django.core.paginator import Paginator
-from django.urls import reverse
-
 
 def context_to_extend(request):
     online_users, online_count, everyone_count = get_online_users()  # session-based
@@ -224,6 +221,10 @@ def questions(request):
     # Attach a flag on each post object
     for post in posts:
         post.user_has_upvoted = post.id in upvoted_post_ids
+
+
+
+
     replies = Reply.objects.filter(post__in=posts).select_related('replyier')
     if user.is_authenticated:
         upvoted_reply_ids = set(
@@ -251,22 +252,9 @@ def questions(request):
             statuses__user=request.user,
             statuses__is_read=False
         ).count()
-    
-
-    # detect AJAX/HTMX request to return only the new chunk
-
-    paginator = Paginator(posts, 10)  # Show 10 posts per page
-    page_number = request.GET.get('page', 1)
-    print("Page number:", page_number)
-    page_obj = paginator.get_page(page_number)
-
-
-    if request.headers.get("Hx-Request"):  
-        return render(request, "partials/question_list_items.html", {"page_obj": page_obj})
 
     context = {
-        # 'posts': posts,
-        'page_obj': page_obj,
+        'posts': posts,
         'viewing_user': request.user,
         # 'user': request.user,
         'tag_choices': get_tag_choices(),
@@ -365,28 +353,7 @@ def add_reply(request, post_id):
                 link=request.POST.get('link'),  # Also handle link if needed
                 tag=request.POST.get('tag')    # And tag if needed
             )
-                        # --- Create notification for post.author ---
-            if post.author != request.user:  # Avoid notifying self
-                post_url = request.build_absolute_uri(
-                    reverse("post_detail", args=[post.id])  # make sure your URL name is 'post_detail'
-                )
-
-                # Create the notification with HTML link inside message
-                notification = Notification.objects.create(
-                    user=post.author,
-                    title="New reply to your question",
-                    # message=f'{request.user.nickname} replied to your question: <a href="{post_url}">{post.title}</a>',
-                    message=(
-                    f'{request.user.nickname} replied to your question: '
-                    f'<a href="{post_url}" class="text-maroon hover:underline">{post.title}</a>'
-                ),  
-                )
-                # Create unread status
-                UserNotificationStatus.objects.create(
-                    user=post.author,
-                    notification=notification,
-                    is_read=False
-                )
+            
             if request.headers.get('HX-Request'):
                 return render(request, 'partials/threaded_replies.html', {
                     'group': reply
@@ -471,59 +438,10 @@ def toggle_reply_upvote(request, reply_id):
     return redirect("post_detail", id=reply.post.id)
 
 
-# @login_required
-# def add_reply_to_reply(request, reply_id=None, parent_id=None):
-#     """
-#     Handles creating a reply to either:
-#     - A Reply (reply_id is set)
-#     - Another ReplytoAReply (parent_id is set)
-#     """
-#     if request.method == "POST":
-#         reply_instance = None
-#         parent_instance = None
-
-#         if reply_id:
-#             reply_instance = get_object_or_404(Reply, id=reply_id)
-#             print(f"Adding reply to Reply ID: {reply_id}")
-#         elif parent_id:
-#             parent_instance = get_object_or_404(ReplytoAReply, id=parent_id)
-#             print(f"Adding reply to ReplytoAReply ID: {parent_id}")
-
-#         new_reply = ReplytoAReply(
-#             reply=reply_instance,
-#             parent=parent_instance,
-#             replyier=request.user,
-#             content=request.POST.get("reply", "")
-#         )
-
-#         # Handle file uploads
-#         for field in ["image", "image2", "video", "docs", "link"]:
-#             if field in request.FILES:
-#                 setattr(new_reply, field, request.FILES[field])
-#             elif field in request.POST and request.POST.get(field):
-#                 setattr(new_reply, field, request.POST.get(field))
-
-#         new_reply.save()
-        
-#         if reply_id:
-#             if request.headers.get("HX-Request"):
-#                 return render(request, "partials/child_dict_replies.html", {
-#                     "child_dict": new_reply
-#                 })
-#         elif parent_id:
-#             if request.headers.get("HX-Request"):
-#                 return render(request, "partials/grandchild_replies.html", {
-#                     "grandchild": new_reply
-#                 })
-
-#         # Redirect back to post detail
-#         if reply_instance:
-#             return redirect("post_detail", id=reply_instance.post.id)
-#         elif parent_instance:
-#             return redirect("post_detail", id=parent_instance.reply.post.id)
-
-#     return HttpResponse("Invalid request", status=400)
-
+from django.shortcuts import render, redirect, get_object_or_404
+from django.http import HttpResponse
+from django.contrib.auth.decorators import login_required
+from .models import Reply, ReplyInteraction, ReplytoAReply, ReplytoReplyInteraction
 
 @login_required
 def add_reply_to_reply(request, reply_id=None, parent_id=None):
@@ -558,54 +476,7 @@ def add_reply_to_reply(request, reply_id=None, parent_id=None):
                 setattr(new_reply, field, request.POST.get(field))
 
         new_reply.save()
-# 🔔 Create notification for the correct user
-        if reply_instance:  # replying to a Reply
-            post = reply_instance.post
-            post_url = reverse("post_detail", args=[post.id])
-            if reply_instance.replyier != request.user:  # don’t notify self
-                notification = Notification.objects.create(
-                    user=reply_instance.replyier,
-                    title="New reply to your comment",
-                    message=(
-                        f'{request.user.nickname} replied to your comment on: '
-                        f'<a href="{post_url}" class="text-maroon hover:underline">{reply_instance.content}</a>'
-                    ),
-                )
-                # Create unread status
-                UserNotificationStatus.objects.create(
-                    user=reply_instance.replyier,
-                    notification=notification,
-                    is_read=False
-                )
-
-        elif parent_instance:  # replying to a ReplytoAReply
-            # post = parent_instance.reply.post
-            # climb up until we hit a Reply that has a post
-            root = parent_instance
-            while root.parent:  # keep moving up if there's another parent
-                root = root.parent
-
-            post = root.reply.post
-
-            post_url = reverse("post_detail", args=[post.id])
-            if parent_instance.replyier != request.user:  # don’t notify self
-                notification = Notification.objects.create(
-                    user=parent_instance.replyier,
-                    title="New reply to your thread",
-                    message=(
-                        f'{request.user.nickname} replied to your thread on: '
-                        f'<a href="{post_url}" class="text-maroon hover:underline">{parent_instance.content}</a>'
-                    ),
-                )
-                # Create unread status
-                UserNotificationStatus.objects.create(
-                    user=parent_instance.replyier,
-                    notification=notification,
-                    is_read=False
-                )
-
-
-        # Handle HTMX partial return
+        
         if reply_id:
             if request.headers.get("HX-Request"):
                 return render(request, "partials/child_dict_replies.html", {
@@ -663,13 +534,3 @@ def toggle_reply_to_reply_upvote(request, rtr_id):
         })
 
     return redirect("post_detail", id=reply_obj.reply.post.id)
-
-
-
-@login_required
-def mark_all_notifications_read(request):
-    user = request.user
-    UserNotificationStatus.objects.filter(user=user, is_read=False).update(is_read=True, read_at=timezone.now())
-
-    # HTMX response: return empty or a small snippet to update the count
-    return HttpResponse('')  # or return a snippet to remove/update the badge

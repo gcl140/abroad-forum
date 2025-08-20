@@ -15,4 +15,13 @@ urlpatterns = [
     path("toggle-upvote/<int:post_id>/", views.toggle_upvote, name="toggle_upvote"),
     path('reply/<int:reply_id>/upvote/', views.toggle_reply_upvote, name='toggle_reply_upvote'),
     # path('reply/<int:group_id>/upvote/', views.toggle_reply_upvote, name='toggle_reply_upvote'),
+    
+    
+    
+    path("reply-to-reply/<int:reply_id>/", views.add_reply_to_reply, name="add_reply_to_reply"),
+    path("reply-to-a-reply/<int:parent_id>/", views.add_reply_to_reply, name="add_reply_to_a_reply"),
+    path("toggle-rtr-upvote/<int:rtr_id>/", views.toggle_reply_to_reply_upvote, name="toggle_reply_to_reply_upvote"),
+
+
+    path('notifications/mark-all-read/', views.mark_all_notifications_read, name='mark_all_notifications_read'),
 ]

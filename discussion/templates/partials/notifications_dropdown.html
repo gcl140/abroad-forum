@@ -6,9 +6,26 @@
                  x-transition:leave="transition ease-in duration-75"
                  x-transition:leave-start="transform opacity-100 scale-100"
                  x-transition:leave-end="transform opacity-0 scale-95">
+<p class="px-4 py-2 text-sm text-gray-400 font-semibold flex items-center justify-between">
+  Notifications
+  <!-- Double-tick button -->
+  <button 
+  
 
-                <p class="px-4 py-2 text-sm text-gray-400 font-semibold">Notifications</p>
-                <div class="border-t border-gray-700/50 mb-1"></div>
+    hx-post="{% url 'mark_all_notifications_read' %}" 
+    hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'
+    hx-trigger="click"
+    hx-target="#unread-count"
+    hx-swap="outerHTML"
+
+  class="text-white bg-maroon p-2 w-6 h-6 rounded-full flex items-center justify-center">
+    {% comment %} ✔✔ {% endcomment %}
+    <i class="fas fa-check"></i>
+
+  </button>
+</p>
+<div class="border-t border-gray-700/50 mb-1"></div>
+
                 {% for notification in notifications %}
                     <div
                         class="block px-4 py-3 text-sm transition-all duration-150
@@ -28,8 +45,8 @@
                             {{ notification.title }}
                         </h3>
 
-                        <p class="mt-1">{{ notification.message }}</p>
-                        
+                        <p class="mt-1">{{ notification.message|safe }}</p>
+
                         <span class="block text-xs text-gray-500 mt-2">
                             {{ notification.created_at|timesince }} ago
                         </span>

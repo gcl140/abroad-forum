@@ -170,7 +170,7 @@ class Reply(models.Model):
         return False
     
     def __str__(self):
-        return f"Reply by {self.replyier.nickname} on {self.post.title} at {self.created_at.strftime('%Y-%m-%d %H:%M:%S')}"
+        return f"{self.content[:20]} - Reply by {self.replyier.nickname} on {self.post.title} at {self.created_at.strftime('%Y-%m-%d %H:%M:%S')}"
 
 class ReplyInteraction(models.Model):
     INTERACTION_TYPES = (
@@ -238,11 +238,14 @@ class ReplytoAReply(models.Model):
         return "Unknown"
 
     def __str__(self):
-        # parent_info = self.reply.content[:20] if self.reply else self.parent.content[:20]
-        parent_info = self.parent.content[:20] if self.parent else self.reply.content[:20]
-        return f"Reply {self.content} to {parent_info} by {self.replyier.nickname} on {self.created_at.strftime('%Y-%m-%d %H:%M:%S')}"
+        # Determine the parent information string based on whether a parent exists
+        if self.parent:
+            parent_info = f"parent comment: {self.parent.content[:20]}"
+        else:
+            parent_info = f"original comment: {self.reply.content[:20]}"
 
-
+        # Construct and return the full string in a single line
+        return f"Reply: {self.content} | Replied to: {parent_info} | By: {self.replyier.nickname} | On: {self.created_at.strftime('%Y-%m-%d %H:%M:%S')}"
 class ReplytoReplyInteraction(models.Model):
     INTERACTION_TYPES = (
         ('view', 'View'),

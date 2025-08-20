@@ -1,0 +1,193 @@
+          <div class="pl-4 mt-3 border-l-2 border-gray-700">
+            <div class="flex items-center gap-2 text-xs mb-1">
+              <div class="w-5 h-5 rounded-full bg-gray-600 text-white flex justify-center items-center">
+                      {% if child_dict.replyier.profile_picture %}
+                        <img src="{{ child_dict.replyier.profile_picture.url }}" alt="{{ child_dict.replyier.nickname }}" class="w-full h-full rounded-full border-2 border-maroon object-cover">
+                        {% else %}
+                        <i class="fas fa-user"></i>
+                        {% endif %}
+              </div>
+              <span class="text-gray-400"><a href="{% url 'view_profile' child_dict.replyier.id %}" class="hover:underline hover:text-maroon hover:font-bold">{{ child_dict.replyier.nickname }}</a></span>
+              <span class="text-gray-500">•</span>
+              <span class="text-gray-400">{{ child_dict.created_at|timesince }} ago</span>
+            </div>
+            <p class="text-sm text-gray-300 mb-2" id="grandchild-reply-{{ child_dict.id }}">
+              {% comment %} <span class="font-bold text-maroon text-xs">@{{ child_dict.reply.replyier.nickname }}</span> {% endcomment %}
+              <span class="font-bold text-maroon text-xs">@<a href="{% url 'view_profile' child_dict.reply.replyier.id %}" class="hover:underline hover:text-maroon hover:font-bold">{{ child_dict.repliedto }}</a></span>
+              [<a href="#reply-{{ group.id }}">{{ child_dict.reply.content |truncatechars:10 }}</a>] {{ child_dict.content}}
+            </p>
+                <!-- Tag -->
+    <div>
+            <!-- Link -->
+            {% if child_dict.link %}
+            <div class="bg-gray-900 p-3 rounded-lg mt-2 border border-gray-800">
+                <a href="{{ child_dict.link }}" target="_blank" rel="noopener noreferrer" 
+                  class="text-blue-400 hover:underline flex items-center gap-2 text-xs">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1" />
+                    </svg>
+                    {{ child_dict.link|truncatechars:40 }}
+                </a>
+            </div>
+            {% endif %}
+
+            <!-- Image -->
+            {% if child_dict.image %}
+            <div class="mt-2 rounded-lg overflow-hidden border border-gray-800 max-w-lg z-0">
+                <img src="{{ child_dict.image.url }}" alt="Posted image" 
+                    class="w-full h-auto object-cover cursor-pointer hover:opacity-90 transition-opacity">
+            </div>
+            {% endif %}
+
+            <!-- Video -->
+            {% if child_dict.video %}
+            <div class="mt-2 rounded-lg overflow-hidden border border-gray-800 max-w-lg">
+                <video controls class="w-full">
+                    <source src="{{ child_dict.video.url }}" type="video/mp4">
+                    Your browser does not support the video tag.
+                </video>
+            </div>
+            {% endif %}
+
+            <!-- Document -->
+            {% if child_dict.docs %}
+            <div class="bg-gray-900 p-2 rounded-lg mt-2 border border-gray-800 flex items-center gap-3">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                </svg>
+                <div>
+                    <a href="{{ child_dict.docs.url }}" download 
+                      class="text-sm text-blue-400 hover:underline block">{{ child_dict.docs.name|cut:"posts/"|cut:"replies/"|truncatechars:50 }}</a>
+                    <span class="text-xs text-gray-500">{{ child_dict.docs.size|filesizeformat }}</span>
+                </div>
+            </div>
+            {% endif %}
+
+    </div>
+            <div class="flex items-center gap-3 text-xs text-gray-400">
+             
+
+            <div class="flex flex-col gap-2">
+              <div class="flex flex-row gap-3">
+                    <div id="upvote-reply-btn-{{ child_dict.id }}">
+                      {% include "partials/reply_to_parent_upvote_button.html" %}
+                    </div>
+                    <button id="reply-parent-button-{{ child_dict.id }}" onclick="toggleReplyParentForm('{{ child_dict.id }}')" class="hover:text-maroon">
+                        Replyyyyiyyyyy
+                    </button>
+              </div>
+
+                    <div id="reply-to-parent-form-container-{{ child_dict.id }}" class="hidden">
+                        {% include "partials/reply-to-parent-form.html" %}
+                    </div>
+
+          </div>
+
+
+
+            </div>
+
+            <!-- 3rd Level Replies -->
+            {% for grandchild in child_dict.child_replies.all %}
+            <div class="mt-3">
+              <div class="flex items-center gap-2 text-xs mb-1">
+                <div class="w-5 h-5 rounded-full bg-gray-600 text-white flex justify-center items-center">
+
+                  {% if grandchild.replyier.profile_picture %}
+                        <img src="{{ grandchild.replyier.profile_picture.url }}" alt="{{ grandchild.replyier.nickname }}" class="w-full h-full rounded-full border-2 border-maroon object-cover">
+                        {% else %}
+                        <i class="fas fa-user"></i>
+                        {% endif %}
+
+                </div>
+                <span class="text-gray-400"><a href="{% url 'view_profile' grandchild.replyier.id %}" class="hover:underline hover:text-maroon hover:font-bold">{{ grandchild.replyier.nickname }}</a></span>
+                <span class="text-gray-500">•</span>
+                <span class="text-gray-400">{{ grandchild.created_at|timesince }} ago</span>
+              </div>
+              <p class="text-sm text-gray-300 mb-2">
+                {% comment %} <span class="font-bold text-maroon text-xs">@{{ grandchild.reply.replyier.nickname }}</span> {% endcomment %}
+                {% if grandchild.reply %}
+                <span class="font-bold text-maroon text-xs">@<a href="{% url 'view_profile' grandchild.replyier.id %}" class="hover:underline hover:text-maroon hover:font-bold">{{ grandchild.replyier.nickname }}llll{{ grandchild.repliedto }}</a></span>
+                [{{ grandchild.reply.content |truncatechars:10 }}] {{ grandchild.content }}
+                {% else %}
+                {% comment %} <span class="font-bold text-maroon text-xs">@{{ grandchild.repliedto }}</span> {% endcomment %}
+                <span class="font-bold text-maroon text-xs">@<a href="{% url 'view_profile' grandchild.parent.replyier.id %}" class="hover:underline hover:text-maroon hover:font-bold">{{ grandchild.repliedto }}</a></span>
+                [<a href="#grandchild-reply-{{ child_dict.id }}">{{ grandchild.parent.content |truncatechars:10 }}</a>] {{ grandchild.content }}
+                {% endif %}
+              </p>
+            <!-- Link -->
+            {% if grandchild.link %}
+            <div class="bg-gray-900 p-3 rounded-lg mt-2 border border-gray-800">
+                <a href="{{ grandchild.link }}" target="_blank" rel="noopener noreferrer" 
+                  class="text-blue-400 hover:underline flex items-center gap-2 text-xs">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1" />
+                    </svg>
+                    {{ grandchild.link|truncatechars:40 }}
+                </a>
+            </div>
+            {% endif %}
+
+            <!-- Image -->
+            {% if grandchild.image %}
+            <div class="mt-2 rounded-lg overflow-hidden border border-gray-800 max-w-lg z-0">
+                <img src="{{ grandchild.image.url }}" alt="Posted image" 
+                    class="w-full h-auto object-cover cursor-pointer hover:opacity-90 transition-opacity">
+            </div>
+            {% endif %}
+
+            <!-- Video -->
+            {% if grandchild.video %}
+            <div class="mt-2 rounded-lg overflow-hidden border border-gray-800 max-w-lg">
+                <video controls class="w-full">
+                    <source src="{{ grandchild.video.url }}" type="video/mp4">
+                    Your browser does not support the video tag.
+                </video>
+            </div>
+            {% endif %}
+
+            <!-- Document -->
+            {% if grandchild.docs %}
+            <div class="bg-gray-900 p-2 rounded-lg mt-2 border border-gray-800 flex items-center gap-3">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                </svg>
+                <div>
+                    <a href="{{ grandchild.docs.url }}" download 
+                      class="text-sm text-blue-400 hover:underline block">{{ grandchild.docs.name|cut:"posts/"|cut:"replies/"|truncatechars:50 }}</a>
+                    <span class="text-xs text-gray-500">{{ grandchild.docs.size|filesizeformat }}</span>
+                </div>
+            </div>
+            {% endif %}
+              <div class="flex items-center gap-3 text-xs text-gray-400">
+                <button class="flex items-center gap-1 hover:text-maroon">
+                  <i class="fas fa-fire"></i>
+                  <span>{{ grandchild.upvotes }}</span>
+                </button>
+                <button class="flex items-center gap-1 hover:text-blue-400">
+                  <i class="fas fa-arrow-down"></i>
+                  <span>{{ grandchild.downvotes }}</span>
+                </button>
+                <button class="hover:text-maroon">Reply</button>
+              </div>
+            </div>
+            {% endfor %}
+          </div>
+
+
+
+                <script>
+                  function toggleReplyParentForm(groupId) {
+                      const container = document.getElementById(`reply-to-parent-form-container-${groupId}`);
+                      const button = document.getElementById(`reply-parent-button-${groupId}`);
+
+                      const isHidden = container.classList.contains('hidden');
+                      container.classList.toggle('hidden');
+
+                      if (isHidden) {
+                          button.classList.add('text-maroon');
+                      } else {
+                          button.classList.remove('text-maroon');
+                      }
+                  }
+                </script>
