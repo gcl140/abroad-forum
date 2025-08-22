@@ -28,7 +28,7 @@
                             {{ notification.title }}
                         </h3>
 
-                        <p class="mt-1">{{ notification.message }}</p>
+                        <p class="mt-1">{{ notification.message|safe }}</p>
                         
                         <span class="block text-xs text-gray-500 mt-2">
                             {{ notification.created_at|timesince }} ago

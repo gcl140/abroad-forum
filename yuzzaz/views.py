@@ -153,7 +153,7 @@ def login(request):
             if user.is_staff:
                 return redirect('questions')
             else:
-                return redirect('profile')  # Standard redirect — adjust to your default user landing page
+                return redirect('questions')  # Standard redirect — adjust to your default user landing page
 
         messages.error(request, "Invalid credentials, please try again.")
 

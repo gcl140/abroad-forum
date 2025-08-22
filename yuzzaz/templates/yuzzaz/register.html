@@ -4,18 +4,15 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Register | North & Beyond</title>
+    <title>Register | ForumAbroad</title>
 
     <!-- Font Awesome -->
     <link
       rel="stylesheet"
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
     />
-    <link
-      rel="shortcut icon"
-      href="../../../static/images/NB ENDITA RED (1).png"
-      type="image/x-icon"
-    />
+
+    <link rel="shortcut icon" href="{% static 'images/fav.png' %}" type="image/x-icon">
     <!-- Google Fonts - Karla -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -44,7 +41,7 @@
         theme: {
           extend: {
             colors: {
-              maroon: "#800020",
+              maroon: "#c4ad2bff",
               dark: "#121212",
               light: "#f8f9fa",
             },
@@ -106,15 +103,15 @@
             <a href="{% url 'landing' %}" class="flex items-center space-x-2">
               <img
                 class="h-8 w-8"
-                src="../../../static/images/NB ENDITA RED (1).png"
-                alt="North & Beyond Logo"
+                src="{% static 'images/fav.png' %}"
+                alt="ForumAbroad Logo"
               />
               <div
                 class="hidden lg:flex lg:flex-col flex flex-row items-center"
               >
                 <span
                   class="text-xl font-bold text-white hover:text-maroon transition-colors uppercase"
-                  >North & Beyond</span
+                  >ForumAbroad</span
                 >
                 <span
                   class="text-xs font-saint text-gray-500 hover:text-maroon transition-colors"
@@ -232,10 +229,46 @@
                 <h2 class="text-3xl font-extrabold text-white">
                   Create an Account
                 </h2>
+                
+                
+                <!-- Google Auth Button -->
+                <a
+                  {% comment %} href="{% url 'social:begin' 'google-oauth2' %}?next={% url 'profile' %}" {% endcomment %}
+                  href="{% if not user.is_authenticated %}{% url 'social:begin' 'google-oauth2' %}?next={% url 'questions' %}{% else %}{% url 'set_user_type_and_login' %}{% endif %}"
+                  
+                  {% comment %} href="{% url 'logout-then-google' %}?next={{ request.path }}" {% endcomment %}
+                >
+                {% comment %} <a href="{% url 'social:begin' 'google-oauth2' %}?next={% url 'profile' %}"> {% endcomment %}
+
+                  <button
+                    type="button"
+                    class="w-full flex justify-center items-center py-3 px-4 border border-gray-300 rounded-lg shadow-sm text-sm font-medium text-gray-700 bg-white mt-4"
+                  >
+                    <i class="fab fa-google mr-2 text-blue-500"></i> Sign up with
+                    Google
+                  </button>
+                </a>
+                
+                                              
+                <!-- OR Separator -->
+                <div class="flex items-center my-4">
+                  <hr class="flex-grow border-gray-300" />
+                  <span
+                    class="mx-4 text-gray-500 text-sm flex items-center gap-2"
+                  >
+                    <i class="fas fa-circle"></i>
+                    OR
+                    <i class="fas fa-circle"></i>
+                  </span>
+                  <hr class="flex-grow border-gray-300" />
+                </div>
+
                 <p class="mt-2 text-gray-400">
                   Fill out the details below to register.
                 </p>
               </div>
+              
+
 
               <form
                 method="POST"
@@ -318,9 +351,12 @@
                 >
                   <i class="fas fa-user-plus mr-2"></i> Register
                 </button>
+                
+
+
 
                 <!-- Footer -->
-                <div class="text-center">
+                <div class="text-center mt-4">
                   <p class="text-sm text-gray-400">Already have an account?</p>
                   <div class="mt-2">
                     <a href="{% url 'login' %}">

@@ -108,6 +108,7 @@
         class="relative mt-2 rounded-lg overflow-hidden border border-gray-800 max-w-lg z-0 mb-2"
         id="image-{{ post.id }}-container"
       >
+      
         <img
           src="{{ post.image.url }}"
           alt="Image 1"
@@ -115,6 +116,7 @@
         />
 
         {% if post.image2 %}
+        kln;lm
         <img
           src="{{ post.image2.url }}"
           alt="Image 2"
@@ -174,8 +176,8 @@
           >
         </div>
       </div>
-      {% endif %} {% comment %} hx-trigger="every 5s, intersect once:false" 
-      {% endcomment %}
+      {% endif %} 
+      {% comment %} hx-trigger="every 5s, intersect once:false" {%endcomment %}
 
       <div class="flex items-center gap-4 text-sm text-gray-400">
         <button
@@ -213,7 +215,8 @@
         <!-- Replies container -->
         <div id="replies-container-{{post.id}}" class="hidden">
           {% for group in post.threaded_replies %} 
-          {% include "partials/threaded_replies.html" %} {% empty %}
+          {% include "partials/threaded_replies.html" %} 
+          {% empty %}
           <p class="text-gray-500 text-center">No replies yet.</p>
           {% endfor %}
         </div>
@@ -259,7 +262,7 @@
   }
 
   function sharePost(postId) {
-    const shareUrl = `${window.location.origin}/discuss/post/${postId}/`;
+    const shareUrl = `${window.location.origin}/post/${postId}/`;
 
     if (navigator.share) {
       navigator

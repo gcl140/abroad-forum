@@ -286,7 +286,7 @@ body.loading {
     <div class="w-10 h-10 rounded-full text-gray-400 flex items-center justify-center text-white shadow-lg">
         <div class="relative" x-data="{ open: false }">
             <button @click="open = !open" class="focus:outline-none">
-                {% if viewing_user.is_authenticated %}
+                {% if user.is_authenticated %}
     <div class="relative w-10 h-10 rounded-full flex flex-col text-xs flex items-center justify-center shadow-lg text-gray-400">
 
                          <i class="fas fa-bell text-base text-gray-400"></i> Alerts
@@ -323,7 +323,7 @@ body.loading {
                 x-transition:leave="transition ease-in duration-75"
                 x-transition:leave-start="transform opacity-100 scale-100"
                 x-transition:leave-end="transform opacity-0 scale-95">
-                <a href="{% url 'view_profile' viewing_user.id %}" class="block px-4 py-2 text-sm text-gray-400 hover:bg-gray-100">Your Profile</a>
+                <a href="{% url 'view_profile' user.id %}" class="block px-4 py-2 text-sm text-gray-400 hover:bg-gray-100">Your Profile</a>
                 <a href="mailto:gftinity01@gmail.com" class="block px-4 py-2 text-sm text-gray-400 hover:bg-gray-100">Help Center</a>
                 <div class="border-t border-gray-500/10"></div>
                 <a href="{% url 'logout' %}" class="block px-4 py-2 text-sm text-gray-500 hover:bg-gray-100 hover:text-red-400">Sign out</a>
@@ -342,7 +342,7 @@ body.loading {
     <div class="w-10 h-10 rounded-full bg-maroon flex items-center justify-center text-white shadow-lg">
         <div class="relative" x-data="{ open: false }">
             <button @click="open = !open" class="focus:outline-none">
-                {% if viewing_user.is_authenticated %}
+                {% if user.is_authenticated %}
     <div class="relative w-10 h-10 rounded-full bg-maroon flex items-center justify-center text-white shadow-lg">
 
                          <i class="fas fa-bell text-base"></i>
@@ -364,11 +364,11 @@ body.loading {
 
         <div class="fixed z-50 hidden lg:block  top-4 right-4 z-50">
             <div class="w-10 h-10 rounded-full bg-maroon flex items-center justify-center text-white shadow-lg">
-                {% comment %} <img src="{{ viewing_user.profile_picture.url }}" alt="Profile Picture" class="w-10 h-10 rounded-full object-cover border-2 border-maroon"> {% endcomment %}
+                {% comment %} <img src="{{ user.profile_picture.url }}" alt="Profile Picture" class="w-10 h-10 rounded-full object-cover border-2 border-maroon"> {% endcomment %}
                 <div class="relative" x-data="{ open: false }">
                     <button @click="open = !open" class="flex items-center space-x-2 focus:outline-none">
-                        {% if viewing_user.profile_picture %}
-                    <img src="{{ viewing_user.profile_picture.url }}" alt="Profile Picture" class="w-10 h-10 rounded-full object-cover border-2 border-maroon">
+                        {% if user.profile_picture %}
+                    <img src="{{ user.profile_picture.url }}" alt="Profile Picture" class="w-10 h-10 rounded-full object-cover border-2 border-maroon">
                                         {% else %}
                     <i class="fas fa-user"></i>
                     {% endif %}
@@ -382,7 +382,7 @@ body.loading {
                         x-transition:leave="transition ease-in duration-75"
                         x-transition:leave-start="transform opacity-100 scale-100"
                         x-transition:leave-end="transform opacity-0 scale-95">
-                        <a href="{% url 'view_profile' viewing_user.id %}"
+                        <a href="{% url 'view_profile' user.id %}"
                             class="block px-4 py-2 text-sm text-gray-400 hover:bg-gray-100">Your Profile</a>
                         <a href="mailto:gftinity01@gmail.com"
                             class="block px-4 py-2 text-sm text-gray-400 hover:bg-gray-100">Help

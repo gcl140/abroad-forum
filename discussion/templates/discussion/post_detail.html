@@ -1,149 +1,225 @@
-{% extends "discussion/base.html" %}
-{% load static %}
-{% block title %}
-    {{post.title | truncatechars:30}}
-{% endblock %}
+{% extends "discussion/base.html" %} 
+{% load static %} {% block title %}
+{{post.title | truncatechars:30}} 
+{% endblock %} 
 {% block content %}
-    <div class="flex items-center justify-between mb-6">
-                <div class="flex items-center gap-2">
-                    <i class="fas fa-fire text-maroon"></i>
-                    <h2 class="font-bold text-lg">Hot Questions</h2>
-                </div>
-        <div class="hidden md:flex flex-wrap gap-2 text-sm font-medium">
-                <button class="px-4 py-1.5 rounded-full bg-gradient-to-r from-gray-800 to-gray-700 text-gray-300 hover:from-gray-700 hover:to-gray-600 transition duration-200">
-                  <a href="{% url 'questions' %}?filter=latest" class="hover:underline hover:text-maroon hover:font-bold">
-                    Latest
-                  </a>
-                </button>
-                <button class="px-4 py-1.5 rounded-full bg-gradient-to-r from-maroon to-gray-700 text-white shadow-md hover:from-gray-700 hover:to-maroon transition duration-200">
-                  <a href="{% url 'questions' %}?filter=top" class="hover:underline hover:text-maroon hover:font-bold">
-                    Top
-                  </a>
-                </button>
-                <button class="px-4 py-1.5 rounded-full bg-gradient-to-r from-gray-800 to-gray-700 text-gray-300 hover:from-gray-700 hover:to-gray-600 transition duration-200">
-                  <a href="{% url 'questions' %}?filter=controversial" class="hover:underline hover:text-maroon hover:font-bold">
-                    Controversial
-                  </a>
-                </button>
-        </div>
+<div class="flex items-center justify-between mb-6">
+  <div class="flex items-center gap-2">
+    <i class="fas fa-fire text-maroon"></i>
+    <h2 class="font-bold text-lg">Hot Questions</h2>
+  </div>
+  <div class="hidden md:flex flex-wrap gap-2 text-sm font-medium">
+    <button
+      class="px-4 py-1.5 rounded-full bg-gradient-to-r from-gray-800 to-gray-700 text-gray-300 hover:from-gray-700 hover:to-gray-600 transition duration-200"
+    >
+      <a
+        href="{% url 'questions' %}?filter=latest"
+        class="hover:underline hover:text-maroon hover:font-bold"
+      >
+        Latest
+      </a>
+    </button>
+    <button
+      class="px-4 py-1.5 rounded-full bg-gradient-to-r from-maroon to-gray-700 text-white shadow-md hover:from-gray-700 hover:to-maroon transition duration-200"
+    >
+      <a
+        href="{% url 'questions' %}?filter=top"
+        class="hover:underline hover:text-maroon hover:font-bold"
+      >
+        Top
+      </a>
+    </button>
+    <button
+      class="px-4 py-1.5 rounded-full bg-gradient-to-r from-gray-800 to-gray-700 text-gray-300 hover:from-gray-700 hover:to-gray-600 transition duration-200"
+    >
+      <a
+        href="{% url 'questions' %}?filter=controversial"
+        class="hover:underline hover:text-maroon hover:font-bold"
+      >
+        Controversial
+      </a>
+    </button>
+  </div>
 
-        <select 
-          class="md:hidden px-4 py-1.5 rounded-full bg-gradient-to-r from-maroon to-gray-700 text-white shadow-md hover:from-gray-700 hover:to-maroon transition duration-200"
-          onchange="location.href='?filter=' + this.value.toLowerCase();"
-        >
-          <option disabled selected>Sort by</option>
-          <option value="recent">Latest</option>
-          <option value="top">Top</option>
-          <option value="controversial">Controversial</option>
-        </select>
+  <select
+    class="md:hidden px-4 py-1.5 rounded-full bg-gradient-to-r from-maroon to-gray-700 text-white shadow-md hover:from-gray-700 hover:to-maroon transition duration-200"
+    onchange="location.href='?filter=' + this.value.toLowerCase();"
+  >
+    <option disabled selected>Sort by</option>
+    <option value="recent">Latest</option>
+    <option value="top">Top</option>
+    <option value="controversial">Controversial</option>
+  </select>
 </div>
-
 
 <div class="bg-dark rounded-lg overflow-hidden mb-6 border border-gray-800">
   <div class="flex flex-col md:flex-row">
     <!-- Vote Controls -->
-    <div class="bg-gray-900 w-full md:w-14 flex md:flex-col flex-row justify-around md:justify-start md:items-center items-center py-2 md:py-3">
+    <div
+      class="bg-gray-900 w-full md:w-14 flex md:flex-col flex-row justify-around md:justify-start md:items-center items-center py-2 md:py-3"
+    >
       <div id="upvote-btn-{{ post.id }}">
         {% include "partials/upvote_button.html" %}
-    </div>
-      <button onclick="sharePost({{ post.id }})" class="text-gray-400 hover:text-maroon md:mt-3">
+      </div>
+      <button
+        onclick="sharePost({{ post.id }})"
+        class="text-gray-400 hover:text-maroon md:mt-3"
+      >
         <i class="fas fa-share"></i>
       </button>
     </div>
 
     <div class="flex-1 p-4">
-
       <div class="text-sm mb-2 space-y-1">
-  <!-- Top line for all screen sizes -->
-  <div class="flex items-center gap-2">
-    <div class="w-6 h-6 rounded-full bg-maroon text-white text-xs flex justify-center items-center">
-      <i class="fas fa-user"></i>
-    </div>
-    <span class="text-gray-400 text-sm">Asked by g../<a href="{% url 'view_profile' post.author.id %}" class="hover:underline hover:text-maroon hover:font-bold">{{ post.author.nickname }}</a></span>
-  </div>
-
-  <!-- Bottom line: stacked for small, inline for md+ -->
-  <div class="flex flex-row md:flex-row md:items-center md:gap-2 justify-between md:justify-between">
-    <div class="text-gray-400 text-xs md:text-sm ml-8 italic">
-      <i class="fas fa-clock text-xs"></i>
-       {{ post.created_at|timesince }} ago
-    </div>
-            
-            {% if post.tag %}
-            <div class="text-maroon text-xs md:text-sm text-right md:text-left">
-                <a href="{% url 'questions' %}?tag={{ post.tag }}" class="hover:underline hover:text-maroon hover:font-bold">
-                  • g../{{ post.tag }}
-                </a>
-            </div>
-            {% endif %}
+        <!-- Top line for all screen sizes -->
+        <div class="flex items-center gap-2">
+          <div
+            class="w-6 h-6 rounded-full bg-maroon text-white text-xs flex justify-center items-center"
+          >
+            <i class="fas fa-user"></i>
           </div>
+          <span class="text-gray-400 text-sm"
+            >Asked by g../<a
+              href="{% url 'view_profile' post.author.id %}"
+              class="hover:underline hover:text-maroon hover:font-bold"
+              >{{ post.author.nickname }}</a
+            ></span
+          >
         </div>
 
-              <h3 class="text-xl font-bold mb-2">{{ post.title }}</h3>
-              <p class="text-gray-300 mb-4">{{ post.content }}</p>
-            {% if post.link %}
-            <div class="bg-gray-900 p-3 rounded-lg mt-2 border border-gray-800 mb-2">
-                <a href="{{ post.link }}" target="_blank" rel="noopener noreferrer" 
-                  class="text-blue-400 hover:underline flex items-center gap-2 text-xs">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1" />
-                    </svg>
-                    {{ post.link|truncatechars:40 }}
-                </a>
-            </div>
-            {% endif %}
+        <!-- Bottom line: stacked for small, inline for md+ -->
+        <div
+          class="flex flex-row md:flex-row md:items-center md:gap-2 justify-between md:justify-between"
+        >
+          <div class="text-gray-400 text-xs md:text-sm ml-8 italic">
+            <i class="fas fa-clock text-xs"></i>
+            {{ post.created_at|timesince }} ago
+          </div>
 
-            {% if post.image %}
-            
-            <div class="relative mt-2 rounded-lg overflow-hidden border border-gray-800 max-w-lg z-0  mb-2" id="image-container">
-            {% if post.image %}
-                <img src="{{ post.image.url }}" alt="Image 1"
-                    class="carousel-img w-full h-auto object-cover transition-opacity duration-300 block">
-            {% endif %}
-            {% if post.image2 %}
-                <img src="{{ post.image2.url }}" alt="Image 2"
-                    class="carousel-img w-full h-auto object-cover transition-opacity duration-300 hidden">
-            {% endif %}
-
-            {% if post.image2 %}
-            <span class="absolute top-2 right-3 text-xs bg-maroon text-gray-800 px-2 py-1 rounded cursor-pointer"
-                  onclick="lonnextImage()">
-                <i class="fas fa-chevron-right"></i>
-            </span>
-            {% endif %}
+          {% if post.tag %}
+          <div class="text-maroon text-xs md:text-sm text-right md:text-left">
+            <a
+              href="{% url 'questions' %}?tag={{ post.tag }}"
+              class="hover:underline hover:text-maroon hover:font-bold"
+            >
+              • g../{{ post.tag }}
+            </a>
           </div>
           {% endif %}
+        </div>
+      </div>
 
-            <!-- Video -->
-            {% if post.video %}
-            <div class="mt-2 rounded-lg overflow-hidden border border-gray-800 max-w-lg">
-                <video controls class="w-full">
-                    <source src="{{ post.video.url }}" type="video/mp4">
-                    Your browser does not support the video tag.
-                </video>
-            </div>
-            {% endif %}
+      <h3 class="text-xl font-bold mb-2">{{ post.title }}</h3>
+      <p class="text-gray-300 mb-4">{{ post.content }}</p>
+      {% if post.link %}
+      <div class="bg-gray-900 p-3 rounded-lg mt-2 border border-gray-800 mb-2">
+        <a
+          href="{{ post.link }}"
+          target="_blank"
+          rel="noopener noreferrer"
+          class="text-blue-400 hover:underline flex items-center gap-2 text-xs"
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            class="h-4 w-4"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"
+            />
+          </svg>
+          {{ post.link|truncatechars:40 }}
+        </a>
+      </div>
+      {% endif %} {% if post.image %}
 
-            <!-- Document -->
-            {% if post.docs %}
-            <div class="bg-gray-900 p-2 rounded-lg mt-2 border border-gray-800 flex items-center gap-3 mb-2">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                </svg>
-                <div>
-                    <a href="{{ post.docs.url }}" download 
-                      class="text-sm text-blue-400 hover:underline block">{{ post.docs.name|cut:"posts/"|cut:"replies/"|truncatechars:30 }}</a>
-                    <span class="text-xs text-gray-500">{{ post.docs.size|filesizeformat }}</span>
-                </div>
-            </div>
-            {% endif %}
+      <div
+        class="relative mt-2 rounded-lg overflow-hidden border border-gray-800 max-w-lg z-0 mb-2"
+        id="image-container"
+      >
+        {% if post.image %}
+        <img
+          src="{{ post.image.url }}"
+          alt="Image 1"
+          class="carousel-img w-full h-auto object-cover transition-opacity duration-300 block"
+        />
+        {% endif %} {% if post.image2 %}
+        <img
+          src="{{ post.image2.url }}"
+          alt="Image 2"
+          class="carousel-img w-full h-auto object-cover transition-opacity duration-300 hidden"
+        />
+        {% endif %} {% if post.image2 %}
+        <span
+          class="absolute top-2 right-3 text-xs bg-maroon text-gray-800 px-2 py-1 rounded cursor-pointer"
+          onclick="lonnextImage()"
+        >
+          <i class="fas fa-chevron-right"></i>
+        </span>
+        {% endif %}
+      </div>
+      {% endif %}
+
+      <!-- Video -->
+      {% if post.video %}
+      <div
+        class="mt-2 rounded-lg overflow-hidden border border-gray-800 max-w-lg"
+      >
+        <video controls class="w-full">
+          <source src="{{ post.video.url }}" type="video/mp4" />
+          Your browser does not support the video tag.
+        </video>
+      </div>
+      {% endif %}
+
+      <!-- Document -->
+      {% if post.docs %}
+      <div
+        class="bg-gray-900 p-2 rounded-lg mt-2 border border-gray-800 flex items-center gap-3 mb-2"
+      >
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          class="h-5 w-5 text-gray-400"
+          fill="none"
+          viewBox="0 0 24 24"
+          stroke="currentColor"
+        >
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
+          />
+        </svg>
+        <div>
+          <a
+            href="{{ post.docs.url }}"
+            download
+            class="text-sm text-blue-400 hover:underline block"
+            >{{ post.docs.name|cut:"posts/"|cut:"replies/"|truncatechars:30
+            }}</a
+          >
+          <span class="text-xs text-gray-500"
+            >{{ post.docs.size|filesizeformat }}</span
+          >
+        </div>
+      </div>
+      {% endif %}
 
       <div class="flex items-center gap-4 text-sm text-gray-400">
         <button class="flex items-center gap-1 hover:text-maroon">
           <i class="far fa-comment"></i>
           <span id="reply-count">{{ post.replies.count }} replies</span>
         </button>
-        <button onclick="sharePost({{ post.id }})" class="flex items-center gap-1 hover:text-maroon">
+        <button
+          onclick="sharePost({{ post.id }})"
+          class="flex items-center gap-1 hover:text-maroon"
+        >
           <i class="fas fa-share"></i>
           <span>Share</span>
         </button>
@@ -154,93 +230,94 @@
         {% include "partials/reply-form.html" %}
         <!-- Replies List -->
         <div id="replies-container-{{ post.id }}">
-          {% for group in post.threaded_replies %}
-              {% include "partials/threaded_replies.html" %}
-            {% endfor %}
+          {% for group in post.threaded_replies %} {% include
+          "partials/threaded_replies.html" %} {% endfor %}
         </div>
       </div>
-
     </div>
   </div>
 </div>
 
-
-            <!-- Load More Button -->
-            <div class="text-center my-8">
-                <button class="px-6 py-2 bg-gray-800 hover:bg-gray-700 rounded-full font-medium">
-                    You may also like
-                </button>
-            </div>
+<!-- Load More Button -->
+<div class="text-center my-8">
+  <button
+    class="px-6 py-2 bg-gray-800 hover:bg-gray-700 rounded-full font-medium"
+  >
+    You may also like
+  </button>
+</div>
 
 {% include "partials/thequestions.html" %}
 
-
 <script>
-    let currentImageIndex = 0;
+  let currentImageIndex = 0;
 
-    function lonnextImage() {
-        const images = document.querySelectorAll('#image-container .carousel-img');
-        if (images.length < 2) return;
+  function lonnextImage() {
+    const images = document.querySelectorAll("#image-container .carousel-img");
+    if (images.length < 2) return;
 
-        // Hide current image
-        images[currentImageIndex].classList.add('hidden');
+    // Hide current image
+    images[currentImageIndex].classList.add("hidden");
 
-        // Toggle index (0 → 1 → 0)
-        currentImageIndex = (currentImageIndex + 1) % images.length;
+    // Toggle index (0 → 1 → 0)
+    currentImageIndex = (currentImageIndex + 1) % images.length;
 
-        // Show next image
-        images[currentImageIndex].classList.remove('hidden');
-    }
-
-    function sharePost(postId) {
-  const shareUrl = `${window.location.origin}/discuss/post/${postId}/`;
-
-  if (navigator.share) {
-    navigator.share({
-      title: 'Check out this post',
-      text: 'Thought you might find this interesting.',
-      url: shareUrl
-    }).catch((error) => {
-      console.error('Sharing failed:', error);
-      fallbackCopyLink(shareUrl);
-    });
-  } else if (navigator.clipboard) {
-    fallbackCopyLink(shareUrl);
-  } else {
-    Toastify({
-      text: `Sharing not supported. Copy this link:\n${shareUrl}`,
-      duration: 4000,
-      gravity: "top",
-      position: "right",
-      close: true,
-      backgroundColor: "#f44336"
-    }).showToast();
+    // Show next image
+    images[currentImageIndex].classList.remove("hidden");
   }
-}
 
-function fallbackCopyLink(url) {
-  navigator.clipboard.writeText(url).then(() => {
-    Toastify({
-      text: "Link copied to clipboard! You can now share it.",
-      duration: 3000,
-      gravity: "top",
-      position: "right",
-      close: true,
-      backgroundColor: "#4CAF50"
-    }).showToast();
-  }).catch(() => {
-    Toastify({
-      text: `Failed to copy automatically. Please copy this link manually:\n${url}`,
-      duration: 4000,
-      gravity: "top",
-      position: "right",
-      close: true,
-      backgroundColor: "#f44336"
-    }).showToast();
-  });
-}
+  function sharePost(postId) {
+    const shareUrl = `${window.location.origin}/post/${postId}/`;
+
+    if (navigator.share) {
+      navigator
+        .share({
+          title: "Check out this post",
+          text: "Thought you might find this interesting.",
+          url: shareUrl,
+        })
+        .catch((error) => {
+          console.error("Sharing failed:", error);
+          fallbackCopyLink(shareUrl);
+        });
+    } else if (navigator.clipboard) {
+      fallbackCopyLink(shareUrl);
+    } else {
+      Toastify({
+        text: `Sharing not supported. Copy this link:\n${shareUrl}`,
+        duration: 4000,
+        gravity: "top",
+        position: "right",
+        close: true,
+        backgroundColor: "#f44336",
+      }).showToast();
+    }
+  }
+
+  function fallbackCopyLink(url) {
+    navigator.clipboard
+      .writeText(url)
+      .then(() => {
+        Toastify({
+          text: "Link copied to clipboard! You can now share it.",
+          duration: 3000,
+          gravity: "top",
+          position: "right",
+          close: true,
+          backgroundColor: "#4CAF50",
+        }).showToast();
+      })
+      .catch(() => {
+        Toastify({
+          text: `Failed to copy automatically. Please copy this link manually:\n${url}`,
+          duration: 4000,
+          gravity: "top",
+          position: "right",
+          close: true,
+          backgroundColor: "#f44336",
+        }).showToast();
+      });
+  }
 </script>
 
-            {% endblock %}
-
-
+{% endblock %}

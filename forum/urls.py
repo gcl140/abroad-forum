@@ -14,7 +14,7 @@ def logout_then_google(request):
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('accounts/', include('yuzzaz.urls')),
-    path('discuss/', include('discussion.urls')),
+    path('', include('discussion.urls')),
     path('oauth/', include('social_django.urls', namespace='social')),
     path('oauth/login/google/', logout_then_google, name='logout-then-google'),
     path("__reload__/", include("django_browser_reload.urls")),

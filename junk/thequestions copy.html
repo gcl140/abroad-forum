@@ -1,131 +1,206 @@
-{% comment %} {% for post in posts %} {% endcomment %}
-{% for post in page_obj %}
+{% comment %} {% for post in posts %} {% endcomment %} {% for post in page_obj
+%}
 <div class="bg-dark rounded-lg overflow-hidden mb-6 border border-gray-800">
   <div class="flex flex-col md:flex-row">
-  
     <!-- Vote Controls -->
-    <div class="bg-gray-900 w-full md:w-14 flex md:flex-col flex-row justify-around md:justify-start md:items-center items-center py-2 md:py-3">
+    <div
+      class="bg-gray-900 w-full md:w-14 flex md:flex-col flex-row justify-around md:justify-start md:items-center items-center py-2 md:py-3"
+    >
       <div id="upvote-btn-{{ post.id }}">
-          {% include "partials/upvote_button.html" %}
+        {% include "partials/upvote_button.html" %}
       </div>
 
-      <button onclick="sharePost({{ post.id }})" class="text-gray-400 hover:text-maroon md:mt-3">
+      <button
+        onclick="sharePost({{ post.id }})"
+        class="text-gray-400 hover:text-maroon md:mt-3"
+      >
         <i class="fas fa-share"></i>
       </button>
     </div>
 
     <!-- Post Content -->
     <div class="flex-1 p-4">
-
       <div class="text-sm mb-2 space-y-0">
-  <!-- Top line for all screen sizes -->
-  <div class="flex items-center gap-2">
-    <div class="w-6 h-6 rounded-full bg-maroon text-white text-xs flex justify-center items-center">
-      {% if post.author.profile_picture %}
-      <img src="{{ post.author.profile_picture.url }}" alt="{{ post.author.nickname }}" class="w-full h-full rounded-full border-2 border-maroon object-cover">
-      {% else %}
-      <i class="fas fa-user"></i>
-      {% endif %}
-    </div>
-    <span class="text-gray-400 text-sm">Posted by g../<a href="{% url 'view_profile' post.author.id %}" class="hover:underline hover:text-maroon hover:font-bold">{{ post.author.nickname }}</a></span>
-  </div>
+        <!-- Top line for all screen sizes -->
+        <div class="flex items-center gap-2">
+          <div
+            class="w-6 h-6 rounded-full bg-maroon text-white text-xs flex justify-center items-center"
+          >
+            {% if post.author.profile_picture %}
+            <img
+              src="{{ post.author.profile_picture.url }}"
+              alt="{{ post.author.nickname }}"
+              class="w-full h-full rounded-full border-2 border-maroon object-cover"
+            />
+            {% else %}
+            <i class="fas fa-user"></i>
+            {% endif %}
+          </div>
+          <span class="text-gray-400 text-sm"
+            >Posted by g../<a
+              href="{% url 'view_profile' post.author.id %}"
+              class="hover:underline hover:text-maroon hover:font-bold"
+              >{{ post.author.nickname }}</a
+            ></span
+          >
+        </div>
 
-  <!-- Bottom line: stacked for small, inline for md+ -->
-  <div class="flex flex-row md:flex-row md:items-center md:gap-2 justify-between md:justify-between">
-    <div class="text-gray-400 text-[10px] ml-8">
-      <i class="fas fa-clock"></i>
-       {{ post.created_at|timesince }} ago
-    </div>
-    {% if post.tag %}
-    <div class="text-maroon text-xs md:text-sm text-right md:text-left">
-        <a href="{% url 'questions' %}?tag={{ post.tag }}" class="hover:underline hover:text-maroon hover:font-bold">
-            • g../{{ post.tag }}
-        </a>
-    </div>
-    {% endif %}
-  </div>
-</div>
+        <!-- Bottom line: stacked for small, inline for md+ -->
+        <div
+          class="flex flex-row md:flex-row md:items-center md:gap-2 justify-between md:justify-between"
+        >
+          <div class="text-gray-400 text-[10px] ml-8">
+            <i class="fas fa-clock"></i>
+            {{ post.created_at|timesince }} ago
+          </div>
+          {% if post.tag %}
+          <div class="text-maroon text-xs md:text-sm text-right md:text-left">
+            <a
+              href="{% url 'questions' %}?tag={{ post.tag }}"
+              class="hover:underline hover:text-maroon hover:font-bold"
+            >
+              • g../{{ post.tag }}
+            </a>
+          </div>
+          {% endif %}
+        </div>
+      </div>
 
-    <a href="{% url 'post_detail' post.id %}" class="text-gray-400 hover:text-maroon hover:underline">
-      <h3 class="text-xl font-bold mb-2">{{ post.title | truncatewords:15}}</h3>
-    </a>
+      <a
+        href="{% url 'post_detail' post.id %}"
+        class="text-gray-400 hover:text-maroon hover:underline"
+      >
+        <h3 class="text-xl font-bold mb-2">
+          {{ post.title | truncatewords:15}}
+        </h3>
+      </a>
       <p class="text-gray-300 mb-4">{{ post.content }}</p>
 
-
-
-    {% if post.link %}
-    <div class="bg-gray-900 p-3 rounded-lg mt-2 border border-gray-800 mb-2">
-        <a href="{{ post.link }}" target="_blank" rel="noopener noreferrer" 
-           class="text-blue-400 hover:underline flex items-center gap-2 text-xs">
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1" />
-            </svg>
-            {{ post.link|truncatechars:40 }}
+      {% if post.link %}
+      <div class="bg-gray-900 p-3 rounded-lg mt-2 border border-gray-800 mb-2">
+        <a
+          href="{{ post.link }}"
+          target="_blank"
+          rel="noopener noreferrer"
+          class="text-blue-400 hover:underline flex items-center gap-2 text-xs"
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            class="h-4 w-4"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"
+            />
+          </svg>
+          {{ post.link|truncatechars:40 }}
         </a>
-    </div>
-    {% endif %}
+      </div>
+      {% endif %}
 
-    <!-- Image -->
-     {% if post.image %}
-<div class="relative mt-2 rounded-lg overflow-hidden border border-gray-800 max-w-lg z-0 mb-2"
-     id="image-{{ post.id }}-container">
-    <img src="{{ post.image.url }}" alt="Image 1"
-         class="carousel-img w-full h-auto object-cover transition-opacity duration-300 block">
+      <!-- Image -->
+      {% if post.image %}
+      <div
+        class="relative mt-2 rounded-lg overflow-hidden border border-gray-800 max-w-lg z-0 mb-2"
+        id="image-{{ post.id }}-container"
+      >
+        <img
+          src="{{ post.image.url }}"
+          alt="Image 1"
+          class="carousel-img w-full h-auto object-cover transition-opacity duration-300 block"
+        />
 
-    {% if post.image2 %}
-    <img src="{{ post.image2.url }}" alt="Image 2"
-         class="carousel-img w-full h-auto object-cover transition-opacity duration-300 hidden">
+        {% if post.image2 %}
+        <img
+          src="{{ post.image2.url }}"
+          alt="Image 2"
+          class="carousel-img w-full h-auto object-cover transition-opacity duration-300 hidden"
+        />
 
-    <span class="absolute top-2 right-3 text-xs bg-maroon text-gray-800 px-2 py-1 rounded cursor-pointer"
-          onclick="nextImage({{ post.id }})">
-        <i class="fas fa-chevron-right"></i>
-    </span>
-    {% endif %}
-</div>
-{% endif %}
+        <span
+          class="absolute top-2 right-3 text-xs bg-maroon text-gray-800 px-2 py-1 rounded cursor-pointer"
+          onclick="nextImage({{ post.id }})"
+        >
+          <i class="fas fa-chevron-right"></i>
+        </span>
+        {% endif %}
+      </div>
+      {% endif %}
 
-
-
-    <!-- Video -->
-    {% if post.video %}
-    <div class="mt-2 rounded-lg overflow-hidden border border-gray-800 max-w-lg">
+      <!-- Video -->
+      {% if post.video %}
+      <div
+        class="mt-2 rounded-lg overflow-hidden border border-gray-800 max-w-lg"
+      >
         <video controls class="w-full">
-            <source src="{{ post.video.url }}" type="video/mp4">
-            Your browser does not support the video tag.
+          <source src="{{ post.video.url }}" type="video/mp4" />
+          Your browser does not support the video tag.
         </video>
-    </div>
-    {% endif %}
+      </div>
+      {% endif %}
 
-    <!-- Document -->
-    {% if post.docs %}
-    <div class="bg-gray-900 p-2 rounded-lg mt-2 border border-gray-800 flex items-center gap-3 mb-2">
-        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+      <!-- Document -->
+      {% if post.docs %}
+      <div
+        class="bg-gray-900 p-2 rounded-lg mt-2 border border-gray-800 flex items-center gap-3 mb-2"
+      >
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          class="h-5 w-5 text-gray-400"
+          fill="none"
+          viewBox="0 0 24 24"
+          stroke="currentColor"
+        >
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
+          />
         </svg>
         <div>
-            <a href="{{ post.docs.url }}" download 
-               class="text-sm text-blue-400 hover:underline block">{{ post.docs.name|cut:"posts/"|cut:"replies/"|truncatechars:30 }}</a>
-            <span class="text-xs text-gray-500">{{ post.docs.size|filesizeformat }}</span>
+          <a
+            href="{{ post.docs.url }}"
+            download
+            class="text-sm text-blue-400 hover:underline block"
+            >{{ post.docs.name|cut:"posts/"|cut:"replies/"|truncatechars:30
+            }}</a
+          >
+          <span class="text-xs text-gray-500"
+            >{{ post.docs.size|filesizeformat }}</span
+          >
         </div>
-    </div>
-    {% endif %}
-    
+      </div>
+      {% endif %}
+
       <div class="flex items-center gap-4 text-sm text-gray-400">
         <button class="flex items-center gap-1 hover:text-maroon">
           <i class="far fa-comment"></i>
 
-        <span 
-            hx-get="{% url 'get_replies_count' post.id %}" 
-            {% comment %} hx-trigger="every 5s, intersect once:false" {% endcomment %}
+          <span
+            hx-get="{% url 'get_replies_count' post.id %}"
+            {%
+            comment
+            %}
+            hx-trigger="every 5s, intersect once:false"
+            {%
+            endcomment
+            %}
             hx-trigger="intersect once:false, every 5s [hx-visible]"
             hx-swap="innerHTML"
-        >
+          >
             {{ post.replies }} replies
-        </span>
-
-
+          </span>
         </button>
-        <button onclick="sharePost({{ post.id }})" class="flex items-center gap-1 hover:text-maroon">
+        <button
+          onclick="sharePost({{ post.id }})"
+          class="flex items-center gap-1 hover:text-maroon"
+        >
           <i class="fas fa-share"></i>
           <span>Share</span>
         </button>
@@ -136,168 +211,169 @@
         <!-- Reply Form -->
         {% include "partials/reply-form.html" %}
         <!-- Replies List -->
-<!-- Toggle button -->
-<button 
-  class="toggle-replies bg-maroon my-4 text-white px-3 py-1 rounded" 
-  data-target="replies-container-{{post.id}}">
+        <!-- Toggle button -->
+        <button
+          class="toggle-replies bg-maroon my-4 text-white px-3 py-1 rounded"
+          data-target="replies-container-{{post.id}}"
+        >
+          <span class="label">Show Replies</span>
+          <i class="fas fa-chevron-down"></i>
+        </button>
 
-  <span class="label">Show Replies</span>
-  <i class="fas fa-chevron-down"></i>
-</button>
-
-<!-- Replies container -->
-<div id="replies-container-{{post.id}}" class="hidden">
-  {% for group in post.threaded_replies %}
-    {% include "partials/threaded_replies.html" %}
-    {% empty %}
-    <p class="text-gray-500 text-center">No replies yet.</p>
-  {% endfor %}
-</div>
-
+        <!-- Replies container -->
+        <div id="replies-container-{{post.id}}" class="hidden">
+          {% for group in post.threaded_replies %} {% include
+          "partials/threaded_replies.html" %} {% empty %}
+          <p class="text-gray-500 text-center">No replies yet.</p>
+          {% endfor %}
+        </div>
       </div>
     </div>
   </div>
 </div>
 
-
 {% endfor %}
 
 <script>
-    const imageIndices = {}; // track index per post
+  const imageIndices = {}; // track index per post
 
-    function nextImage(postId) {
-        const container = document.getElementById(`image-${postId}-container`);
-        const images = container.querySelectorAll(".carousel-img");
+  function nextImage(postId) {
+    const container = document.getElementById(`image-${postId}-container`);
+    const images = container.querySelectorAll(".carousel-img");
 
-        if (images.length < 2) return;
+    if (images.length < 2) return;
 
-        // init if undefined
-        if (!(postId in imageIndices)) imageIndices[postId] = 0;
+    // init if undefined
+    if (!(postId in imageIndices)) imageIndices[postId] = 0;
 
-        // hide current
-        images[imageIndices[postId]].classList.add("hidden");
+    // hide current
+    images[imageIndices[postId]].classList.add("hidden");
 
-        // next index
-        imageIndices[postId] = (imageIndices[postId] + 1) % images.length;
+    // next index
+    imageIndices[postId] = (imageIndices[postId] + 1) % images.length;
 
-        // show next
-        images[imageIndices[postId]].classList.remove("hidden");
-    }
+    // show next
+    images[imageIndices[postId]].classList.remove("hidden");
+  }
 
+  function sharePost(postId) {
+    const shareUrl = `${window.location.origin}/post/${postId}/`;
 
-function sharePost(postId) {
-  const shareUrl = `${window.location.origin}/discuss/post/${postId}/`;
-
-  if (navigator.share) {
-    navigator.share({
-      title: 'Check out this post',
-      text: 'Thought you might find this interesting.',
-      url: shareUrl
-    }).catch((error) => {
-      console.error('Sharing failed:', error);
+    if (navigator.share) {
+      navigator
+        .share({
+          title: "Check out this post",
+          text: "Thought you might find this interesting.",
+          url: shareUrl,
+        })
+        .catch((error) => {
+          console.error("Sharing failed:", error);
+          fallbackCopyLink(shareUrl);
+        });
+    } else if (navigator.clipboard) {
       fallbackCopyLink(shareUrl);
-    });
-  } else if (navigator.clipboard) {
-    fallbackCopyLink(shareUrl);
-  } else {
-    Toastify({
-      text: `Sharing not supported. Copy this link:\n${shareUrl}`,
-      duration: 4000,
-      gravity: "top",
-      position: "right",
-      close: true,
-      backgroundColor: "#f44336"
-    }).showToast();
+    } else {
+      Toastify({
+        text: `Sharing not supported. Copy this link:\n${shareUrl}`,
+        duration: 4000,
+        gravity: "top",
+        position: "right",
+        close: true,
+        backgroundColor: "#f44336",
+      }).showToast();
+    }
   }
-}
 
-function fallbackCopyLink(url) {
-  navigator.clipboard.writeText(url).then(() => {
-    Toastify({
-      text: "Link copied to clipboard! You can now share it.",
-      duration: 3000,
-      gravity: "top",
-      position: "right",
-      close: true,
-      backgroundColor: "#4CAF50"
-    }).showToast();
-  }).catch(() => {
-    Toastify({
-      text: `Failed to copy automatically. Please copy this link manually:\n${url}`,
-      duration: 4000,
-      gravity: "top",
-      position: "right",
-      close: true,
-      backgroundColor: "#f44336"
-    }).showToast();
+  function fallbackCopyLink(url) {
+    navigator.clipboard
+      .writeText(url)
+      .then(() => {
+        Toastify({
+          text: "Link copied to clipboard! You can now share it.",
+          duration: 3000,
+          gravity: "top",
+          position: "right",
+          close: true,
+          backgroundColor: "#4CAF50",
+        }).showToast();
+      })
+      .catch(() => {
+        Toastify({
+          text: `Failed to copy automatically. Please copy this link manually:\n${url}`,
+          duration: 4000,
+          gravity: "top",
+          position: "right",
+          close: true,
+          backgroundColor: "#f44336",
+        }).showToast();
+      });
+  }
+
+  function scrollAndFlash(hash) {
+    const target = document.querySelector(hash);
+    if (target) {
+      const elementRect = target.getBoundingClientRect();
+      const absoluteElementTop = elementRect.top + window.scrollY;
+
+      // Scroll so it's near the bottom of the viewport
+      const position = absoluteElementTop - window.innerHeight * 0.3;
+
+      window.scrollTo({
+        top: position,
+        behavior: "smooth",
+      });
+
+      // Flash effect
+      target.classList.add("flash-once");
+      setTimeout(() => {
+        target.classList.remove("flash-once");
+      }, 1000);
+    }
+  }
+
+  // On initial page load with hash
+  document.addEventListener("DOMContentLoaded", function () {
+    if (window.location.hash) {
+      scrollAndFlash(window.location.hash);
+    }
   });
-}
 
-function scrollAndFlash(hash) {
-                    const target = document.querySelector(hash);
-                    if (target) {
-                        const elementRect = target.getBoundingClientRect();
-                        const absoluteElementTop = elementRect.top + window.scrollY;
+  // When clicking same-page links
+  document.addEventListener("click", function (e) {
+    const link = e.target.closest('a[href^="#"]');
+    if (link && link.getAttribute("href").length > 1) {
+      e.preventDefault(); // stop default jump
+      const hash = link.getAttribute("href");
+      history.pushState(null, null, hash); // update URL hash
+      scrollAndFlash(hash);
+    }
+  });
 
-                        // Scroll so it's near the bottom of the viewport
-                        const position = absoluteElementTop - (window.innerHeight * 0.3);
+  document.addEventListener("click", function (e) {
+    const btn = e.target.closest(".toggle-replies");
+    if (!btn) return;
 
-                        window.scrollTo({
-                            top: position,
-                            behavior: "smooth"
-                        });
+    const targetId = btn.getAttribute("data-target");
+    const container = document.getElementById(targetId);
+    const label = btn.querySelector(".label");
+    const icon = btn.querySelector("i");
 
-                        // Flash effect
-                        target.classList.add("flash-once");
-                        setTimeout(() => {
-                            target.classList.remove("flash-once");
-                        }, 1000);
-                    }
-                }
-
-                // On initial page load with hash
-                document.addEventListener("DOMContentLoaded", function () {
-                    if (window.location.hash) {
-                        scrollAndFlash(window.location.hash);
-                    }
-                });
-
-                // When clicking same-page links
-                document.addEventListener("click", function (e) {
-                    const link = e.target.closest('a[href^="#"]');
-                    if (link && link.getAttribute("href").length > 1) {
-                        e.preventDefault(); // stop default jump
-                        const hash = link.getAttribute("href");
-                        history.pushState(null, null, hash); // update URL hash
-                        scrollAndFlash(hash);
-                    }
-                });
-
-document.addEventListener("click", function(e) {
-  const btn = e.target.closest(".toggle-replies");
-  if (!btn) return;
-
-  const targetId = btn.getAttribute("data-target");
-  const container = document.getElementById(targetId);
-  const label = btn.querySelector(".label");
-  const icon = btn.querySelector("i");
-
-  if (container.classList.contains("hidden")) {
-    // Open
-    container.classList.remove("hidden");
-    label.textContent = "Hide Replies";
-    btn.classList.remove("bg-maroon");
-    btn.classList.add("bg-red-600");
-    icon.classList.remove("fa-chevron-down");
-    icon.classList.add("fa-chevron-up");
-  } else {
-    // Close
-    container.classList.add("hidden");
-    label.textContent = "Show Replies";
-    btn.classList.remove("bg-red-600");
-    btn.classList.add("bg-maroon");
-    icon.classList.remove("fa-chevron-up");
-    icon.classList.add("fa-chevron-down");
-  }
-});
+    if (container.classList.contains("hidden")) {
+      // Open
+      container.classList.remove("hidden");
+      label.textContent = "Hide Replies";
+      btn.classList.remove("bg-maroon");
+      btn.classList.add("bg-red-600");
+      icon.classList.remove("fa-chevron-down");
+      icon.classList.add("fa-chevron-up");
+    } else {
+      // Close
+      container.classList.add("hidden");
+      label.textContent = "Show Replies";
+      btn.classList.remove("bg-red-600");
+      btn.classList.add("bg-maroon");
+      icon.classList.remove("fa-chevron-up");
+      icon.classList.add("fa-chevron-down");
+    }
+  });
 </script>

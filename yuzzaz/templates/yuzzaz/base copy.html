@@ -9,7 +9,7 @@
 
   <!-- Font Awesome -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-  <link rel="shortcut icon" href="../../../static/images/NB ENDITA RED (1).png" type="image/x-icon">
+  <link rel="shortcut icon" href="{% static 'images/fav.png' %}" type="image/x-icon">
   <!-- Google Fonts - Karla -->
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -22,7 +22,7 @@
       theme: {
         extend: {
           colors: {
-            maroon: '#800020',
+            maroon: '#c4ad2bff',
             dark: '#121212',
             light: '#f8f9fa',
           },
@@ -84,9 +84,9 @@
         <!-- Logo -->
         <div class="flex-shrink-0 flex items-center">
           <a href="{% url 'landing' %}" class="flex items-center space-x-2">
-            <img class="h-8 w-8" src="../../../static/images/NB ENDITA RED (1).png" alt="North & Beyond Logo">
+            <img class="h-8 w-8" src="{% static 'images/fav.png' %}" alt="ForumAbroad Logo">
             <div class="hidden lg:block flex items-center">
-              <span class="text-xl font-bold text-white hover:text-maroon transition-colors">NORTH & BEYOND</span>
+              <span class="text-xl font-bold text-white hover:text-maroon transition-colors">ForumAbroad</span>
               <br>
               <span class="text-xs font-saint text-gray-500 hover:text-maroon transition-colors">Go beyond the
                 Norm</span>

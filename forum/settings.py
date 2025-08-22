@@ -128,13 +128,22 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 AUTH_USER_MODEL = 'yuzzaz.CustomUser'
 
+# EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+# EMAIL_HOST = 'smtp.gmail.com'
+# EMAIL_PORT = 587
+# EMAIL_USE_TLS = True
+# EMAIL_HOST_USER = 'gftinity01@gmail.com'  # Use your Gmail address here
+# # EMAIL_HOST_PASSWORD = 'pjrrcldgbkeiwapb'  # Use the app password (not your Google account password)
+# EMAIL_HOST_PASSWORD = 'lwuhmvurprfjbdso'  # Use the app password (not your Google account password)
+
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-EMAIL_HOST = 'smtp.gmail.com'
-EMAIL_PORT = 587
-EMAIL_USE_TLS = True
-EMAIL_HOST_USER = 'gftinity01@gmail.com'  # Use your Gmail address here
-# EMAIL_HOST_PASSWORD = 'pjrrcldgbkeiwapb'  # Use the app password (not your Google account password)
-EMAIL_HOST_PASSWORD = 'lwuhmvurprfjbdso'  # Use the app password (not your Google account password)
+EMAIL_HOST = 'mail.tztoabroad.tech'     # cPanel mail server (sometimes it's your domain, sometimes 'mail.yourdomain.com')
+EMAIL_PORT = 465                        # or 587 depending on SSL/TLS
+EMAIL_USE_TLS = True                    # use TLS if port 587, use SSL if port 465
+EMAIL_USE_SSL = False                   # keep False if using TLS
+EMAIL_HOST_USER = 'support@tztoabroad.tech'
+EMAIL_HOST_PASSWORD = 'SupportLukoonge14@0'   # the exact password you set in cPanel for this email
+DEFAULT_FROM_EMAIL = 'support@tztoabroad.tech'
 
 INSTALLED_APPS += [
     'social_django',

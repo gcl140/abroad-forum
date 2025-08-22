@@ -257,7 +257,6 @@ def questions(request):
 
     paginator = Paginator(posts, 10)  # Show 10 posts per page
     page_number = request.GET.get('page', 1)
-    print("Page number:", page_number)
     page_obj = paginator.get_page(page_number)
 
 
@@ -413,14 +412,11 @@ def toggle_upvote(request, post_id):
         return HttpResponse("Unauthorized", status=401)
 
     upvote = UserPostInteraction.objects.filter(user=user, post=post, interaction_type='upvote')
-    print(f"Upvote exists? {upvote.exists()} for user {user} and post {post.id}")
 
     if upvote.exists():
-        print("Deleting upvote")
         upvote.delete()  # remove upvote
         post.user_has_upvoted = False
     else:
-        print("Creating upvote")
         UserPostInteraction.objects.filter(user=user, post=post, interaction_type='downvote').delete()
         UserPostInteraction.objects.create(user=user, post=post, interaction_type='upvote')
         post.user_has_upvoted = True
@@ -484,10 +480,8 @@ def toggle_reply_upvote(request, reply_id):
 
 #         if reply_id:
 #             reply_instance = get_object_or_404(Reply, id=reply_id)
-#             print(f"Adding reply to Reply ID: {reply_id}")
 #         elif parent_id:
 #             parent_instance = get_object_or_404(ReplytoAReply, id=parent_id)
-#             print(f"Adding reply to ReplytoAReply ID: {parent_id}")
 
 #         new_reply = ReplytoAReply(
 #             reply=reply_instance,
@@ -538,10 +532,8 @@ def add_reply_to_reply(request, reply_id=None, parent_id=None):
 
         if reply_id:
             reply_instance = get_object_or_404(Reply, id=reply_id)
-            print(f"Adding reply to Reply ID: {reply_id}")
         elif parent_id:
             parent_instance = get_object_or_404(ReplytoAReply, id=parent_id)
-            print(f"Adding reply to ReplytoAReply ID: {parent_id}")
 
         new_reply = ReplytoAReply(
             reply=reply_instance,
