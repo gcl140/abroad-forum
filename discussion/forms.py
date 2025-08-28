@@ -13,9 +13,10 @@ class PostForm(forms.ModelForm):
                 'placeholder': 'Post title...'
             }),
             'content': forms.Textarea(attrs={
-                'class': 'w-full bg-gray-800 rounded-lg px-4 py-2 text-sm text-white focus:outline-none focus:ring-2 focus:ring-maroon placeholder-gray-500',
-                'rows': 3,
-                'placeholder': "What's on your mind?"
+                'class': 'w-full bg-gray-800 rounded-lg px-4 py-3 text-sm text-white focus:outline-none focus:ring-2 focus:ring-maroon placeholder-gray-500 resize-y',
+                'rows': 8,
+                'placeholder': "What's on your mind? Share your thoughts, experiences, or questions here...",
+                'style': 'min-height: 200px; line-height: 1.5;'
             }),
             'link': forms.URLInput(attrs={
                 'class': 'w-full bg-gray-800 rounded-lg px-4 py-2 text-sm text-white focus:outline-none focus:ring-2 focus:ring-maroon placeholder-gray-500',

@@ -11,6 +11,11 @@ https://docs.djangoproject.com/en/4.2/ref/settings/
 """
 
 from pathlib import Path
+import os
+from dotenv import load_dotenv
+
+# Load environment variables
+load_dotenv()
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -155,18 +160,15 @@ AUTHENTICATION_BACKENDS = (
     'django.contrib.auth.backends.ModelBackend',
 )
 
-# Google OAuth2 keys
-SOCIAL_AUTH_GOOGLE_OAUTH2_KEY = '919101548584-effkv0vht53sno8d4h1b0os7ld7r9d75.apps.googleusercontent.com'
-SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET = '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'
-
+# Google OAuth2 keys (now from environment)
+SOCIAL_AUTH_GOOGLE_OAUTH2_KEY = os.getenv('GOOGLE_OAUTH2_KEY')
+SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET = os.getenv('GOOGLE_OAUTH2_SECRET')
 
 # Optional (to handle missing email cases)
 SOCIAL_AUTH_GOOGLE_OAUTH2_SCOPE = [
     'https://www.googleapis.com/auth/userinfo.email',
     'https://www.googleapis.com/auth/userinfo.profile',
 ]
-
-import os
 
 MEDIA_URL = '/media/' 
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
@@ -224,3 +226,14 @@ SOCIAL_AUTH_PIPELINE = (
     'social_core.pipeline.social_auth.load_extra_data',
     'social_core.pipeline.user.user_details',
 )
+
+# AI Content Directory for RAG System
+AI_CONTENT_DIR = os.path.join(BASE_DIR, 'ai_content')
+
+# Google AI Platform Settings from .env
+GOOGLE_AI_PROJECT_ID = os.getenv('PROJECT_ID')
+GOOGLE_AI_REGION = os.getenv('LOCATION') 
+RAG_CORPUS_ID = os.getenv('RAG_CORPUS_ID')
+
+# Build full corpus name
+RAG_CORPUS_NAME = f"projects/{GOOGLE_AI_PROJECT_ID}/locations/{GOOGLE_AI_REGION}/ragCorpora/{RAG_CORPUS_ID}"

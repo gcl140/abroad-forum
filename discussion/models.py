@@ -316,62 +316,87 @@ class ReplyToAnotherReplyInteraction(models.Model):
     def __str__(self):
         return f"{self.user.username} - {self.reply.content} ({self.get_interaction_type_display()})"
 
-
-
-
-
-
-# from django.contrib.contenttypes.models import ContentType
-# from django.contrib.contenttypes.fields import GenericForeignKey
-
-# class ReplyInteraction(models.Model):
-#     INTERACTION_TYPES = (
-#         ('view', 'View'),
-#         ('reply', 'Reply'),
-#         ('upvote', 'Upvote'),
-#         ('downvote', 'Downvote'),
-#     )
-
-#     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='user_reply_interactions')
+class AIRagFile(models.Model):
+    """Track files uploaded to RAG corpus with precise mapping"""
+    post_id = models.IntegerField(unique=True, help_text="Discussion post ID")
+    rag_file_name = models.CharField(max_length=500, help_text="Full Vertex AI File name (e.g., projects/.../ragFiles/123)")
+    rag_file_id = models.CharField(max_length=100, help_text="Just the file ID (e.g., 5509377323857763591)")
+    display_name = models.CharField(max_length=255, help_text="Display name in Vertex AI")
+    local_file_path = models.CharField(max_length=500, help_text="Path to local JSON file")
     
-#     content_type = models.ForeignKey(ContentType, on_delete=models.CASCADE)
-#     object_id = models.PositiveIntegerField()
-#     reply_object = GenericForeignKey('content_type', 'object_id')
-
-#     interaction_type = models.CharField(max_length=10, choices=INTERACTION_TYPES)
-#     timestamp = models.DateTimeField(auto_now_add=True)
-
-#     class Meta:
-#         unique_together = ('user', 'content_type', 'object_id', 'interaction_type')
-
-#     def __str__(self):
-#         return f"{self.user.username} - {self.reply_object} ({self.get_interaction_type_display()})"
-
-
-
-
-# class ReplytoAReply(models.Model):
-#     reply = models.ForeignKey(Reply, on_delete=models.CASCADE, related_name='replies_to_reply')
-#     replyier = models.ForeignKey(User, on_delete=models.CASCADE)
-#     image = models.ImageField(upload_to=reply_upload_path, blank=True, null=True)
-#     video = models.FileField(upload_to=reply_upload_path, blank=True, null=True)
-#     docs = models.FileField(upload_to=reply_upload_path, blank=True, null=True)
-#     link = models.URLField(blank=True, null=True)
-#     content = models.TextField()
-#     tag = models.CharField(max_length=50, blank=True, null=True, choices=TAG_CHOICES)
-#     created_at = models.DateTimeField(auto_now_add=True)
-
-#     @property
-#     def upvotes(self):
-#         return self.reply_to_interactions.filter(interaction_type='upvote').count()
-
-#     @property
-#     def downvotes(self):
-#         return self.reply_to_interactions.filter(interaction_type='downvote').count()
-
-#     @property
-#     def riplies(self):
-#         return self.reply_to_interactions.filter(interaction_type='reply').count()
+    # File tracking
+    uploaded_at = models.DateTimeField(auto_now_add=True)
+    last_updated_at = models.DateTimeField(auto_now=True)
+    file_size = models.IntegerField(default=0, help_text="File size in bytes")
+    file_hash = models.CharField(max_length=64, help_text="SHA256 hash of file content")
     
-#     def __str__(self):
-#         return f"Reply to {self.reply.content[:20]} by {self.replyier.nickname} on {self.created_at.strftime('%Y-%m-%d %H:%M:%S')}"
+    # Status tracking
+    is_uploaded = models.BooleanField(default=False)
+    needs_update = models.BooleanField(default=False)
+    last_sync_error = models.TextField(blank=True, help_text="Last error message if any")
+    
+    class Meta:
+        verbose_name = "AI RAG File"
+        verbose_name_plural = "AI RAG Files"
+        indexes = [
+            models.Index(fields=['post_id']),
+            models.Index(fields=['rag_file_id']),
+        ]
+    
+    def __str__(self):
+        return f"Post {self.post_id} -> {self.rag_file_id}"
+    
+    @property
+    def short_rag_file_id(self):
+        """Extract just the file ID from the full name"""
+        if self.rag_file_name:
+            return self.rag_file_name.split('/')[-1]
+        return self.rag_file_id
+
+class AIRagCorpusStats(models.Model):
+    """Track overall corpus statistics"""
+    corpus_id = models.CharField(max_length=100, unique=True)
+    total_files = models.IntegerField(default=0)
+    total_posts_indexed = models.IntegerField(default=0)
+    last_full_sync_at = models.DateTimeField(null=True, blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+    
+    def __str__(self):
+        return f"Corpus {self.corpus_id}: {self.total_files} files"
+
+# Django Signals for AI Content File Management
+from django.db.models.signals import post_save, post_delete
+from django.dispatch import receiver
+
+@receiver(post_save, sender=Post)
+def handle_post_change(sender, instance, created, **kwargs):
+    """Update AI content file when post is created/updated"""
+    from .ai_utils import update_post_content_file
+    update_post_content_file(instance.id)
+
+@receiver(post_save, sender=Reply)
+def handle_reply_change(sender, instance, created, **kwargs):
+    """Update AI content file when reply is added/updated"""
+    from .ai_utils import update_post_content_file
+    update_post_content_file(instance.post.id)
+
+@receiver(post_save, sender=ReplytoAReply)
+def handle_reply2_change(sender, instance, created, **kwargs):
+    """Update AI content file when 2nd level reply is added/updated"""
+    from .ai_utils import update_post_content_file
+    if instance.reply:
+        update_post_content_file(instance.reply.post.id)
+
+@receiver(post_save, sender=ReplyToAnotherReply)
+def handle_reply3_change(sender, instance, created, **kwargs):
+    """Update AI content file when 3rd level reply is added/updated"""
+    from .ai_utils import update_post_content_file
+    if instance.reply and instance.reply.reply:
+        update_post_content_file(instance.reply.reply.post.id)
+
+@receiver(post_delete, sender=Post)
+def handle_post_delete(sender, instance, **kwargs):
+    """Clean up AI content file when post is deleted"""
+    from .ai_utils import delete_post_content_file
+    delete_post_content_file(instance.id)
