@@ -447,6 +447,20 @@ Remember: For greetings, be warm and welcoming without searching the forum. For 
             logger.error(f"Error listing RAG files: {str(e)}")
             return []
     
+    def list_rag_files(self):
+        """Alias for list_all_rag_files for compatibility"""
+        return self.list_all_rag_files()
+    
+    def delete_rag_file(self, file_name):
+        """Delete a specific RAG file by its full name"""
+        try:
+            rag.delete_file(name=file_name)
+            logger.info(f"✅ Deleted RAG file: {file_name}")
+            return True
+        except Exception as e:
+            logger.error(f"❌ Failed to delete RAG file {file_name}: {e}")
+            raise e
+    
     def generate_discussion_data_for_post(self, post):
         """Generate discussion data structure for a post"""
         from .models import Reply, ReplytoAReply
