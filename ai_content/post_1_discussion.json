@@ -1,0 +1,80 @@
+{
+  "post": {
+    "id": 1,
+    "title": "tEST",
+    "content": "Who is who",
+    "tag": null,
+    "created_at": "2025-08-26T18:50:12.593498+00:00",
+    "upvotes": 0,
+    "downvotes": 0,
+    "author": {
+      "id": 1,
+      "nickname": "mazikuben2",
+      "email": "mazikuben2@gmail.com",
+      "reputation": 0,
+      "badges": [
+        "Newbie"
+      ],
+      "school": null,
+      "grad_year": null
+    },
+    "media": {
+      "has_image": false,
+      "has_image2": false,
+      "has_video": false,
+      "has_docs": false,
+      "has_link": false
+    },
+    "metadata": {
+      "replies_count": 1,
+      "total_interactions": 0,
+      "discussion_depth": 1
+    }
+  },
+  "discussion_thread": [
+    {
+      "id": 1,
+      "content": "hi",
+      "author": {
+        "id": 1,
+        "nickname": "mazikuben2",
+        "email": "mazikuben2@gmail.com",
+        "reputation": 0,
+        "badges": [
+          "Newbie"
+        ],
+        "school": null,
+        "grad_year": null
+      },
+      "created_at": "2025-08-26T18:51:34.539306+00:00",
+      "upvotes": 0,
+      "downvotes": 0,
+      "level": 1,
+      "media": {
+        "has_image": false,
+        "has_image2": false,
+        "has_video": false,
+        "has_docs": false,
+        "has_link": false
+      },
+      "nested_replies": []
+    }
+  ],
+  "ai_metadata": {
+    "generated_at": "2025-08-27T13:05:13.223988",
+    "content_type": "forum_discussion",
+    "discussion_levels": 3,
+    "total_participants": [
+      1
+    ],
+    "topics_discussed": [],
+    "content_summary": {
+      "total_words": 4,
+      "has_links": false,
+      "has_media": false,
+      "discussion_depth": 1,
+      "total_replies": 1
+    },
+    "participants_count": 1
+  }
+}

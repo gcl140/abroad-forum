@@ -9,6 +9,7 @@ from django.contrib.auth.decorators import login_required
 from .forms import PostForm
 from django.contrib import messages
 import random
+import logging
 from yuzzaz.models import CustomUser
 from django.contrib.sessions.models import Session
 from django.utils import timezone
@@ -18,6 +19,10 @@ from django.http import HttpResponse
 from .models import Post, UserPostInteraction
 from django.core.paginator import Paginator
 from django.urls import reverse
+import json
+from django.http import JsonResponse
+
+logger = logging.getLogger(__name__)
 
 
 def context_to_extend(request):
@@ -339,7 +344,17 @@ def add_post(request):
             post = form.save(commit=False)
             post.author = request.user
             post.save()
-            messages.success(request, 'Post added successfully!')
+            
+            # Auto-update RAG corpus with new post
+            try:
+                from .ai_rag import get_rag_manager
+                rag_manager = get_rag_manager()
+                rag_manager.update_corpus_with_new_post(post)
+                messages.success(request, 'Post added successfully and indexed for AI assistant!')
+            except Exception as e:
+                logger.warning(f"Failed to update RAG corpus: {e}")
+                messages.success(request, 'Post added successfully!')
+            
             return redirect('post_detail', id=post.id)
     else:
         form = PostForm()
@@ -364,7 +379,18 @@ def add_reply(request, post_id):
                 link=request.POST.get('link'),  # Also handle link if needed
                 tag=request.POST.get('tag')    # And tag if needed
             )
-                        # --- Create notification for post.author ---
+            
+            # Auto-update RAG corpus with new reply
+            try:
+                from .ai_rag import get_rag_manager
+                rag_manager = get_rag_manager()
+                rag_manager.update_corpus_with_new_reply(reply)
+            except Exception as e:
+                import logging
+                logger = logging.getLogger(__name__)
+                logger.warning(f"Failed to update RAG corpus with reply: {e}")
+            
+            # --- Create notification for post.author ---
             if post.author != request.user:  # Avoid notifying self
                 post_url = request.build_absolute_uri(
                     reverse("post_detail", args=[post.id])  # make sure your URL name is 'post_detail'
@@ -665,3 +691,88 @@ def mark_all_notifications_read(request):
 
     # HTMX response: return empty or a small snippet to update the count
     return HttpResponse('')  # or return a snippet to remove/update the badge
+
+
+def ai_assistant_view(request):
+    """AI Assistant page for asking questions"""
+    # Get the same context data that other views use
+    online_users, online_count, everyone_count = get_online_users()
+    
+    # Get unread notification count if user is authenticated
+    unreadnotificationcount = 0
+    if request.user.is_authenticated:
+        unreadnotificationcount = Notification.objects.filter(
+            statuses__user=request.user,
+            statuses__is_read=False
+        ).count()
+    
+    context = {
+        'page_title': 'AI Assistant',
+        'user': request.user if request.user.is_authenticated else None,
+        'viewing_user': request.user if request.user.is_authenticated else None,
+        'unreadnotificationcount': unreadnotificationcount,
+        'online_users': online_users,
+        'online_count': online_count,
+        'everyone_count': everyone_count,
+        'tag_choices': get_tag_choices(),
+    }
+    return render(request, 'discussion/ai_assistant.html', context)
+
+def ai_query_api(request):
+    """API endpoint for AI queries"""
+    if request.method != 'POST':
+        return JsonResponse({'error': 'POST method required'}, status=405)
+    
+    try:
+        data = json.loads(request.body)
+        question = data.get('question', '').strip()
+        
+        if not question:
+            return JsonResponse({'error': 'Question is required'}, status=400)
+        
+        from .ai_rag import get_rag_manager
+        rag_manager = get_rag_manager()
+        
+        # Get AI answer with sources
+        try:
+            # Extract sources using the new enhanced method
+            sources = rag_manager.extract_sources_from_retrieval(question, top_k=5)
+            
+            # Generate AI answer
+            ai_answer = rag_manager.generate_ai_answer(question)
+            
+            # Format sources for frontend with proper URLs
+            formatted_sources = []
+            for source in sources:
+                if source.get('post_id'):
+                    formatted_sources.append({
+                        'reference_id': source['reference_id'],
+                        'post_id': source['post_id'],
+                        'title': source['title'],
+                        'author': source['author'],
+                        'content_snippet': source['content_snippet'],
+                        'tag': source['tag'],
+                        'upvotes': source['upvotes'],
+                        'replies_count': source['replies_count'],
+                        'url': f'/post/{source["post_id"]}/',  # Updated URL format
+                        'confidence_score': source['confidence_score']
+                    })
+            
+            return JsonResponse({
+                'success': True,
+                'answer': ai_answer,
+                'sources': formatted_sources,
+                'question': question,
+                'sources_count': len(formatted_sources)
+            })
+            
+        except Exception as e:
+            return JsonResponse({
+                'error': f'AI service error: {str(e)}',
+                'fallback_message': 'Sorry, the AI assistant is currently unavailable. Please try again later.'
+            }, status=500)
+            
+    except json.JSONDecodeError:
+        return JsonResponse({'error': 'Invalid JSON data'}, status=400)
+    except Exception as e:
+        return JsonResponse({'error': str(e)}, status=500)

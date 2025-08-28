@@ -22,6 +22,9 @@ urlpatterns = [
     path("reply-to-a-reply/<int:parent_id>/", views.add_reply_to_reply, name="add_reply_to_a_reply"),
     path("toggle-rtr-upvote/<int:rtr_id>/", views.toggle_reply_to_reply_upvote, name="toggle_reply_to_reply_upvote"),
 
-
     path('notifications/mark-all-read/', views.mark_all_notifications_read, name='mark_all_notifications_read'),
+    
+    # AI Assistant routes
+    path('ai/', views.ai_assistant_view, name='ai_assistant'),
+    path('api/ai-query/', views.ai_query_api, name='ai_query_api'),
 ]

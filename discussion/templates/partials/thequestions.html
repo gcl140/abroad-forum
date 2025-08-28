@@ -11,7 +11,7 @@
       </div>
 
       <button
-        onclick="sharePost({{ post.id }})"
+        data-share-post="{{ post.id }}"
         class="text-gray-400 hover:text-maroon md:mt-3"
       >
         <i class="fas fa-share"></i>
@@ -74,7 +74,7 @@
           {{ post.title | truncatewords:15}}
         </h3>
       </a>
-      <p class="text-gray-300 mb-4">{{ post.content }}</p>
+      <div class="text-gray-300 mb-4 whitespace-pre-line">{{ post.content|truncatewords:50 }}</div>
 
       {% if post.link %}
       <div class="bg-gray-900 p-3 rounded-lg mt-2 border border-gray-800 mb-2">
@@ -124,7 +124,7 @@
 
         <span
           class="absolute top-2 right-3 text-xs bg-maroon text-gray-800 px-2 py-1 rounded cursor-pointer"
-          onclick="nextImage({{ post.id }})"
+          data-next-image="{{ post.id }}"
         >
           <i class="fas fa-chevron-right"></i>
         </span>
@@ -179,26 +179,24 @@
       {% endif %}
 
       <div class="flex items-center gap-4 text-sm text-gray-400">
-        <button class="flex items-center gap-1 hover:text-maroon">
+        <button
+          class="flex items-center gap-1 hover:text-maroon toggle-replies"
+          data-target="replies-container-{{post.id}}"
+        >
           <i class="far fa-comment"></i>
-
           <span
+            class="label"
             hx-get="{% url 'get_replies_count' post.id %}"
-            {%
-            comment
-            %}
-            hx-trigger="every 5s, intersect once:false"
-            {%
-            endcomment
-            %}
             hx-trigger="intersect once:false, every 5s [hx-visible]"
             hx-swap="innerHTML"
           >
-            {{ post.replies }} replies
+            {{ post.replies.count }}
           </span>
+          replies
+          <i class="fas fa-chevron-down"></i>
         </button>
         <button
-          onclick="sharePost({{ post.id }})"
+          data-share-post="{{ post.id }}"
           class="flex items-center gap-1 hover:text-maroon"
         >
           <i class="fas fa-share"></i>
@@ -211,19 +209,11 @@
         <!-- Reply Form -->
         {% include "partials/reply-form.html" %}
         <!-- Replies List -->
-        <!-- Toggle button -->
-        <button
-          class="toggle-replies bg-maroon my-4 text-white px-3 py-1 rounded"
-          data-target="replies-container-{{post.id}}"
-        >
-          <span class="label">Replies</span>
-          <i class="fas fa-chevron-down"></i>
-        </button>
-
         <!-- Replies container -->
         <div id="replies-container-{{post.id}}" class="hidden">
-          {% for group in post.threaded_replies %} {% include
-          "partials/threaded_replies.html" %} {% empty %}
+          {% for group in post.threaded_replies %} 
+            {% include "partials/threaded_replies.html" with group=group %}
+          {% empty %}
           <p class="text-gray-500 text-center">No replies yet.</p>
           {% endfor %}
         </div>
@@ -356,24 +346,40 @@
     const targetId = btn.getAttribute("data-target");
     const container = document.getElementById(targetId);
     const label = btn.querySelector(".label");
-    const icon = btn.querySelector("i");
+    const icon = btn.querySelector("i.fas");
 
     if (container.classList.contains("hidden")) {
       // Open
       container.classList.remove("hidden");
-      label.textContent = "Hide Replies";
-      btn.classList.remove("bg-maroon");
-      btn.classList.add("bg-red-600");
-      icon.classList.remove("fa-chevron-down");
-      icon.classList.add("fa-chevron-up");
+      if (label) label.classList.add("text-maroon");
+      if (icon) {
+        icon.classList.remove("fa-chevron-down");
+        icon.classList.add("fa-chevron-up");
+      }
     } else {
       // Close
       container.classList.add("hidden");
-      label.textContent = "Show Replies";
-      btn.classList.remove("bg-red-600");
-      btn.classList.add("bg-maroon");
-      icon.classList.remove("fa-chevron-up");
-      icon.classList.add("fa-chevron-down");
+      if (icon) {
+        icon.classList.remove("fa-chevron-up");
+        icon.classList.add("fa-chevron-down");
+      }
+    }
+  });
+
+  // Delegated handlers for share and next-image
+  document.addEventListener('click', function(e) {
+    const shareBtn = e.target.closest('[data-share-post]');
+    if (shareBtn) {
+      const id = parseInt(shareBtn.getAttribute('data-share-post'), 10);
+      if (!isNaN(id)) sharePost(id);
+      return;
+    }
+
+    const nextImgBtn = e.target.closest('[data-next-image]');
+    if (nextImgBtn) {
+      const id = nextImgBtn.getAttribute('data-next-image');
+      nextImage(id);
+      return;
     }
   });
 </script>

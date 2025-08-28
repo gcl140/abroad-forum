@@ -73,7 +73,7 @@
           {{ post.title | truncatewords:15}}
         </h3>
       </a>
-      <p class="text-gray-300 mb-4">{{ post.content }}</p>
+      <div class="text-gray-300 mb-4 whitespace-pre-line">{{ post.content|truncatewords:50 }}</div>
 
       {% if post.link %}
       <div class="bg-gray-900 p-3 rounded-lg mt-2 border border-gray-800 mb-2">

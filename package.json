@@ -1,0 +1,23 @@
+{
+  "name": "abroad-forum",
+  "version": "1.0.0",
+  "description": "A Django-based forum application with integrated AI features for intelligent question answering using RAG (Retrieval Augmented Generation) technology.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/gcl140/abroad-forum.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/gcl140/abroad-forum/issues"
+  },
+  "homepage": "https://github.com/gcl140/abroad-forum#readme",
+  "devDependencies": {
+    "tailwindcss": "^4.1.12"
+  }
+}

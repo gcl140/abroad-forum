@@ -1,0 +1,52 @@
+{
+  "post": {
+    "id": 2,
+    "title": "How can I get to a top University like MIT? What projects do I need to do",
+    "content": "hi, if you are going for computer science start coding early and do open source contributions... also attend hackathons, events, conferences, etc",
+    "tag": null,
+    "created_at": "2025-08-27T09:33:43.327116+00:00",
+    "upvotes": 0,
+    "downvotes": 0,
+    "author": {
+      "id": 1,
+      "nickname": "mazikuben2",
+      "email": "mazikuben2@gmail.com",
+      "reputation": 0,
+      "badges": [
+        "Newbie"
+      ],
+      "school": null,
+      "grad_year": null
+    },
+    "media": {
+      "has_image": false,
+      "has_image2": false,
+      "has_video": false,
+      "has_docs": false,
+      "has_link": false
+    },
+    "metadata": {
+      "replies_count": 0,
+      "total_interactions": 0,
+      "discussion_depth": 0
+    }
+  },
+  "discussion_thread": [],
+  "ai_metadata": {
+    "generated_at": "2025-08-27T13:05:13.209078",
+    "content_type": "forum_discussion",
+    "discussion_levels": 3,
+    "total_participants": [
+      1
+    ],
+    "topics_discussed": [],
+    "content_summary": {
+      "total_words": 22,
+      "has_links": false,
+      "has_media": false,
+      "discussion_depth": 0,
+      "total_replies": 0
+    },
+    "participants_count": 1
+  }
+}
