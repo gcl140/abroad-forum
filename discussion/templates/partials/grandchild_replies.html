@@ -10,9 +10,12 @@
 
                       </div>
                       {% if grandchild.reply %}
-                <span class="text-gray-400"><a href="{% url 'view_profile' grandchild.replyier.id %}" class="hover:underline hover:text-maroon hover:font-bold">{{ grandchild.replyier.nickname }}</a></span>
+                <span class="text-gray-400"><a href="{% url 'view_profile' grandchild.replyier.id %}" class="hover:underline hover:text-maroon hover:font-bold">{{ grandchild.replyier.nickname }}11 </a></span>
+                
+                      {% elif grandchild.reply %}
+                <span class="text-gray-400"><a href="{% url 'view_profile' grandchild.parent.replyier.id %}" class="hover:underline hover:text-maroon hover:font-bold">{{ grandchild.parent.replyier.nickname }} </a></span>
                 {% else %}
-                <span class="text-gray-400"><a href="{% url 'view_profile' grandchild.parent.replyier.id %}" class="hover:underline hover:text-maroon hover:font-bold">{{ grandchild.parent.replyier.nickname }}</a></span>
+                                <span class="text-gray-400"><a href="{% url 'view_profile' grandchild.replyier.id %}" class="hover:underline hover:text-maroon hover:font-bold">{{ grandchild.replyier.nickname }}</a></span>
                 {% endif%}
                 <span class="text-gray-500">•</span>
                 <span class="text-gray-400">{{ grandchild.created_at|timesince }} ago</span>

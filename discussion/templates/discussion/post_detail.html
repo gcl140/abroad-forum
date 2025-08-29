@@ -203,8 +203,7 @@
             href="{{ post.docs.url }}"
             download
             class="text-sm text-blue-400 hover:underline block"
-            >{{ post.docs.name|cut:"posts/"|cut:"replies/"|truncatechars:30
-            }}</a
+            >{{ post.docs.name|cut:"posts/"|cut:"replies/"|truncatechars:30 }}</a
           >
           <span class="text-xs text-gray-500"
             >{{ post.docs.size|filesizeformat }}</span
