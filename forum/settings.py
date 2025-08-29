@@ -1,3 +1,7 @@
+import pymysql
+pymysql.install_as_MySQLdb()
+
+
 """
 Django settings for forum project.
 
@@ -28,9 +32,12 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-^b@qtq_otx-jv#f$81*$x7o_&7tqa4^gnx8^j)+@!pf4#8#5dj'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
+# DEBUG = True
 
-ALLOWED_HOSTS = []
+# ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['tztoabroad.tech']
+
 
 
 # Application definition
@@ -84,12 +91,24 @@ WSGI_APPLICATION = 'forum.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
 
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.sqlite3',
+#         'NAME': BASE_DIR / 'db.sqlite3',
+#     }
+# }
+
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': 'tztopqqh_tztoabroad',
+        'USER': 'tztopqqh_tztoabroad',
+        'PASSWORD': 'Lukoonge14@0',
+        'HOST': 'localhost',
+        'PORT': '3306',
     }
 }
+
 
 
 # Password validation
@@ -141,14 +160,33 @@ AUTH_USER_MODEL = 'yuzzaz.CustomUser'
 # # EMAIL_HOST_PASSWORD = 'pjrrcldgbkeiwapb'  # Use the app password (not your Google account password)
 # EMAIL_HOST_PASSWORD = 'lwuhmvurprfjbdso'  # Use the app password (not your Google account password)
 
-EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-EMAIL_HOST = 'mail.tztoabroad.tech'     # cPanel mail server (sometimes it's your domain, sometimes 'mail.yourdomain.com')
-EMAIL_PORT = 465                        # or 587 depending on SSL/TLS
-EMAIL_USE_TLS = True                    # use TLS if port 587, use SSL if port 465
-EMAIL_USE_SSL = False                   # keep False if using TLS
+# EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+# EMAIL_HOST = 'mail.tztoabroad.tech'     # cPanel mail server (sometimes it's your domain, sometimes 'mail.yourdomain.com')
+# EMAIL_PORT = 465                        # or 587 depending on SSL/TLS
+# EMAIL_USE_TLS = True                    # use TLS if port 587, use SSL if port 465
+# EMAIL_USE_SSL = False                   # keep False if using TLS
+# EMAIL_HOST_USER = 'support@tztoabroad.tech'
+# EMAIL_HOST_PASSWORD = 'SupportLukoonge14@0'   # the exact password you set in cPanel for this email
+# DEFAULT_FROM_EMAIL = 'support@tztoabroad.tech'
+
+
+# EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+# EMAIL_HOST = 'mail.tztoabroad.tech'     # cPanel mail server (sometimes it's your domain, sometimes 'mail.yourdomain.com')
+# EMAIL_PORT = 465                        # or 587 depending on SSL/TLS
+# EMAIL_USE_TLS = True                    # use TLS if port 587, use SSL if port 465
+# EMAIL_USE_SSL = False                   # keep False if using TLS
+# EMAIL_HOST_USER = 'support@tztoabroad.tech'
+# EMAIL_HOST_PASSWORD = 'supportLukoonge14@0'   # the exact password you set in cPanel for this email
+# DEFAULT_FROM_EMAIL = 'support@tztoabroad.tech'
+
+EMAIL_HOST = 'tztoabroad.tech'
+EMAIL_PORT = 465
+EMAIL_USE_SSL = True  # Use SSL, not TLS
 EMAIL_HOST_USER = 'support@tztoabroad.tech'
-EMAIL_HOST_PASSWORD = 'SupportLukoonge14@0'   # the exact password you set in cPanel for this email
+EMAIL_HOST_PASSWORD = 'supportLukoonge14@0'
 DEFAULT_FROM_EMAIL = 'support@tztoabroad.tech'
+ 
+
 
 INSTALLED_APPS += [
     'social_django',

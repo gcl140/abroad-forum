@@ -77,6 +77,12 @@
                     <i class="fas fa-clock w-5"></i>
                     <span>Recent</span>
                 </a>
+                                <!-- AI Assistant Button -->
+                <a href="{% url 'ai_assistant' %}" class="flex items-center gap-3 p-2 rounded hover:bg-gray-700 hover:bg-opacity-50 text-gray-300 hover:text-white transition-all duration-200">
+                    <i class="fas fa-robot w-5 animate-pulse"></i>
+                    <span>AI</span>
+                </a>
+                
                 {% comment %} <a href="#" class="flex items-center gap-3 p-2 rounded hover:bg-maroon hover:bg-opacity-20 text-gray-300 hover:text-white">
                     <i class="fas fa-bookmark w-5"></i>
                     <span>Saved</span>
@@ -343,9 +349,10 @@
     <!-- Community Info -->
 <div class="bg-dark rounded-lg border border-gray-800 overflow-hidden">
     <div class="p-4 border-b border-gray-800 flex items-center gap-3">
-        <div class="w-10 h-10 rounded-full bg-maroon flex items-center justify-center text-white">
-            <i class="fas fa-globe-africa"></i>
-        </div>
+<div class="w-10 h-10 rounded-full bg-maroon flex items-center justify-center overflow-hidden">
+    <img src="{% static 'images/fav.png' %}" alt="Logo" class="w-full h-full object-cover">
+</div>
+
         <div>
             <h3 class="font-bold text-lg">ForumAbroad</h3>
             <p class="text-xs text-gray-400">Your gateway to global education</p>
@@ -353,7 +360,7 @@
     </div>
     <div class="p-4">
         <p class="text-sm text-gray-300 mb-4">
-            🌍 *Big dreams deserve real answers.* ForumAbroad is where students across Tanzania come to ask, share, and learn everything about studying abroad — from applications and scholarships to life in the US. No fluff. Just honest help, from people who’ve been there or are going there.
+            🌍 *Big dreams deserve real answers.* ForumAbroad is where students across Tanzania come to ask, share, and learn everything about studying abroad — from applications and scholarships to life abroad. No fluff. Just honest help, from people who’ve been there or are going there.
         </p>
         <div class="grid grid-cols-3 gap-2 text-center mb-4">
             <div class="bg-gray-900 rounded p-2">

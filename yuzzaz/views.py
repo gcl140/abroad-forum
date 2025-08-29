@@ -206,3 +206,8 @@ def edit_profile(request):
         form = CustomUserForm(instance=request.user)
 
     return render(request, 'yuzzaz/partials/edit_profile_modal.html', {'form': form, 'viewing_user': request.user})
+    
+    
+
+def custom_404_view(request, exception):
+    return render(request, 'yuzzaz/404.html', status=404)
