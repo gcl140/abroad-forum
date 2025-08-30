@@ -1,21 +1,17 @@
+<style>
+a:hover{
+    text-decoration: underline !important;
+  }
+
+a{
+    color: #9d9fa3;
+}
+
+</style>
 {% for post in page_obj %}
 <div class="bg-dark rounded-lg overflow-hidden mb-10 border border-gray-800">
   <div class="flex flex-col md:flex-row">
-    <!-- Vote Controls -->
-    <div
-      class="hidden bg-gray-900 w-full md:w-14 md:flex md:flex-col flex-row justify-around md:justify-start md:items-center items-center py-2 md:py-3"
-    >
-      <div id="upvote-btn-{{ post.id }}">
-        {% include "partials/upvote_button.html" %}
-      </div>
 
-      <button
-        onclick="sharePost({{ post.id }})"
-        class="text-gray-400 hover:text-maroon md:mt-3"
-      >
-        <i class="fas fa-share"></i>
-      </button>
-    </div>
 
     <!-- Post Content -->
     <div class="flex-1 p-4">
@@ -224,7 +220,7 @@
 
         <!-- Vote Controls -->
     <div
-      class="md:hidden bg-gray-900 w-full md:w-14 flex md:flex-col flex-row justify-around md:justify-start md:items-center items-center py-2 md:py-3"
+      class=" bg-gray-900 w-full md:w-14 flex md:flex-col flex-row justify-around md:justify-start md:items-center items-center py-2 md:py-3"
     >
       <div id="upvote-btn-{{ post.id }}">
         {% include "partials/upvote_button.html" %}
