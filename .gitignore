@@ -153,6 +153,7 @@ dmypy.json
 
 # Cython debug symbols
 cython_debug/
+junk/
 
 # PyCharm
 #  JetBrains specific template is maintained in a separate JetBrains.gitignore that can
@@ -163,10 +164,6 @@ cython_debug/
 
 application_default_credentials.json
 
-<<<<<<< HEAD
-ai_content/
-=======
 ai_content/
 
 bright-meridian-470215-h2-bebe697286b0.json
->>>>>>> 932f5ac (from cpanel)
