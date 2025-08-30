@@ -1,6 +1,23 @@
 from django.urls import path
 from discussion import views
 
+
+from django.contrib.sitemaps.views import sitemap
+from .sitemaps import PostSitemap
+# , StaticViewSitemap
+
+from django.views.generic import TemplateView
+from django.urls import path
+
+
+
+
+sitemaps = {
+    "posts": PostSitemap,
+    # "static": StaticViewSitemap,
+}
+
+
 urlpatterns = [
 
     path('', views.questions, name='questions'),
@@ -27,4 +44,17 @@ urlpatterns = [
     # AI Assistant routes
     path('ai/', views.ai_assistant_view, name='ai_assistant'),
     path('api/ai-query/', views.ai_query_api, name='ai_query_api'),
+    
+    
+    
+    path("sitemap.xml", sitemap, {"sitemaps": sitemaps}, name="sitemap"),
+]
+
+
+
+urlpatterns += [
+    path("robots.txt", TemplateView.as_view(
+        template_name="robots.txt",
+        content_type="text/plain"
+    )),
 ]

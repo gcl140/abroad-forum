@@ -1,3 +1,4 @@
+from django.urls import reverse
 from django.db import models
 from django.contrib.auth import get_user_model
 
@@ -112,6 +113,9 @@ class Post(models.Model):
         if user.is_authenticated:
             return self.user_interactions.filter(user=user, interaction_type='upvote').exists()
         return False
+        
+    def get_absolute_url(self):
+        return reverse("post_detail", args=[self.id])
 
     
     class Meta:

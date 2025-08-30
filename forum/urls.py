@@ -29,6 +29,7 @@ from django.conf.urls import handler404
 from django.urls import path
 from yuzzaz import views
 
+
 handler404 = 'yuzzaz.views.custom_404_view'
 
 def logout_then_google(request):
@@ -46,6 +47,9 @@ urlpatterns = [
     path("__reload__/", include("django_browser_reload.urls")),
     path('accounts/login/', RedirectView.as_view(url='/login/', permanent=True)),
 ]
+
+
+
 
 if settings.DEBUG:
     # Dev: Django serves static & media
