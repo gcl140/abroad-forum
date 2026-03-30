@@ -21,6 +21,7 @@ sitemaps = {
 urlpatterns = [
 
     path('', views.questions, name='questions'),
+    path('about/', views.landing, name='about'),
     path('profile/<int:id>/', views.view_profile, name='view_profile'),
     path('post/<int:id>/', views.post_detail, name='post_detail'),
     path('add-post/', views.add_post, name='add_post'),

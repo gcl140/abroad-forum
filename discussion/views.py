@@ -25,6 +25,15 @@ from django.http import JsonResponse
 logger = logging.getLogger(__name__)
 
 
+def landing(request):
+    context = {
+        'year': datetime.now().year,
+        "all_users": CustomUser.objects.all().count(),
+        "all_posts": Post.objects.all().count(),
+    }
+    return render(request, 'yuzzaz/landing.html', context)
+
+  
 def context_to_extend(request):
     online_users, online_count, everyone_count = get_online_users()  # session-based
     tag_choices = get_tag_choices()
