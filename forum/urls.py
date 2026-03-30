@@ -40,7 +40,10 @@ def logout_then_google(request):
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('accounts/', include('yuzzaz.urls')),
+    path('ForumAbroad/', include('yuzzaz.urls')),
+    
+    # path('accounts/', include('yuzzaz.urls')),
+    
     path('', include('discussion.urls')),
     path('oauth/', include('social_django.urls', namespace='social')),
     path('oauth/login/google/', logout_then_google, name='logout-then-google'),
