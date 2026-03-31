@@ -1,13 +1,13 @@
 {% load static %}
 <!doctype html>
-<html lang="en" class="overflow-x-hidden">
+<html lang="en">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>ForumAbroad ,  Big dreams deserve real answers.</title>
 
-  <!-- Tailwind CSS CDN -->
-  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Tailwind CSS (compiled) -->
+  <link rel="stylesheet" href="{% static 'css/output.css' %}">
 
   <!-- Font Awesome 6.4.0 -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"/>
@@ -30,6 +30,9 @@
 
   <!-- Mobile slide-in menu -->
   <div class="mobile-menu" id="mobileMenu">
+    <button id="menuClose" class="absolute top-4 right-4 p-2 rounded-full bg-[#EDE9DF] text-amber-600 border border-gray-200">
+      <i class="fa-solid fa-xmark text-lg"></i>
+    </button>
     <nav class="flex flex-col gap-6">
       <a href="#about"    class="text-lg text-[#333D51] hover:text-amber-600 py-2 border-b border-gray-100">About</a>
       <a href="#features" class="text-lg text-[#333D51] hover:text-amber-600 py-2 border-b border-gray-100">Features</a>
@@ -43,11 +46,11 @@
   <!-- Floating navbar -->
   <div class="fixed inset-x-0 top-5 z-40 flex justify-center pointer-events-none">
     <div class="w-[92%] lg:w-[86%] pointer-events-auto">
-      <div class="glass rounded-3xl p-3 flex items-center justify-between neon-frame tilt">
+      <div class="glass rounded-3xl px-3 py-2 sm:p-3 flex items-center justify-between neon-frame tilt">
 
         <!-- Logo -->
         <div class="flex items-center gap-4">
-          <div class="badge-gold rounded-full p-1">
+          <div class="badge-gold rounded-full">
             <img class="h-8 w-8" src="{% static 'images/fav.png' %}" alt="ForumAbroad Logo" />
           </div>
           <div class="hidden sm:block">
@@ -80,7 +83,7 @@
   </div>
 
   <!-- Hero -->
-  <header class="pt-32 pb-8 px-4">
+  <header class="pt-32 pb-8 px-4 overflow-hidden">
     <div class="max-w-[1200px] mx-auto grid grid-cols-12 gap-6 relative">
 
       <!-- Left hero panel -->
@@ -92,7 +95,7 @@
               ForumAbroad. Opening doors for students with global dreams.
             </h1>
             <p class="mt-4 muted text-base md:text-lg max-w-xl">
-              We started ForumAbroad as two students who made the leap ourselves. Gift Christian (now at Dartmouth) and Benny (now at Alfred) know how confusing and isolating the process can feel. This platform is our way of giving back: a community where students can find clear guidance, real mentors, and trusted opportunities, without the endless guesswork.
+              We started ForumAbroad as two students who made the leap ourselves. Gift Christian (now at Dartmouth) and Benjamin Maziku (admitted to Alfred) know how confusing and isolating the process can feel. This platform is our way of giving back: a community where students can find clear guidance, real mentors, and trusted opportunities, without the endless guesswork.
             </p>
 
             <div class="mt-6 flex flex-wrap gap-3 items-center">
@@ -203,12 +206,12 @@
   <!-- Stories preview -->
   <section id="stories" class="py-14 px-4">
     <div class="max-w-[1100px] mx-auto">
-      <div class="flex items-center justify-between mb-8">
+      <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-8">
         <div>
           <h2 class="text-2xl md:text-3xl">Real stories from students who made it</h2>
           <p class="text-[var(--muted)] mt-2 text-sm">Admission journeys, scholarship wins, visa tips. Written by people who have been through it.</p>
         </div>
-        <a href="{% url 'story_list' %}" class="hidden sm:inline-flex items-center gap-2 gold-btn px-4 py-2 rounded-full text-sm">
+        <a href="{% url 'story_list' %}" class="self-start sm:self-auto inline-flex items-center gap-2 gold-btn px-4 py-2 rounded-full text-sm whitespace-nowrap">
           All stories <i class="fas fa-arrow-right"></i>
         </a>
       </div>
@@ -238,9 +241,6 @@
           </div>
         </a>
         {% endfor %}
-      </div>
-      <div class="mt-6 text-center sm:hidden">
-        <a href="{% url 'story_list' %}" class="gold-btn px-5 py-2 rounded-full text-sm">View all stories</a>
       </div>
       {% else %}
       <div class="glass rounded-2xl p-8 text-center">
@@ -392,9 +392,9 @@
 
               <div class="glass rounded-2xl p-4">
                 <div class="flex items-center gap-3">
-                  <img src="https://miminajamii.netlify.app/assets/img/team/team-12.jpg" class="w-12 h-12 md:w-14 md:h-14 rounded-md object-cover" alt="Benny">
+                  <img src="https://miminajamii.netlify.app/assets/img/team/team-12.jpg" class="w-12 h-12 md:w-14 md:h-14 rounded-md object-cover" alt="Benjamin Maziku">
                   <div>
-                    <div class="font-semibold">Benny</div>
+                    <div class="font-semibold">Benjamin Maziku</div>
                     <div class="text-xs muted">Co-founder, Alfred</div>
                   </div>
                 </div>
@@ -417,12 +417,12 @@
         <!-- Brand -->
         <div class="col-span-12 lg:col-span-5 glass rounded-3xl p-5 md:p-6">
           <div class="flex items-center gap-3 mb-3">
-            <div class="badge-gold rounded-full p-1">
+            <div class="badge-gold rounded-full">
               <img class="h-7 w-7" src="{% static 'images/fav.png' %}" alt="ForumAbroad Logo" />
             </div>
             <div class="font-bold text-lg">ForumAbroad</div>
           </div>
-          <div class="muted text-sm">Built by Gift Christian and Benny. Supporting our country's journey to global opportunity.</div>
+          <div class="muted text-sm">Built by Gift Christian and Benjamin Maziku. Supporting our country's journey to global opportunity.</div>
 
           <div class="mt-6">
             <div class="text-xs muted">Get in touch</div>
@@ -469,7 +469,7 @@
       </div>
 
       <div class="mt-8 text-center text-sm muted">
-        &copy; 2025 ForumAbroad. Built with community-first values.
+        &copy; {% now "Y" %} ForumAbroad. Built with community-first values.
       </div>
     </div>
   </footer>

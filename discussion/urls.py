@@ -1,9 +1,10 @@
 from django.urls import path
+from django.views.generic import RedirectView
 from discussion import views
 
 
 from django.contrib.sitemaps.views import sitemap
-from .sitemaps import PostSitemap
+from .utils.sitemaps import PostSitemap
 # , StaticViewSitemap
 
 from django.views.generic import TemplateView
@@ -20,8 +21,10 @@ sitemaps = {
 
 urlpatterns = [
 
-    path('', views.questions, name='questions'),
-    path('about/', views.landing, name='landing'),
+    path('', views.landing, name='landing'),
+    path('discuss/', views.questions, name='questions'),
+    path('about/', views.landing),
+    path('profile/', RedirectView.as_view(url='/accounts/login/'), name='profile_no_id'),
     path('profile/<int:id>/', views.view_profile, name='view_profile'),
     path('post/<int:id>/', views.post_detail, name='post_detail'),
     path('add-post/', views.add_post, name='add_post'),
@@ -30,6 +33,7 @@ urlpatterns = [
     #test
     path('add_reply/<int:post_id>/', views.add_reply, name='add_reply'),
     path('get_replies_count/<int:post_id>/', views.get_replies_count, name='get_replies_count'),
+    path('api/replies-counts/', views.replies_counts_api, name='replies_counts_api'),
     path("toggle-upvote/<int:post_id>/", views.toggle_upvote, name="toggle_upvote"),
     path('reply/<int:reply_id>/upvote/', views.toggle_reply_upvote, name='toggle_reply_upvote'),
     # path('reply/<int:group_id>/upvote/', views.toggle_reply_upvote, name='toggle_reply_upvote'),
@@ -48,6 +52,7 @@ urlpatterns = [
 
     # Public APIs
     path('api/stats/', views.api_stats, name='api_stats'),
+    path('api/search-suggestions/', views.api_search_suggestions, name='api_search_suggestions'),
     path('api/notifications/', views.api_notifications, name='api_notifications'),
     path('api/activity/<int:user_id>/', views.api_recent_activity, name='api_recent_activity'),
 
@@ -55,6 +60,7 @@ urlpatterns = [
     path('stories/', views.story_list, name='story_list'),
     path('stories/<int:id>/', views.story_detail, name='story_detail'),
     path('stories/create/', views.create_story, name='create_story'),
+    path('api/stories/filter/', views.stories_filter_api, name='stories_filter_api'),
     
     
     

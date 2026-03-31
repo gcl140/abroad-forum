@@ -1,0 +1,71 @@
+{% extends "discussion/base.html" %}
+{% load static %}
+{% block title %}Write a Story{% endblock %}
+{% block content %}
+
+<div class="max-w-2xl mx-auto">
+
+  <a href="{% url 'story_list' %}" class="inline-flex items-center gap-2 text-gray-400 hover:text-maroon text-sm mb-6">
+    <i class="fas fa-arrow-left"></i> Back to Stories
+  </a>
+
+  <h2 class="text-2xl font-bold mb-1">Write your story</h2>
+  <p class="text-gray-400 text-sm mb-6">Share your study-abroad journey ,  your experience could be the nudge someone else needs.</p>
+
+  <form method="POST" enctype="multipart/form-data" class="space-y-5">
+    {% csrf_token %}
+
+    <!-- Title -->
+    <div>
+      <label class="block text-sm font-medium text-gray-300 mb-1">Title <span class="text-red-400">*</span></label>
+      <input type="text" name="title" maxlength="200" required
+             placeholder="e.g. My journey from Dar es Salaam to Dartmouth"
+             class="w-full bg-gray-900 border border-gray-700 text-white rounded-lg px-4 py-3 focus:outline-none focus:border-maroon transition">
+    </div>
+
+    <!-- Summary -->
+    <div>
+      <label class="block text-sm font-medium text-gray-300 mb-1">Summary <span class="text-red-400">*</span> <span class="text-gray-500 font-normal">(shown in preview)</span></label>
+      <input type="text" name="summary" maxlength="300" required
+             placeholder="One sentence about what your story covers"
+             class="w-full bg-gray-900 border border-gray-700 text-white rounded-lg px-4 py-3 focus:outline-none focus:border-maroon transition">
+    </div>
+
+    <!-- Tag -->
+    <div>
+      <label class="block text-sm font-medium text-gray-300 mb-1">Category</label>
+      <select name="tag"
+              class="w-full bg-gray-900 border border-gray-700 text-white rounded-lg px-4 py-3 focus:outline-none focus:border-maroon transition">
+        {% for value, label in story_tags %}
+        <option value="{{ value }}">{{ label }}</option>
+        {% endfor %}
+      </select>
+    </div>
+
+    <!-- Cover image -->
+    <div>
+      <label class="block text-sm font-medium text-gray-300 mb-1">Cover Image <span class="text-gray-500 font-normal">(optional)</span></label>
+      <input type="file" name="cover_image" accept="image/*"
+             class="w-full bg-gray-900 border border-gray-700 text-gray-300 rounded-lg px-4 py-3 file:mr-4 file:py-1 file:px-3 file:rounded file:border-0 file:text-sm file:bg-maroon file:text-white hover:file:bg-opacity-90 cursor-pointer focus:outline-none focus:border-maroon transition">
+    </div>
+
+    <!-- Body -->
+    <div>
+      <label class="block text-sm font-medium text-gray-300 mb-1">Your Story <span class="text-red-400">*</span></label>
+      <textarea name="body" rows="16" required
+                placeholder="Start with your background, then walk through how you applied, what challenges you faced, and what advice you'd give to someone starting out today..."
+                class="w-full bg-gray-900 border border-gray-700 text-white rounded-lg px-4 py-3 focus:outline-none focus:border-maroon transition resize-y leading-relaxed"></textarea>
+    </div>
+
+    <div class="flex items-center gap-4 pt-2">
+      <button type="submit"
+              class="px-6 py-3 bg-maroon text-white rounded-full font-semibold hover:bg-opacity-90 transition flex items-center gap-2">
+        <i class="fas fa-paper-plane"></i> Publish Story
+      </button>
+      <a href="{% url 'story_list' %}" class="text-gray-400 hover:text-white text-sm">Cancel</a>
+    </div>
+  </form>
+
+</div>
+
+{% endblock %}

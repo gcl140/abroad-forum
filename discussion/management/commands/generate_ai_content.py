@@ -1,6 +1,6 @@
 from django.core.management.base import BaseCommand
 from discussion.models import Post
-from discussion.ai_utils import generate_post_content_file
+from discussion.utils.ai_utils import generate_post_content_file
 import os
 from django.conf import settings
 

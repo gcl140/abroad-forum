@@ -1,15 +1,11 @@
-{% comment %} 
 <button
-   hx-post="{% url 'toggle_reply_upvote' group.id %}"
-    hx-target="#upvote-reply-btn-{{ group.id }}"
+    hx-post="{% url 'toggle_reply_upvote' child_dict.id %}"
+    hx-target="#upvote-parent-reply-btn-{{ child_dict.id }}"
     hx-swap="innerHTML"
     hx-trigger="click"
     hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'
-    id="reply-btn-{{ group.id }}"
-    class="flex items-center gap-1 hover:text-maroon
-           {% if group.has_user_upvoted %}text-maroon{% else %}text-gray-400 hover:text-maroon{% endif %}">
-              <i class="fas fa-fire"></i>
-
-    <span class="text-sm font-semibold">{{ group.upvotes }}</span>
-</button> 
-{% endcomment %}
+    id="parent-reply-btn-{{ child_dict.id }}"
+    class="flex items-center gap-1 {% if child_dict.has_user_upvoted %}text-maroon{% else %}text-gray-400 hover:text-maroon{% endif %}">
+    <i class="fas fa-fire"></i>
+    <span class="text-sm font-semibold">{{ child_dict.upvotes }}</span>
+</button>

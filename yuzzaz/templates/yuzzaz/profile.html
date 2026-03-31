@@ -1,74 +1,80 @@
-{% extends "yuzzaz/besi.html" %}
+{% extends "discussion/base.html" %}
 {% load static %}
 {% load widget_tweaks %}
-{% block title %}Profile{% endblock %}
+
+{% block title %}My Profile{% endblock %}
+
+{% block extra_head %}
+<link rel="stylesheet" href="{% static 'css/profile.css' %}">
+{% endblock %}
 
 {% block content %}
-<div class="min-w-full mx-auto px-4 sm:px-6 lg:px-8 py-12 bg-dark text-red-600">
-  <!-- Profile Header -->
-  <div class="mb-8">
-    <h1 class="text-3xl font-bold">Welcome, {{ user.first_name }}!</h1>
-    <p class="text-gray-500 mt-2">Manage your profile information</p>
+<div class="max-w-4xl mx-auto">
+
+  <div class="mb-6">
+    <h1 class="text-2xl font-bold text-white">Welcome, {{ user.first_name }}!</h1>
+    <p class="text-gray-400 mt-1">Manage your profile information</p>
   </div>
 
-  <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+  <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+
     <!-- Profile Card -->
     <div class="lg:col-span-1">
-      <div class="bg-white rounded-xl shadow-md border border-gray-200 overflow-hidden">
+      <div class="bg-dark rounded-xl border border-gray-800 overflow-hidden">
         <!-- Profile Picture -->
-        <div class="relative h-64 bg-gray-100 flex items-center justify-center">
-          <img src="{% if user.profile_picture %}{{ user.profile_picture.url }}{% else %}{% static 'img/default-profile.jpg' %}{% endif %}"
-               alt="Profile Picture" 
-               class="absolute inset-0 w-full h-full object-cover">
+        <div class="relative h-52 bg-gray-800 flex items-center justify-center">
+          {% if user.profile_picture %}
+          <img src="{{ user.profile_picture.url }}" alt="Profile Picture" class="absolute inset-0 w-full h-full object-cover">
+          {% else %}
+          <i class="fas fa-user text-5xl text-gray-600"></i>
+          {% endif %}
         </div>
-        
-        <!-- Profile Info -->
-        <div class="p-6">
-          <h3 class="text-xl font-bold mb-4">Your Information</h3>
-          <div class="space-y-3">
-            <div>
-              <p class="text-sm text-gray-600">First Name</p>
-              <p class="font-medium">{{ user.first_name }}</p>
-            </div>
-            <div>
-              <p class="text-sm text-gray-600">Last Name</p>
-              <p class="font-medium">{{ user.last_name }}</p>
-            </div>
-            <div>
-              <p class="text-sm text-gray-600">Email</p>
-              <p class="font-medium"> <a href="mailto:{{ user.email }}"> {{ user.email }}</a></p>
-            </div>
-            <div>
-                <p class="text-sm text-gray-600">Telephone</p>
-                <p class="font-medium"><a href="tel:{{user.telephone}}"> {{ user.telephone }}</a></p>
-              </div>
-            </div>
-          
-          <!-- Update Button -->
-          <button id="updateButton" 
-                  class="w-full mt-6 bg-maroon text-white py-2 px-4 rounded-md font-medium hover:bg-gray-800 transition-colors">
+
+        <div class="p-5 space-y-3">
+          <div>
+            <p class="text-xs text-gray-500">First Name</p>
+            <p class="font-medium text-gray-200">{{ user.first_name|default:"—" }}</p>
+          </div>
+          <div>
+            <p class="text-xs text-gray-500">Last Name</p>
+            <p class="font-medium text-gray-200">{{ user.last_name|default:"—" }}</p>
+          </div>
+          <div>
+            <p class="text-xs text-gray-500">Email</p>
+            <p class="font-medium text-gray-200"><a href="mailto:{{ user.email }}" class="hover:text-maroon transition">{{ user.email }}</a></p>
+          </div>
+          {% if user.telephone %}
+          <div>
+            <p class="text-xs text-gray-500">Telephone</p>
+            <p class="font-medium text-gray-200"><a href="tel:{{ user.telephone }}" class="hover:text-maroon transition">{{ user.telephone }}</a></p>
+          </div>
+          {% endif %}
+
+          <button id="updateButton" class="w-full mt-4 bg-maroon text-white py-2 px-4 rounded-lg font-medium hover:opacity-90 transition">
             Update Information
           </button>
         </div>
       </div>
     </div>
 
-    <!-- Update Form (Initially Hidden) -->
+    <!-- Update Form (hidden by default) -->
     <div class="lg:col-span-2 hidden" id="updateSection">
-      <div class="bg-white rounded-xl shadow-md border border-gray-200 p-6">
-        <h3 class="text-xl font-bold mb-6">Update Your Profile</h3>
-        
+      <div class="bg-dark rounded-xl border border-gray-800 p-6">
+        <h3 class="text-lg font-bold text-white mb-5">Update Your Profile</h3>
+
         <form method="POST" enctype="multipart/form-data" class="space-y-4">
           {% csrf_token %}
-          
-          <!-- Profile Picture Field -->
+
+          <!-- Profile Picture -->
           <div>
-            <label class="block text-sm font-medium text-gray-700 mb-1">Profile Picture</label>
-            <div class="flex items-center">
-              <div class="relative w-16 h-16 rounded-full overflow-hidden mr-4 bg-gray-100">
-                <img id="profileImagePreview" 
-                     src="{% if user.profile_picture %}{{ user.profile_picture.url }}{% else %}{% static 'img/default-profile.jpg' %}{% endif %}" 
-                     class="w-full h-full object-cover">
+            <label class="block text-sm font-medium text-gray-300 mb-1">Profile Picture</label>
+            <div class="flex items-center gap-4">
+              <div class="w-14 h-14 rounded-full overflow-hidden bg-gray-800 flex-shrink-0 flex items-center justify-center">
+                {% if user.profile_picture %}
+                <img id="profileImagePreview" src="{{ user.profile_picture.url }}" class="w-full h-full object-cover">
+                {% else %}
+                <i class="fas fa-user text-gray-500"></i>
+                {% endif %}
               </div>
               <div class="flex-grow">
                 {{ form.profile_picture }}
@@ -76,64 +82,46 @@
               </div>
             </div>
           </div>
-          
-          <!-- First Name Field -->
+
+          <!-- First Name -->
           <div>
-            <label for="{{ form.first_name.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-1">
-              First Name
-            </label>
-            {{ form.first_name }}
-            {% if form.first_name.errors %}
-              <p class="mt-1 text-sm text-red-600">{{ form.first_name.errors.0 }}</p>
-            {% endif %}
+            <label for="{{ form.first_name.id_for_label }}" class="block text-sm font-medium text-gray-300 mb-1">First Name</label>
+            {{ form.first_name|add_class:"block w-full bg-gray-800 text-gray-200 rounded-lg border border-gray-700 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-maroon" }}
+            {% if form.first_name.errors %}<p class="mt-1 text-xs text-red-400">{{ form.first_name.errors.0 }}</p>{% endif %}
           </div>
-          
-          <!-- Last Name Field -->
+
+          <!-- Last Name -->
           <div>
-            <label for="{{ form.last_name.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-1">
-              Last Name
-            </label>
-            {{ form.last_name }}
-            {% if form.last_name.errors %}
-              <p class="mt-1 text-sm text-red-600">{{ form.last_name.errors.0 }}</p>
-            {% endif %}
+            <label for="{{ form.last_name.id_for_label }}" class="block text-sm font-medium text-gray-300 mb-1">Last Name</label>
+            {{ form.last_name|add_class:"block w-full bg-gray-800 text-gray-200 rounded-lg border border-gray-700 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-maroon" }}
+            {% if form.last_name.errors %}<p class="mt-1 text-xs text-red-400">{{ form.last_name.errors.0 }}</p>{% endif %}
           </div>
-          
-          <!-- Telephone Field -->
-        <div>
-            <label for="{{ form.telephone.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-1">
-            Telephone
-            </label>
-            {{ form.telephone|add_class:"block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm p-2 border border-gray-200" }}
-            {% if form.telephone.errors %}
-            <p class="mt-1 text-sm text-red-600">{{ form.telephone.errors.0 }}</p>
-            {% endif %}
-        </div>
-  
-          <!-- Email Field -->
+
+          <!-- Telephone -->
           <div>
-            <label for="{{ form.email.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-1">
-              Email
-            </label>
-            {{ form.email }}
-            {% if form.email.errors %}
-              <p class="mt-1 text-sm text-red-600">{{ form.email.errors.0 }}</p>
-            {% endif %}
+            <label for="{{ form.telephone.id_for_label }}" class="block text-sm font-medium text-gray-300 mb-1">Telephone</label>
+            {{ form.telephone|add_class:"block w-full bg-gray-800 text-gray-200 rounded-lg border border-gray-700 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-maroon" }}
+            {% if form.telephone.errors %}<p class="mt-1 text-xs text-red-400">{{ form.telephone.errors.0 }}</p>{% endif %}
           </div>
-          
-          <!-- Submit Button -->
+
+          <!-- Email -->
+          <div>
+            <label for="{{ form.email.id_for_label }}" class="block text-sm font-medium text-gray-300 mb-1">Email</label>
+            {{ form.email|add_class:"block w-full bg-gray-800 text-gray-200 rounded-lg border border-gray-700 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-maroon" }}
+            {% if form.email.errors %}<p class="mt-1 text-xs text-red-400">{{ form.email.errors.0 }}</p>{% endif %}
+          </div>
+
           <div class="pt-2">
-            <button type="submit" 
-                    class="w-full bg-maroon text-white py-3 px-4 rounded-md font-medium hover:bg-gray-800 transition-colors">
+            <button type="submit" class="w-full bg-maroon text-white py-2.5 px-4 rounded-lg font-medium hover:opacity-90 transition">
               Save Changes
             </button>
           </div>
         </form>
       </div>
     </div>
+
   </div>
 </div>
 
-<link rel="stylesheet" href="{% static 'css/profile.css' %}">
 <script src="{% static 'js/profile.js' %}"></script>
 {% endblock %}

@@ -79,6 +79,8 @@ class Notification(models.Model):
 
     @property
     def is_read(self):
+        if not self.user:
+            return False
         return self.user.notification_statuses.filter(notification=self, is_read=True).exists()
 
     def __str__(self):
@@ -120,28 +122,12 @@ class Post(models.Model):
         return self.user_interactions.filter(interaction_type='downvote').count()
 
     @property
-    def riplies(self):
-        return self.user_interactions.filter(interaction_type='reply').count()
-    
+    def replies_count(self):
+        return self.replies.count()
+
     @property
     def replies_list(self):
         return self.replies.all().order_by('created_at')
-    # @property
-    # def threaded_replies(self):
-    #     threads = []
-    #     for reply in self.replies.all().order_by('created_at'):
-    #         children = []
-    #         for child in reply.replies_to_reply.all().order_by('created_at'):
-    #             childrenzz = child.replies_to_another_reply.all().order_by('created_at')
-    #             children.append({
-    #                 'reply': child,
-    #                 'children': childrenzz
-    #             })
-    #         threads.append({
-    #             'reply': reply,
-    #             'children': children
-    #         })
-    #     return threads
     @property
     def threaded_replies(self):
         return self.replies.all().order_by('created_at')
@@ -202,9 +188,9 @@ class Reply(models.Model):
         return self.reply_interactions.filter(interaction_type='downvote').count()
 
     @property
-    def riplies(self):
-        return self.reply_interactions.filter(interaction_type='reply').count()
-    
+    def replies_count(self):
+        return self.replies_to_reply.count()
+
     def has_user_upvoted(self, user):
         if user.is_authenticated:
             return self.reply_interactions.filter(user=user, interaction_type='upvote').exists()
@@ -267,9 +253,9 @@ class ReplytoAReply(models.Model):
         return self.reply_to_interactions.filter(interaction_type='downvote').count()
 
     @property
-    def riplies(self):
+    def replies_count(self):
         return self.child_replies.count()
-    
+
     @property
     def repliedto(self):
         if self.parent:
@@ -331,12 +317,11 @@ class ReplyToAnotherReply(models.Model):
         return self.reply_to_another_reply_interactions.filter(interaction_type='downvote').count()
 
     @property
-    def riplies(self):
+    def replies_count(self):
         return self.reply_to_another_reply_interactions.filter(interaction_type='reply').count()
 
     def __str__(self):
-        # parent_info = self.reply.content[:20] if self.reply else self.parent.content[:20]
-        parent_info = self.reply.content[:20] if self.reply else self.reply.content[:20]
+        parent_info = self.reply.content[:20] if self.reply else "unknown"
         return f"Reply to {parent_info} by {self.replyier.nickname} on {self.created_at.strftime('%Y-%m-%d %H:%M:%S')}"
 
 class ReplyToAnotherReplyInteraction(models.Model):
@@ -407,37 +392,59 @@ class AIRagCorpusStats(models.Model):
         return f"Corpus {self.corpus_id}: {self.total_files} files"
 
 # Django Signals for AI Content File Management
+import threading
 from django.db.models.signals import post_save, post_delete
 from django.dispatch import receiver
 
+def _run_async(fn, *args):
+    threading.Thread(target=fn, args=args, daemon=True).start()
+
 @receiver(post_save, sender=Post)
 def handle_post_change(sender, instance, created, **kwargs):
-    """Update AI content file when post is created/updated"""
-    from .ai_utils import update_post_content_file
-    update_post_content_file(instance.id)
+    from .utils.ai_utils import sync_post_to_rag
+    _run_async(sync_post_to_rag, instance.id)
 
 @receiver(post_save, sender=Reply)
 def handle_reply_change(sender, instance, created, **kwargs):
-    """Update AI content file when reply is added/updated"""
-    from .ai_utils import update_post_content_file
-    update_post_content_file(instance.post.id)
+    from .utils.ai_utils import sync_post_to_rag
+    _run_async(sync_post_to_rag, instance.post.id)
+    _broadcast_reply_count(instance.post_id)
 
 @receiver(post_save, sender=ReplytoAReply)
 def handle_reply2_change(sender, instance, created, **kwargs):
-    """Update AI content file when 2nd level reply is added/updated"""
-    from .ai_utils import update_post_content_file
+    from .utils.ai_utils import sync_post_to_rag
     if instance.reply:
-        update_post_content_file(instance.reply.post.id)
+        _run_async(sync_post_to_rag, instance.reply.post.id)
 
 @receiver(post_save, sender=ReplyToAnotherReply)
 def handle_reply3_change(sender, instance, created, **kwargs):
-    """Update AI content file when 3rd level reply is added/updated"""
-    from .ai_utils import update_post_content_file
+    from .utils.ai_utils import sync_post_to_rag
     if instance.reply and instance.reply.reply:
-        update_post_content_file(instance.reply.reply.post.id)
+        _run_async(sync_post_to_rag, instance.reply.reply.post.id)
 
 @receiver(post_delete, sender=Post)
 def handle_post_delete(sender, instance, **kwargs):
-    """Clean up AI content file when post is deleted"""
-    from .ai_utils import delete_post_content_file
-    delete_post_content_file(instance.id)
+    from .utils.ai_utils import remove_post_from_rag
+    _run_async(remove_post_from_rag, instance.id)
+
+@receiver(post_delete, sender=Reply)
+def handle_reply_delete(sender, instance, **kwargs):
+    _broadcast_reply_count(instance.post_id)
+
+
+def _broadcast_reply_count(post_id):
+    """Push updated reply count to all WebSocket clients watching this post."""
+    def _send():
+        from asgiref.sync import async_to_sync
+        from channels.layers import get_channel_layer
+        count = Reply.objects.filter(post_id=post_id).count()
+        layer = get_channel_layer()
+        async_to_sync(layer.group_send)(
+            'reply_counts',
+            {
+                'type': 'reply.count.update',
+                'post_id': post_id,
+                'count': count,
+            }
+        )
+    threading.Thread(target=_send, daemon=True).start()

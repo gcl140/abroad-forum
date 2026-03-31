@@ -1,5 +1,5 @@
 from django.core.management.base import BaseCommand
-from discussion.ai_rag import get_rag_manager
+from discussion.utils.ai_rag import get_rag_manager
 from discussion.models import AIRagFile, AIRagCorpusStats
 
 class Command(BaseCommand):

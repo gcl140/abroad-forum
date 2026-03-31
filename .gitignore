@@ -165,5 +165,7 @@ junk/
 application_default_credentials.json
 
 ai_content/
+node_modules/
 
 bright-meridian-470215-h2-bebe697286b0.json
+/.claude/

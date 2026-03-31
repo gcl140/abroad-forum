@@ -75,20 +75,27 @@
 
     <!-- Toast Messages -->
     {% if messages %}
-    <div class="fixed-toast-container">
-        {% for message in messages %}
-        <div class="toast-message {% if message.tags %}{{ message.tags }}{% endif %}">
-            <div class="toast-content">
-                <div class="toast-text">{{ message }}</div>
-                <button type="button" class="toast-close" onclick="this.parentElement.parentElement.remove()">×</button>
-            </div>
-            <div class="toast-progress">
-                <div class="progress-bar"></div>
-            </div>
-        </div>
-        {% endfor %}
-    </div>
-
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
+    <script>
+      {% for message in messages %}
+      Toastify({
+        text: "{{ message|escapejs }}",
+        duration: 4000,
+        gravity: "top",
+        position: "right",
+        style: {
+          background: "{% if message.tags == 'success' %}#16a34a{% elif message.tags == 'error' %}#dc2626{% elif message.tags == 'warning' %}#d97706{% elif message.tags == 'info' %}#2563eb{% else %}#1f2937{% endif %}",
+          borderRadius: "0.75rem",
+          fontSize: "0.875rem",
+          fontWeight: "500",
+          boxShadow: "0 4px 12px rgba(0,0,0,0.15)",
+        },
+        stopOnFocus: true,
+        close: true,
+      }).showToast();
+      {% endfor %}
+    </script>
     {% endif %}
     <!-- Scripts -->
     <script src="{% static 'js/yuzzaz-base.js' %}"></script>

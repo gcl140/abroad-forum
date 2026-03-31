@@ -8,7 +8,7 @@ from django.conf import settings
 from dotenv import load_dotenv
 from vertexai import rag, init as vertexai_init
 from vertexai.generative_models import GenerativeModel, Tool
-from .models import Post, AIRagFile, AIRagCorpusStats
+from discussion.models import Post, AIRagFile, AIRagCorpusStats
 
 # Load environment variables
 load_dotenv()
@@ -463,7 +463,7 @@ Remember: For greetings, be warm and welcoming without searching the forum. For 
     
     def generate_discussion_data_for_post(self, post):
         """Generate discussion data structure for a post"""
-        from .models import Reply, ReplytoAReply
+        from discussion.models import Reply, ReplytoAReply
         
         # Get all replies for this post
         replies = Reply.objects.filter(post=post).order_by('created_at')
@@ -623,7 +623,7 @@ Remember: For greetings, be warm and welcoming without searching the forum. For 
             
             # Get the parent post to rebuild the discussion
             if reply.parent_type == 'post':
-                from .models import Post
+                from discussion.models import Post
                 try:
                     post = Post.objects.get(id=reply.parent_id)
                     

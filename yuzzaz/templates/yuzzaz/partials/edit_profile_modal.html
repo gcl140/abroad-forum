@@ -100,11 +100,20 @@ Edit Profile
                     </div>
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
 
-                        <div class="mt-4">
+                        <div class="mt-4 relative" id="uni-wrapper">
                         <label class="block text-gray-300 mb-2 font-medium">
                             <i class="fas fa-graduation-cap mr-2 text-maroon"></i>School/Institution
                         </label>
-                        {% render_field form.school class="w-full px-4 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-maroon focus:border-transparent transition" placeholder="Your school or institution" %}
+                        <input
+                            type="text"
+                            id="uni-search"
+                            autocomplete="off"
+                            value="{{ form.instance.school|default:'' }}"
+                            placeholder="Type to search universities..."
+                            class="w-full px-4 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-maroon focus:border-transparent transition"
+                        >
+                        {% render_field form.school class="hidden" id="uni-hidden" %}
+                        <ul id="uni-dropdown" class="absolute z-50 w-full bg-gray-800 border border-gray-600 rounded-lg mt-1 max-h-52 overflow-y-auto hidden shadow-xl"></ul>
                     </div>
 
                         <div class="mt-4">

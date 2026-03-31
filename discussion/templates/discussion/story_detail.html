@@ -1,0 +1,82 @@
+{% extends "discussion/base.html" %}
+{% load static %}
+{% block title %}{{ story.title }}{% endblock %}
+{% block content %}
+
+<div class="max-w-2xl mx-auto">
+
+  <!-- Back link -->
+  <a href="{% url 'story_list' %}" class="inline-flex items-center gap-2 text-gray-400 hover:text-maroon text-sm mb-6">
+    <i class="fas fa-arrow-left"></i> All Stories
+  </a>
+
+  <!-- Cover image -->
+  {% if story.cover_image %}
+  <div class="rounded-xl overflow-hidden mb-6 border border-gray-800">
+    <img src="{{ story.cover_image.url }}" alt="{{ story.title }}" class="w-full max-h-72 object-cover">
+  </div>
+  {% endif %}
+
+  <!-- Tag + meta -->
+  <div class="flex items-center gap-3 mb-3 flex-wrap">
+    <span class="text-xs px-2 py-0.5 rounded-full bg-gray-800 text-maroon border border-maroon/30">
+      {{ story.get_tag_display }}
+    </span>
+    <span class="text-gray-500 text-xs"><i class="fas fa-clock mr-1"></i>{{ story.created_at|timesince }} ago</span>
+    <span class="text-gray-500 text-xs"><i class="fas fa-eye mr-1"></i>{{ story.views }} views</span>
+  </div>
+
+  <!-- Title -->
+  <h1 class="text-3xl font-bold text-white leading-tight mb-3">{{ story.title }}</h1>
+
+  <!-- Author -->
+  <div class="flex items-center gap-3 mb-6 pb-6 border-b border-gray-800">
+    <div class="w-10 h-10 rounded-full bg-maroon text-white flex items-center justify-center text-sm font-bold overflow-hidden">
+      {% if story.author.profile_picture %}
+      <img src="{{ story.author.profile_picture.url }}" class="w-full h-full object-cover">
+      {% else %}
+      <i class="fas fa-user"></i>
+      {% endif %}
+    </div>
+    <div>
+      <a href="{% url 'view_profile' story.author.id %}" class="font-semibold text-white hover:text-maroon transition text-sm">
+        {{ story.author.get_full_name|default:story.author.nickname }}
+      </a>
+      {% if story.author.school %}
+      <div class="text-xs text-gray-500">{{ story.author.school }}</div>
+      {% endif %}
+    </div>
+  </div>
+
+  <!-- Summary callout -->
+  <div class="bg-gray-900 border-l-4 border-maroon rounded-r-lg p-4 mb-6 text-gray-300 italic text-sm">
+    {{ story.summary }}
+  </div>
+
+  <!-- Body -->
+  <div class="prose prose-invert prose-sm max-w-none text-gray-300 leading-relaxed whitespace-pre-line">
+    {{ story.body }}
+  </div>
+
+  <!-- Share -->
+  <div class="mt-10 pt-6 border-t border-gray-800 flex items-center gap-4">
+    <span class="text-gray-500 text-sm">Share this story:</span>
+    <a href="https://wa.me/?text={{ story.title|urlencode }}%20{{ request.scheme }}://{{ request.get_host }}/stories/{{ story.id }}/"
+       target="_blank" rel="noopener"
+       class="text-green-400 hover:text-green-300 text-sm flex items-center gap-1">
+      <i class="fab fa-whatsapp text-lg"></i> WhatsApp
+    </a>
+    <a href="https://twitter.com/intent/tweet?text={{ story.title|urlencode }}&url={{ request.scheme }}://{{ request.get_host }}/stories/{{ story.id }}/"
+       target="_blank" rel="noopener"
+       class="text-sky-400 hover:text-sky-300 text-sm flex items-center gap-1">
+      <i class="fab fa-x-twitter text-lg"></i> Twitter/X
+    </a>
+    <button onclick="navigator.clipboard.writeText(window.location.href).then(()=>{ Toastify({text:'Link copied!',duration:2000,gravity:'top',position:'right',backgroundColor:'#4CAF50'}).showToast(); })"
+            class="text-gray-400 hover:text-maroon text-sm flex items-center gap-1">
+      <i class="fas fa-link"></i> Copy link
+    </button>
+  </div>
+
+</div>
+
+{% endblock %}

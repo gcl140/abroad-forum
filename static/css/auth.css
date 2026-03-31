@@ -1,0 +1,9 @@
+body { font-family: "DM Sans", sans-serif; }
+
+@keyframes progress {
+  from { width: 100%; }
+  to   { width: 0%; }
+}
+.animate-progress { animation: progress 5s linear forwards; }
+
+input:focus { outline: none; box-shadow: 0 0 0 2px #D3AC2B55; }

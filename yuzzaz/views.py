@@ -9,7 +9,7 @@ from django.template.loader import render_to_string
 from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
 from django.utils.encoding import force_bytes, force_str
 from django.contrib.sites.shortcuts import get_current_site
-from .tokens import account_activation_token
+from .utils.tokens import account_activation_token
 from .forms import UserRegistrationForm
 from django.utils import timezone
 from django.utils.timezone import now
@@ -17,7 +17,7 @@ from django.contrib.sites.shortcuts import get_current_site
 from datetime import timedelta, datetime
 from yuzzaz.forms import UserRegistrationForm, CustomUserForm
 from django.contrib.auth.decorators import login_required
-from yuzzaz.tokens import account_activation_token
+from yuzzaz.utils.tokens import account_activation_token
 import random
 
 User = get_user_model()
@@ -28,7 +28,7 @@ def landing(request):
         'year': datetime.now().year,
         'all_users': User.objects.all().count(),
         'all_posts': Post.objects.all().count(),
-        'latest_stories': Story.objects.select_related('author').all()[:3],
+        'latest_stories': Story.objects.select_related('author').order_by('?')[:3],
     }
     return render(request, 'yuzzaz/landing.html', context)
 
@@ -42,7 +42,7 @@ def register(request):
 
             # Send activation email
             current_site = get_current_site(request)
-            message = render_to_string("yuzzaz/activate_account.html", {
+            message = render_to_string("yuzzaz/auth/activate_account.html", {
                 'user': user,
                 'domain': current_site.domain,
                 'protocol': 'https' if request.is_secure() else 'http',
@@ -65,7 +65,7 @@ def register(request):
     else:
         form = UserRegistrationForm()
 
-    return render(request, 'yuzzaz/register.html', {'form': form})
+    return render(request, 'yuzzaz/auth/register.html', {'form': form})
 
 def activate(request, uidb64, token):
     try:
@@ -100,7 +100,7 @@ def activation_sent(request):
     if not request.session.get('email_sent_time'):
         request.session['email_sent_time'] = now().isoformat()
 
-    return render(request, 'yuzzaz/activation_sent.html', {
+    return render(request, 'yuzzaz/auth/activation_sent.html', {
         'email': email,
         'can_resend_at': now() + timedelta(seconds=90),
     })
@@ -118,7 +118,7 @@ def resend_activation_email(request):
     user = User.objects.filter(email=email, is_active=False).first()
     if user:
         current_site = get_current_site(request)
-        message = render_to_string("yuzzaz/activate_account.html", {
+        message = render_to_string("yuzzaz/auth/activate_account.html", {
             'user': user,
             'domain': current_site.domain,
             'protocol': 'https' if request.is_secure() else 'http',
@@ -154,14 +154,14 @@ def login(request):
             # auth_login(request, user)
             auth_login(request, user, backend='django.contrib.auth.backends.ModelBackend')
             messages.success(request, "You have successfully logged in.")
-            if user.is_staff:
-                return redirect('questions')
-            else:
-                return redirect('questions')  # Standard redirect ,  adjust to your default user landing page
+            next_url = request.POST.get('next') or request.GET.get('next')
+            if next_url:
+                return redirect(next_url)
+            return redirect('questions')
 
         messages.error(request, "Invalid credentials, please try again.")
 
-    return render(request, 'yuzzaz/login.html')
+    return render(request, 'yuzzaz/auth/login.html')
 
 def logout(request):
     auth_logout(request)
@@ -184,13 +184,10 @@ def profile(request):
     return render(request, 'yuzzaz/profile.html', {
         'user': user,
         'form': form,
+        'viewing_user': user,
     })
 
 
-def company_profile(request):
-    context = {        
-    }
-    return render(request, 'yuzzaz/company_profile.html', context)
 
 def logout_and_login(request):
     auth_logout(request)

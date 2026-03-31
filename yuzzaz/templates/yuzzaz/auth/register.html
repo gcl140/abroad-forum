@@ -1,0 +1,183 @@
+{% extends 'yuzzaz/auth/auth-base.html' %}
+{% load static %}
+
+{% block title %}Register{% endblock %}
+
+{% block content %}
+<div class="w-full max-w-lg">
+
+  <!-- Page header -->
+  <div class="text-center mb-8">
+    <h1 class="text-2xl font-bold text-[#333D51] tracking-tight">Join ForumAbroad</h1>
+    <p class="text-sm text-[#aab0bc] mt-1">Start your study-abroad journey.</p>
+  </div>
+
+  <!-- Card -->
+  <div class="bg-white rounded-2xl shadow-sm border border-[#CBD0D8] overflow-hidden">
+    <div class="p-8">
+
+      <!-- Google Sign Up -->
+      <a
+        href="{% if not user.is_authenticated %}{% url 'social:begin' 'google-oauth2' %}?next={% url 'questions' %}{% else %}{% url 'set_user_type_and_login' %}{% endif %}"
+        class="w-full flex items-center justify-center gap-3 py-2.5 px-4 rounded-lg border border-[#CBD0D8] bg-white hover:bg-[#F4F3EA] text-[#333D51] text-sm font-medium transition-colors"
+      >
+        <svg class="h-4 w-4 flex-shrink-0" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+          <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/>
+          <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/>
+          <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z" fill="#FBBC05"/>
+          <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/>
+        </svg>
+        Sign up with Google
+      </a>
+
+      <!-- OR divider -->
+      <div class="flex items-center gap-3 my-5">
+        <hr class="flex-1 border-[#CBD0D8]" />
+        <span class="text-xs text-[#aab0bc] font-medium">OR</span>
+        <hr class="flex-1 border-[#CBD0D8]" />
+      </div>
+
+      <!-- Registration form -->
+      <form method="POST" enctype="multipart/form-data" class="space-y-4">
+        {% csrf_token %}
+
+        <!-- Row 1: First Name | Last Name -->
+        <div class="grid grid-cols-2 gap-4">
+          <div>
+            <label for="id_first_name" class="block text-sm font-medium text-[#333D51] mb-1">First Name</label>
+            <input
+              type="text"
+              id="id_first_name"
+              name="first_name"
+              placeholder="Jane"
+              class="w-full px-3 py-2.5 text-sm rounded-lg border border-[#CBD0D8] bg-[#F4F3EA] text-[#333D51] placeholder-[#aab0bc] transition-shadow"
+            />
+            {% if form.first_name.errors %}
+            <p class="mt-1 text-xs text-red-500">{{ form.first_name.errors }}</p>
+            {% endif %}
+          </div>
+          <div>
+            <label for="id_last_name" class="block text-sm font-medium text-[#333D51] mb-1">Last Name</label>
+            <input
+              type="text"
+              id="id_last_name"
+              name="last_name"
+              placeholder="Doe"
+              class="w-full px-3 py-2.5 text-sm rounded-lg border border-[#CBD0D8] bg-[#F4F3EA] text-[#333D51] placeholder-[#aab0bc] transition-shadow"
+            />
+            {% if form.last_name.errors %}
+            <p class="mt-1 text-xs text-red-500">{{ form.last_name.errors }}</p>
+            {% endif %}
+          </div>
+        </div>
+
+        <!-- Row 2: Email (full width) -->
+        <div>
+          <label for="id_email" class="block text-sm font-medium text-[#333D51] mb-1">Email</label>
+          <div class="relative">
+            <span class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-[#CBD0D8]">
+              <i class="fas fa-envelope text-sm"></i>
+            </span>
+            <input
+              type="email"
+              id="id_email"
+              name="email"
+              placeholder="your@email.com"
+              class="w-full pl-9 pr-3 py-2.5 text-sm rounded-lg border border-[#CBD0D8] bg-[#F4F3EA] text-[#333D51] placeholder-[#aab0bc] transition-shadow"
+            />
+          </div>
+          {% if form.email.errors %}
+          <p class="mt-1 text-xs text-red-500">{{ form.email.errors }}</p>
+          {% endif %}
+        </div>
+
+        <!-- Row 3: Telephone -->
+        <div class="grid grid-cols-2 gap-4">
+          <div>
+            <label for="id_telephone" class="block text-sm font-medium text-[#333D51] mb-1">Telephone</label>
+            <div class="relative">
+              <span class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-[#CBD0D8]">
+                <i class="fas fa-phone text-sm"></i>
+              </span>
+              <input
+                type="text"
+                id="id_telephone"
+                name="telephone"
+                placeholder="+1 234 567 8900"
+                class="w-full pl-9 pr-3 py-2.5 text-sm rounded-lg border border-[#CBD0D8] bg-[#F4F3EA] text-[#333D51] placeholder-[#aab0bc] transition-shadow"
+              />
+            </div>
+            {% if form.telephone.errors %}
+            <p class="mt-1 text-xs text-red-500">{{ form.telephone.errors }}</p>
+            {% endif %}
+          </div>
+          <!-- Empty filler column -->
+          <div></div>
+        </div>
+
+        <!-- Row 4: Password | Confirm Password -->
+        <div class="grid grid-cols-2 gap-4">
+          <div>
+            <label for="id_password1" class="block text-sm font-medium text-[#333D51] mb-1">Password</label>
+            <div class="relative">
+              <span class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-[#CBD0D8]">
+                <i class="fas fa-lock text-sm"></i>
+              </span>
+              <input
+                type="password"
+                id="id_password1"
+                name="password1"
+                placeholder="Create password"
+                class="w-full pl-9 pr-10 py-2.5 text-sm rounded-lg border border-[#CBD0D8] bg-[#F4F3EA] text-[#333D51] placeholder-[#aab0bc] transition-shadow"
+              />
+              <button type="button" onclick="togglePw('id_password1')" class="absolute inset-y-0 right-0 pr-3 flex items-center text-[#aab0bc] hover:text-[#333D51] transition-colors">
+                <i id="eye-id_password1" class="fas fa-eye text-sm"></i>
+              </button>
+            </div>
+            {% if form.password1.errors %}
+            <p class="mt-1 text-xs text-red-500">{{ form.password1.errors }}</p>
+            {% endif %}
+          </div>
+          <div>
+            <label for="id_password2" class="block text-sm font-medium text-[#333D51] mb-1">Confirm Password</label>
+            <div class="relative">
+              <span class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-[#CBD0D8]">
+                <i class="fas fa-lock text-sm"></i>
+              </span>
+              <input
+                type="password"
+                id="id_password2"
+                name="password2"
+                placeholder="Repeat password"
+                class="w-full pl-9 pr-10 py-2.5 text-sm rounded-lg border border-[#CBD0D8] bg-[#F4F3EA] text-[#333D51] placeholder-[#aab0bc] transition-shadow"
+              />
+              <button type="button" onclick="togglePw('id_password2')" class="absolute inset-y-0 right-0 pr-3 flex items-center text-[#aab0bc] hover:text-[#333D51] transition-colors">
+                <i id="eye-id_password2" class="fas fa-eye text-sm"></i>
+              </button>
+            </div>
+            {% if form.password2.errors %}
+            <p class="mt-1 text-xs text-red-500">{{ form.password2.errors }}</p>
+            {% endif %}
+          </div>
+        </div>
+
+        <!-- Register button -->
+        <button
+          type="submit"
+          class="w-full py-2.5 px-4 rounded-lg bg-[#D3AC2B] hover:bg-[#b89420] text-white text-sm font-semibold transition-colors mt-2"
+        >
+          <i class="fas fa-user-plus mr-2"></i> Register
+        </button>
+
+        <!-- Sign in link -->
+        <p class="text-center text-sm text-[#333D51] mt-2">
+          Already have an account?
+          <a href="{% url 'login' %}" class="font-semibold text-[#D3AC2B] hover:underline">Sign in</a>
+        </p>
+
+      </form>
+    </div>
+  </div>
+
+</div>
+{% endblock %}

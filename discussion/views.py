@@ -24,6 +24,65 @@ from django.http import JsonResponse
 
 logger = logging.getLogger(__name__)
 
+def api_search_suggestions(request):
+    q = request.GET.get('q', '').strip()
+    if len(q) < 2:
+        return JsonResponse({'results': []})
+
+    from django.urls import reverse
+    from django.db.models import Count
+    results = []
+
+    # Tags first
+    tag_qs = Post.objects.filter(tag__icontains=q).values('tag').annotate(c=Count('id')).order_by('-c')[:2]
+    for t in tag_qs:
+        tag = t['tag']
+        if tag:
+            results.append({
+                'type': 'tag',
+                'label': f'#{tag}',
+                'sublabel': f'{t["c"]} post{"s" if t["c"] != 1 else ""}',
+                'url': f'/discuss/?filter=recent&tag={tag}',
+            })
+
+    # Posts by title or content snippet
+    posts = Post.objects.filter(
+        Q(title__icontains=q) | Q(content__icontains=q) | Q(tag__icontains=q)
+    ).only('id', 'title', 'tag', 'content')[:5]
+    for post in posts:
+        snippet = post.title
+        sublabel = post.tag or ''
+        if q.lower() not in post.title.lower() and q.lower() in post.content.lower():
+            # query matched content, show snippet
+            idx = post.content.lower().find(q.lower())
+            start = max(0, idx - 30)
+            raw = post.content[start:idx + 60].strip()
+            sublabel = ('…' if start > 0 else '') + raw + '…'
+        results.append({
+            'type': 'post',
+            'label': post.title,
+            'sublabel': sublabel,
+            'url': reverse('post_detail', args=[post.id]),
+        })
+
+    # Replies
+    replies = Reply.objects.filter(
+        Q(content__icontains=q)
+    ).select_related('post').only('id', 'content', 'post__id', 'post__title')[:3]
+    for reply in replies:
+        idx = reply.content.lower().find(q.lower())
+        start = max(0, idx - 20)
+        snippet = reply.content[start:idx + 50].strip()
+        results.append({
+            'type': 'reply',
+            'label': ('…' if start > 0 else '') + snippet + '…',
+            'sublabel': f'Reply in: {reply.post.title}',
+            'url': reverse('post_detail', args=[reply.post.id]),
+        })
+
+    return JsonResponse({'results': results[:8]})
+
+
 def api_stats(request):
     from .models import Post, Story
     return JsonResponse({
@@ -35,6 +94,7 @@ def api_stats(request):
 
 def api_recent_activity(request, user_id):
     from django.utils.timesince import timesince
+    from django.urls import reverse
     target = get_object_or_404(CustomUser, id=user_id)
     items = []
 
@@ -44,8 +104,9 @@ def api_recent_activity(request, user_id):
             'label': 'Asked question',
             'title': post.title,
             'snippet': ' '.join(post.content.split()[:15]),
-            'url': f'/discuss/post/{post.id}/',
+            'url': reverse('post_detail', args=[post.id]),
             'time': timesince(post.created_at) + ' ago',
+            'ts': post.created_at.timestamp(),
             'color': 'blue',
         })
 
@@ -55,8 +116,9 @@ def api_recent_activity(request, user_id):
             'label': 'Replied',
             'title': reply.post.title,
             'snippet': ' '.join(reply.content.split()[:15]),
-            'url': f'/discuss/post/{reply.post.id}/',
+            'url': reverse('post_detail', args=[reply.post.id]),
             'time': timesince(reply.created_at) + ' ago',
+            'ts': reply.created_at.timestamp(),
             'color': 'green',
         })
 
@@ -68,10 +130,11 @@ def api_recent_activity(request, user_id):
             'snippet': ' '.join(rtr.content.split()[:10]),
             'url': None,
             'time': timesince(rtr.created_at) + ' ago',
+            'ts': rtr.created_at.timestamp(),
             'color': 'yellow',
         })
 
-    items.sort(key=lambda x: x['time'])
+    items.sort(key=lambda x: x['ts'], reverse=True)
     return JsonResponse({'activity': items[:5]})
 
 
@@ -113,21 +176,14 @@ def api_notifications(request):
 
 
 def landing(request):
+    if request.user.is_authenticated:
+        return redirect('questions')
     from .models import Story
     context = {
         'year': datetime.now().year,
         "all_users": CustomUser.objects.all().count(),
         "all_posts": Post.objects.all().count(),
         "latest_stories": Story.objects.select_related('author').all()[:3],
-    }
-    return render(request, 'yuzzaz/landing.html', context)
-
-
-def landing(request):
-    context = {
-        'year': datetime.now().year,
-        "all_users": CustomUser.objects.all().count(),
-        "all_posts": Post.objects.all().count(),
     }
     return render(request, 'yuzzaz/landing.html', context)
 
@@ -276,7 +332,7 @@ def search_content(request):
 
 def questions(request):
     if not request.user.is_authenticated:
-        return redirect('landing')
+        return redirect(f"/accounts/login/?next={request.path}")
     online_users, online_count, everyone_count = get_online_users()  # session-based
     filter_option = request.GET.get('filter', 'recent')
     posts = Post.objects.all()
@@ -456,7 +512,7 @@ def add_post(request):
             
             # Auto-update RAG corpus with new post
             try:
-                from .ai_rag import get_rag_manager
+                from .utils.ai_rag import get_rag_manager
                 rag_manager = get_rag_manager()
                 rag_manager.update_corpus_with_new_post(post)
                 messages.success(request, 'Post added successfully and indexed for AI assistant!')
@@ -491,7 +547,7 @@ def add_reply(request, post_id):
             
             # Auto-update RAG corpus with new reply
             try:
-                from .ai_rag import get_rag_manager
+                from .utils.ai_rag import get_rag_manager
                 rag_manager = get_rag_manager()
                 rag_manager.update_corpus_with_new_reply(reply)
             except Exception as e:
@@ -534,8 +590,26 @@ def add_reply(request, post_id):
 
 
 def get_replies_count(request, post_id):
-    post = get_object_or_404(Post, id=post_id)
-    return render(request, 'partials/replies_count.html', {'post': post})
+    from .models import Reply
+    count = Reply.objects.filter(post_id=post_id).count()
+    return HttpResponse(count)
+
+
+def replies_counts_api(request):
+    from .models import Reply
+    from django.db.models import Count
+    ids_param = request.GET.get('ids', '')
+    post_ids = [int(i) for i in ids_param.split(',') if i.strip().isdigit()]
+    if not post_ids:
+        return JsonResponse({'counts': {}})
+    rows = (Reply.objects
+            .filter(post_id__in=post_ids)
+            .values('post_id')
+            .annotate(count=Count('id')))
+    counts = {str(row['post_id']): row['count'] for row in rows}
+    for pid in post_ids:
+        counts.setdefault(str(pid), 0)
+    return JsonResponse({'counts': counts})
 
 
 
@@ -839,7 +913,7 @@ def ai_query_api(request):
         if not question:
             return JsonResponse({'error': 'Question is required'}, status=400)
         
-        from .ai_rag import get_rag_manager
+        from .utils.ai_rag import get_rag_manager
         rag_manager = get_rag_manager()
         
         # Get AI answer with sources
@@ -915,6 +989,29 @@ def story_list(request):
             'viewing_user': request.user,
         })
     return render(request, 'discussion/stories_list.html', context)
+
+
+def stories_filter_api(request):
+    from .models import Story
+    tag = request.GET.get('tag', '')
+    stories_qs = Story.objects.select_related('author').all()
+    if tag:
+        stories_qs = stories_qs.filter(tag=tag)
+    data = []
+    for story in stories_qs:
+        data.append({
+            'id': story.id,
+            'title': story.title,
+            'summary': story.summary,
+            'tag': story.tag,
+            'tag_display': story.get_tag_display(),
+            'views': story.views,
+            'created_at': story.created_at.isoformat(),
+            'cover_image': story.cover_image.url if story.cover_image else None,
+            'author_nickname': story.author.nickname,
+            'author_profile_picture': story.author.profile_picture.url if story.author.profile_picture else None,
+        })
+    return JsonResponse({'stories': data, 'tag': tag})
 
 
 def story_detail(request, id):

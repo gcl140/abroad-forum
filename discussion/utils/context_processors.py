@@ -1,5 +1,5 @@
-from .models import Post, Reply, Notification, UserPostInteraction, ReplyInteraction
-from .views import get_online_users, get_tag_choices  # adjust import paths as needed
+from discussion.models import Post, Reply, Notification, UserPostInteraction, ReplyInteraction
+from discussion.views import get_online_users, get_tag_choices
 
 def context_to_extend(request):
     online_users, online_count, everyone_count = get_online_users()

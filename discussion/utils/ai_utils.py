@@ -3,7 +3,7 @@ import json
 from datetime import datetime
 from django.conf import settings
 from django.core.serializers.json import DjangoJSONEncoder
-from .models import Post, Reply, ReplytoAReply, ReplyToAnotherReply
+from discussion.models import Post, Reply, ReplytoAReply, ReplyToAnotherReply
 
 def create_ai_content_directory():
     """Create directory for AI content files"""
@@ -184,6 +184,43 @@ def delete_post_content_file(post_id):
         os.remove(file_path)
         return True
     return False
+
+def sync_post_to_rag(post_id):
+    """Generate local JSON file then upload to Vertex AI RAG corpus"""
+    import logging
+    logger = logging.getLogger(__name__)
+    try:
+        # Step 1: regenerate local JSON
+        file_path = update_post_content_file(post_id)
+        if not file_path:
+            logger.warning(f"sync_post_to_rag: no local file generated for post {post_id}")
+            return False
+        # Step 2: upload to RAG
+        from discussion.utils.ai_rag import get_rag_manager
+        rag_manager = get_rag_manager()
+        result = rag_manager.upload_post_file(post_id)
+        if result:
+            logger.info(f"sync_post_to_rag: post {post_id} synced to RAG")
+            return True
+        else:
+            logger.error(f"sync_post_to_rag: upload failed for post {post_id}")
+            return False
+    except Exception as e:
+        logger.error(f"sync_post_to_rag: error for post {post_id}: {e}")
+        return False
+
+def remove_post_from_rag(post_id):
+    """Remove post from Vertex AI RAG corpus and delete local file"""
+    import logging
+    logger = logging.getLogger(__name__)
+    try:
+        from discussion.utils.ai_rag import get_rag_manager
+        rag_manager = get_rag_manager()
+        rag_manager.remove_post_from_corpus(post_id)
+    except Exception as e:
+        logger.error(f"remove_post_from_rag: error for post {post_id}: {e}")
+        # Still delete local file even if RAG removal fails
+        delete_post_content_file(post_id)
 
 def get_discussion_summary(post_id):
     """Get a summary of the discussion for AI processing"""

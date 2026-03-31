@@ -1,0 +1,37 @@
+{% extends 'yuzzaz/auth/auth-base.html' %}
+{% load static %}
+
+{% block title %}Activation Email Sent{% endblock %}
+
+{% block content %}
+<div class="w-full max-w-md">
+  <div class="bg-white rounded-2xl shadow-sm border border-[#CBD0D8] overflow-hidden">
+    <div class="p-8 text-center">
+
+      <div class="mx-auto flex items-center justify-center h-12 w-12 rounded-full bg-[#D3AC2B]/10 mb-4">
+        <i class="fas fa-envelope-open-text text-[#D3AC2B] text-xl"></i>
+      </div>
+
+      <h2 class="text-xl font-semibold text-[#333D51]">Check Your Email</h2>
+
+      <div class="mt-3 space-y-2 text-sm text-[#aab0bc]">
+        <p>We've sent an activation link to <strong class="text-[#333D51]">{{ email }}</strong>.</p>
+        <p>Open the email to activate your account. If you don't see it, check your <strong class="text-[#333D51]">spam or junk folder</strong>.</p>
+        <p>If you still haven't received it after 90 seconds, use the button below to resend.</p>
+      </div>
+
+      <form method="post" action="{% url 'resend_activation_email' %}" class="mt-6">
+        {% csrf_token %}
+        <button id="resend-btn" type="submit" disabled
+          class="w-full py-2.5 px-4 rounded-lg text-sm font-semibold transition-colors bg-[#CBD0D8] text-[#aab0bc] cursor-not-allowed">
+          <i class="fas fa-clock mr-2"></i>
+          Please wait <span id="countdown" class="font-bold mx-1">90</span> seconds...
+        </button>
+      </form>
+
+    </div>
+  </div>
+</div>
+
+<script src="{% static 'js/activation_sent.js' %}"></script>
+{% endblock %}

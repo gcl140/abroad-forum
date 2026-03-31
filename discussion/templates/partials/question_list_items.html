@@ -173,14 +173,7 @@
         >
           <i class="far fa-comment"></i>
 
-          <span
-            class="label"
-            hx-get="{% url 'get_replies_count' post.id %}"
-            hx-trigger="intersect once:false, every 5s [hx-visible]"
-            hx-swap="innerHTML"
-          >
-            {{ post.replies }}
-          </span>
+          <span class="label replies-count" data-post-id="{{ post.id }}">{{ post.replies.count }}</span>
           replies
           <i class="fas fa-chevron-down"></i>
         </button>
@@ -192,49 +185,6 @@
           <i class="fas fa-share"></i>
           <span>Share</span>
         </button>
-
-        <!-- Repost dropdown -->
-        <div class="relative" x-data="{ open: false }">
-          <button
-            @click="open = !open"
-            class="flex items-center gap-1 hover:text-maroon"
-          >
-            <i class="fas fa-retweet"></i>
-            <span>Repost</span>
-          </button>
-          <div
-            x-show="open"
-            @click.away="open = false"
-            x-transition
-            class="absolute bottom-8 left-0 bg-gray-900 border border-gray-700 rounded-lg shadow-xl z-50 min-w-max py-1"
-          >
-            <a
-              href="https://wa.me/?text={{ post.title|urlencode }}%20{{ request.scheme }}://{{ request.get_host }}/post/{{ post.id }}/"
-              target="_blank"
-              rel="noopener"
-              class="flex items-center gap-2 px-4 py-2 text-sm text-gray-300 hover:bg-gray-800 hover:text-green-400"
-              @click="open = false"
-            >
-              <i class="fab fa-whatsapp text-green-500"></i> WhatsApp
-            </a>
-            <a
-              href="https://twitter.com/intent/tweet?text={{ post.title|urlencode }}&url={{ request.scheme }}://{{ request.get_host }}/post/{{ post.id }}/"
-              target="_blank"
-              rel="noopener"
-              class="flex items-center gap-2 px-4 py-2 text-sm text-gray-300 hover:bg-gray-800 hover:text-sky-400"
-              @click="open = false"
-            >
-              <i class="fab fa-x-twitter text-sky-400"></i> Twitter / X
-            </a>
-            <button
-              onclick="copyRepostLink({{ post.id }})"
-              class="w-full text-left flex items-center gap-2 px-4 py-2 text-sm text-gray-300 hover:bg-gray-800 hover:text-maroon"
-              @click="open = false"
-            >
-              <i class="fas fa-link"></i> Copy Link
-            </button>
-          </div>
-        </div>
       </div>
 
       <!-- Comment Box -->

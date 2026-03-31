@@ -1,0 +1,90 @@
+{% extends "discussion/base.html" %}
+{% load static %}
+{% block title %}Stories{% endblock %}
+{% block content %}
+
+<div class="mb-6 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+  <div>
+    <h2 class="text-2xl font-bold flex items-center gap-2">
+      <i class="fas fa-book-open text-maroon"></i> Stories
+    </h2>
+    <p class="text-gray-400 text-sm mt-1">Real journeys from students who made it abroad. Read, learn, be inspired.</p>
+  </div>
+  {% if user.is_authenticated %}
+  <a href="{% url 'create_story' %}"
+     class="inline-flex items-center gap-2 px-4 py-2 bg-maroon text-white rounded-full text-sm font-medium hover:bg-opacity-90 transition">
+    <i class="fas fa-pen"></i> Write your story
+  </a>
+  {% endif %}
+</div>
+
+<!-- Tag filter -->
+<div class="flex flex-wrap gap-2 mb-6">
+  <button data-tag-btn data-tag=""
+     class="px-3 py-1 rounded-full text-xs font-medium border transition
+            {% if not tag_filter %}bg-maroon text-white border-maroon{% else %}bg-gray-800 text-gray-300 border-gray-700 hover:border-maroon{% endif %}">
+    All
+  </button>
+  {% for value, label in story_tags %}
+  <button data-tag-btn data-tag="{{ value }}"
+     class="px-3 py-1 rounded-full text-xs font-medium border transition
+            {% if tag_filter == value %}bg-maroon text-white border-maroon{% else %}bg-gray-800 text-gray-300 border-gray-700 hover:border-maroon{% endif %}">
+    {{ label }}
+  </button>
+  {% endfor %}
+</div>
+
+{% if stories %}
+<div id="stories-grid" class="grid grid-cols-1 md:grid-cols-2 gap-5 transition-opacity duration-150">
+  {% for story in stories %}
+  <a href="{% url 'story_detail' story.id %}"
+     class="block bg-dark border border-gray-800 rounded-xl overflow-hidden hover:border-maroon transition group">
+    {% if story.cover_image %}
+    <div class="h-40 overflow-hidden">
+      <img src="{{ story.cover_image.url }}" alt="{{ story.title }}"
+           class="w-full h-full object-cover group-hover:scale-105 transition duration-300">
+    </div>
+    {% endif %}
+    <div class="p-4">
+      <div class="flex items-center gap-2 mb-2">
+        <span class="text-xs px-2 py-0.5 rounded-full bg-gray-800 text-maroon border border-maroon/30">
+          {{ story.get_tag_display }}
+        </span>
+        <span class="text-gray-500 text-xs">{{ story.created_at|timesince }} ago</span>
+      </div>
+      <h3 class="text-lg font-bold text-white group-hover:text-maroon transition">{{ story.title }}</h3>
+      <p class="text-gray-400 text-sm mt-1 line-clamp-2">{{ story.summary }}</p>
+      <div class="mt-3 flex items-center justify-between text-xs text-gray-500">
+        <div class="flex items-center gap-2">
+          <div class="w-5 h-5 rounded-full bg-maroon text-white flex items-center justify-center text-xs">
+            {% if story.author.profile_picture %}
+            <img src="{{ story.author.profile_picture.url }}" class="w-full h-full rounded-full object-cover">
+            {% else %}
+            <i class="fas fa-user" style="font-size:8px;"></i>
+            {% endif %}
+          </div>
+          <span>{{ story.author.nickname }}</span>
+        </div>
+        <span><i class="fas fa-eye mr-1"></i>{{ story.views }}</span>
+      </div>
+    </div>
+  </a>
+  {% endfor %}
+</div>
+{% else %}
+<div id="stories-grid" class="hidden grid grid-cols-1 md:grid-cols-2 gap-5 transition-opacity duration-150"></div>
+{% endif %}
+
+<div id="stories-empty" class="text-center py-20 text-gray-500 {% if stories %}hidden{% endif %}">
+  <i class="fas fa-book-open text-4xl mb-4 block text-gray-700"></i>
+  <p class="text-lg">No stories yet.</p>
+  {% if user.is_authenticated %}
+  <p class="text-sm mt-2">Be the first — <a href="{% url 'create_story' %}" class="text-maroon hover:underline">write your story</a>.</p>
+  {% else %}
+  <p class="text-sm mt-2"><a href="{% url 'login' %}" class="text-maroon hover:underline">Sign in</a> to share your story.</p>
+  {% endif %}
+</div>
+
+<script src="{% static 'js/stories.js' %}"></script>
+
+{% endblock %}

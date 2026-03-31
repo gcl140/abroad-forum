@@ -1,0 +1,120 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="google-site-verification" content="wEtt2II-thlRgNpqM24dfMRBAooIPCGV-CH6d56R-WY" />
+    <meta name="msvalidate.01" content="DEE2AF02ED59562E2DCA645D7F9B738F" />
+    <title>{% block title %}ForumAbroad{% endblock %} | ForumAbroad</title>
+    <link rel="shortcut icon" href="{% static 'images/fav.png' %}" type="image/x-icon" />
+
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+
+    <!-- DM Sans -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&display=swap" rel="stylesheet" />
+
+    <!-- Tailwind CSS (compiled) -->
+    <link rel="stylesheet" href="{% static 'css/output.css' %}">
+
+    <link rel="stylesheet" href="{% static 'css/auth.css' %}">
+  </head>
+
+  <body class="bg-[#F4F3EA] text-[#333D51] min-h-screen flex flex-col">
+
+    <!-- ===== NAVBAR ===== -->
+    <nav class="bg-white border-b border-[#CBD0D8] sticky top-0 z-50 shadow-sm">
+      <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="flex items-center justify-between h-16">
+
+          <!-- Logo -->
+          <a href="{% url 'landing' %}" class="flex items-center gap-2">
+            <img src="{% static 'images/fav.png' %}" alt="ForumAbroad" class="h-8 w-8" />
+            <div class="hidden sm:flex flex-col leading-tight">
+              <span class="font-bold text-[#333D51] text-base tracking-wide uppercase">ForumAbroad</span>
+              <span class="text-[10px] text-[#D3AC2B] font-medium">Big dreams deserve real answers</span>
+            </div>
+          </a>
+
+          <!-- Mobile hamburger -->
+          <button type="button" class="md:hidden text-[#333D51] focus:outline-none" aria-controls="mobile-menu" aria-expanded="false">
+            <i class="fas fa-bars text-xl"></i>
+          </button>
+
+          <!-- Desktop nav links -->
+          <div class="hidden md:flex items-center gap-1">
+            <a href="{% url 'landing' %}" class="px-3 py-2 rounded-md text-sm font-medium text-[#333D51] hover:text-[#D3AC2B] transition-colors">
+              Home
+            </a>
+            <a href="{% url 'story_list' %}" class="px-3 py-2 rounded-md text-sm font-medium text-[#333D51] hover:text-[#D3AC2B] transition-colors">
+              Stories
+            </a>
+            {% if user.is_authenticated %}
+            <a href="{% url 'questions' %}" class="px-3 py-2 rounded-md text-sm font-medium text-[#333D51] hover:text-[#D3AC2B] transition-colors">
+              Forum
+            </a>
+            <a href="{% url 'logout' %}" class="ml-2 px-4 py-2 rounded-md text-sm font-semibold border border-[#CBD0D8] text-[#333D51] hover:border-[#D3AC2B] hover:text-[#D3AC2B] transition-colors">
+              Sign Out
+            </a>
+            {% else %}
+            <a href="{% url 'login' %}" class="ml-2 px-4 py-2 rounded-md text-sm font-semibold bg-[#D3AC2B] text-white hover:bg-[#b89420] transition-colors">
+              Sign In
+            </a>
+            {% endif %}
+          </div>
+        </div>
+      </div>
+
+      <!-- Mobile menu -->
+      <div class="md:hidden hidden" id="mobile-menu">
+        <div class="px-4 pt-2 pb-4 space-y-1 border-t border-[#CBD0D8]">
+          <a href="{% url 'landing' %}" class="block px-3 py-2 rounded-md text-sm font-medium text-[#333D51] hover:text-[#D3AC2B]">Home</a>
+          <a href="{% url 'story_list' %}" class="block px-3 py-2 rounded-md text-sm font-medium text-[#333D51] hover:text-[#D3AC2B]">Stories</a>
+          {% if user.is_authenticated %}
+          <a href="{% url 'questions' %}" class="block px-3 py-2 rounded-md text-sm font-medium text-[#333D51] hover:text-[#D3AC2B]">Forum</a>
+          <a href="{% url 'logout' %}" class="block px-3 py-2 rounded-md text-sm font-medium text-[#333D51] hover:text-[#D3AC2B]">Sign Out</a>
+          {% else %}
+          <a href="{% url 'login' %}" class="block px-3 py-2 rounded-md text-sm font-semibold bg-[#D3AC2B] text-white text-center">Sign In</a>
+          {% endif %}
+        </div>
+      </div>
+    </nav>
+
+    <!-- ===== MAIN CONTENT ===== -->
+    <main class="flex-1 flex items-center justify-center px-4 py-12">
+      {% block content %}{% endblock %}
+    </main>
+
+    <!-- ===== TOAST MESSAGES ===== -->
+    {% if messages %}
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
+    <script>
+      {% for message in messages %}
+      Toastify({
+        text: "{{ message|escapejs }}",
+        duration: 4000,
+        gravity: "top",
+        position: "right",
+        style: {
+          background: "{% if message.tags == 'success' %}#16a34a{% elif message.tags == 'error' %}#dc2626{% elif message.tags == 'warning' %}#d97706{% elif message.tags == 'info' %}#2563eb{% else %}#333D51{% endif %}",
+          borderRadius: "0.75rem",
+          fontSize: "0.875rem",
+          fontWeight: "500",
+          boxShadow: "0 4px 12px rgba(0,0,0,0.15)",
+        },
+        stopOnFocus: true,
+        close: true,
+      }).showToast();
+      {% endfor %}
+    </script>
+    {% endif %}
+
+    <!-- ===== SCRIPTS ===== -->
+    <script src="{% static 'js/auth.js' %}"></script>
+
+  </body>
+</html>
