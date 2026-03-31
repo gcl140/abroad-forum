@@ -18,7 +18,7 @@ from datetime import timedelta, datetime
 from yuzzaz.forms import UserRegistrationForm, CustomUserForm
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.cache import never_cache
-from django_ratelimit.decorators import ratelimit
+from django.core.cache import cache
 from yuzzaz.utils.tokens import account_activation_token
 import random
 
@@ -35,9 +35,16 @@ def landing(request):
     return render(request, 'yuzzaz/landing.html', context)
 
 @never_cache
-@ratelimit(key='ip', rate='5/h', method='POST', block=True)
 def register(request):
     if request.method == "POST":
+        ip = request.META.get('HTTP_X_FORWARDED_FOR', request.META.get('REMOTE_ADDR', '')).split(',')[0].strip()
+        cache_key = f'register_attempts_{ip}'
+        attempts = cache.get(cache_key, 0)
+        if attempts >= 5:
+            messages.error(request, "Too many registration attempts. Please try again later.")
+            return render(request, 'yuzzaz/auth/register.html', {'form': UserRegistrationForm()})
+        cache.set(cache_key, attempts + 1, timeout=3600)
+
         form = UserRegistrationForm(request.POST, request.FILES)
         if form.is_valid():
             if form.cleaned_data.get('website'):
