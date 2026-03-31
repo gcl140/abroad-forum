@@ -179,7 +179,7 @@ DEFAULT_FROM_EMAIL = os.getenv('DEFAULT_FROM_EMAIL')
 INSTALLED_APPS += [
     'social_django',
     'django_browser_reload',
-    'ratelimit',
+    'django_ratelimit',
 ]
 
 AUTHENTICATION_BACKENDS = (

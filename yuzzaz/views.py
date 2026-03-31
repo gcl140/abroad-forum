@@ -18,7 +18,7 @@ from datetime import timedelta, datetime
 from yuzzaz.forms import UserRegistrationForm, CustomUserForm
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.cache import never_cache
-from ratelimit.decorators import ratelimit
+from django_ratelimit.decorators import ratelimit
 from yuzzaz.utils.tokens import account_activation_token
 import random
 
