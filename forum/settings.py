@@ -31,7 +31,8 @@ SECRET_KEY = os.getenv('SECRET_KEY')
 # DEBUG = True
 DEBUG = False
 
-ALLOWED_HOSTS = []
+# ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['tztoabroad.tech', 'www.tztoabroad.tech']  # Allow all hosts for development; restrict in production
 
 
 # Application definition
