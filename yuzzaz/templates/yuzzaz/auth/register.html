@@ -40,6 +40,10 @@
       <!-- Registration form -->
       <form method="POST" enctype="multipart/form-data" class="space-y-4">
         {% csrf_token %}
+        <div style="position:absolute;left:-9999px;top:-9999px;" aria-hidden="true">
+          <label for="id_website">Website</label>
+          <input type="text" id="id_website" name="website" tabindex="-1" autocomplete="off">
+        </div>
 
         <!-- Row 1: First Name | Last Name -->
         <div class="grid grid-cols-2 gap-4">

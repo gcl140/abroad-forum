@@ -10,6 +10,7 @@ class UserRegistrationForm(forms.ModelForm):
         widget=forms.PasswordInput(attrs={'class': 'form-control', 'placeholder': 'Confirm Password'}),
         label="Confirm Password"
     )
+    website = forms.CharField(required=False, widget=forms.TextInput(attrs={'tabindex': '-1', 'autocomplete': 'off'}))
 
     class Meta:
         model = CustomUser

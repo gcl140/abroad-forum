@@ -17,6 +17,8 @@ from django.contrib.sites.shortcuts import get_current_site
 from datetime import timedelta, datetime
 from yuzzaz.forms import UserRegistrationForm, CustomUserForm
 from django.contrib.auth.decorators import login_required
+from django.views.decorators.cache import never_cache
+from ratelimit.decorators import ratelimit
 from yuzzaz.utils.tokens import account_activation_token
 import random
 
@@ -32,10 +34,14 @@ def landing(request):
     }
     return render(request, 'yuzzaz/landing.html', context)
 
+@never_cache
+@ratelimit(key='ip', rate='5/h', method='POST', block=True)
 def register(request):
     if request.method == "POST":
         form = UserRegistrationForm(request.POST, request.FILES)
         if form.is_valid():
+            if form.cleaned_data.get('website'):
+                return redirect('landing')
             user = form.save(commit=False)
             user.is_active = False
             user.save()
