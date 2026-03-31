@@ -6,16 +6,7 @@
 {% endblock %} 
 {% block content %}
 
-<style>
-a:hover{
-    text-decoration: underline !important;
-  }
-
-a{
-    color: #9d9fa3;
-}
-
-</style>
+<link rel="stylesheet" href="{% static 'css/links.css' %}">
 <div class="flex items-center justify-between mb-6">
   <div class="flex items-center gap-2">
     <i class="fas fa-fire text-maroon"></i>
@@ -291,98 +282,6 @@ a{
 
 {% include "partials/thequestions.html" %}
 
-<script>
-  let currentImageIndex = 0;
-
-  function lonnextImage() {
-    const images = document.querySelectorAll("#image-container .carousel-img");
-    if (images.length < 2) return;
-
-    // Hide current image
-    images[currentImageIndex].classList.add("hidden");
-
-    // Toggle index (0 → 1 → 0)
-    currentImageIndex = (currentImageIndex + 1) % images.length;
-
-    // Show next image
-    images[currentImageIndex].classList.remove("hidden");
-  }
-
-  function sharePost(postId) {
-    const shareUrl = `${window.location.origin}/post/${postId}/`;
-
-    if (navigator.share) {
-      navigator
-        .share({
-          title: "Check out this post",
-          text: "Thought you might find this interesting.",
-          url: shareUrl,
-        })
-        .catch((error) => {
-          console.error("Sharing failed:", error);
-          fallbackCopyLink(shareUrl);
-        });
-    } else if (navigator.clipboard) {
-      fallbackCopyLink(shareUrl);
-    } else {
-      Toastify({
-        text: `Sharing not supported. Copy this link:\n${shareUrl}`,
-        duration: 4000,
-        gravity: "top",
-        position: "right",
-        close: true,
-        backgroundColor: "#f44336",
-      }).showToast();
-    }
-  }
-
-  function fallbackCopyLink(url) {
-    navigator.clipboard
-      .writeText(url)
-      .then(() => {
-        Toastify({
-          text: "Link copied to clipboard! You can now share it.",
-          duration: 3000,
-          gravity: "top",
-          position: "right",
-          close: true,
-          backgroundColor: "#4CAF50",
-        }).showToast();
-      })
-      .catch(() => {
-        Toastify({
-          text: `Failed to copy automatically. Please copy this link manually:\n${url}`,
-          duration: 4000,
-          gravity: "top",
-          position: "right",
-          close: true,
-          backgroundColor: "#f44336",
-        }).showToast();
-      });
-  }
-
-  // Helper: toggle replies container open/close for the main post
-  function toggleRepliesContainer(postId) {
-    const btn = document.querySelector(`[data-target="replies-container-${postId}"]`);
-    if (!btn) return;
-    const container = document.getElementById(`replies-container-${postId}`);
-    if (!container) return;
-    const label = btn.querySelector('.label');
-    const icon = btn.querySelector('i.fas');
-
-    const opening = container.classList.contains('hidden');
-    container.classList.toggle('hidden');
-
-    if (opening) {
-      if (label) label.classList.add('text-maroon');
-      if (icon) { icon.classList.remove('fa-chevron-down'); icon.classList.add('fa-chevron-up'); }
-    } else {
-      if (icon) { icon.classList.remove('fa-chevron-up'); icon.classList.add('fa-chevron-down'); }
-    }
-  }
-
-  // Remove previous local delegated toggle (if any) to avoid double toggles
-  // (We no longer register a document-level handler for .toggle-replies-main)
-</script>
+<script src="{% static 'js/post_detail.js' %}"></script>
 
 {% endblock %}

@@ -1,4 +1,4 @@
-{% extends "discussion/base2.html" %}
+{% extends "discussion/base.html" %}
 {% load static %}
 {% block title %}@{{viewing_user.nickname}}{% endblock %}
 
@@ -27,9 +27,14 @@
                             <p class="text-blue-100/90 text-sm sm:text-base">@{{ viewing_user.nickname }}</p>
                         </div>
                         {% if is_own_profile %}
-                            <a href="{% url 'edit_profile' %}" class="bg-maroon text-gray-600 px-3 py-1.5 sm:px-4 sm:py-2 rounded-md font-medium hover:bg-white transition-all shadow-sm whitespace-nowrap text-sm sm:text-base">
-                                <i class="fas fa-edit mr-1 sm:mr-2"></i>Edit Profile
-                            </a>
+                            <div class="flex items-center gap-2">
+                                <a href="{% url 'edit_profile' %}" class="bg-maroon text-gray-600 px-3 py-1.5 sm:px-4 sm:py-2 rounded-md font-medium hover:bg-white transition-all shadow-sm whitespace-nowrap text-sm sm:text-base">
+                                    <i class="fas fa-edit mr-1 sm:mr-2"></i>Edit Profile
+                                </a>
+                                <button onclick="toggleTheme()" class="bg-white/20 hover:bg-white/40 text-white px-3 py-1.5 sm:px-4 sm:py-2 rounded-md font-medium transition-all shadow-sm whitespace-nowrap text-sm sm:text-base" title="Toggle theme">
+                                    <i id="theme-icon-profile" class="fas fa-sun"></i>
+                                </button>
+                            </div>
                         {% else %}
                             <button class="bg-white/90 text-gray-600 px-3 py-1.5 sm:px-4 sm:py-2 rounded-md font-medium hover:bg-white transition-all shadow-sm whitespace-nowrap text-sm sm:text-base">
                                 <a href="mailto:{{ viewing_user.email }}" class="flex items-center">
@@ -112,60 +117,11 @@
                         <h2 class="text-lg sm:text-xl font-semibold mb-3 pb-2 border-b border-gray-700 flex items-center">
                             <i class="fas fa-clock mr-2 text-gray-400"></i>Recent Activity
                         </h2>
-                        {% if not recent_posts and not recent_replies and not recent_child_replies %}
-                        <p class="text-gray-300 text-sm sm:text-base">No recent activity found.</p>
-                        {% else %}
-                        <div class="space-y-3">
-                            {% for post in recent_posts %}
-                            <div class="border-l-4 border-blue-500 pl-3 py-2 bg-gray-700/50 rounded-r">
-                                <div class="flex justify-between items-center text-xs sm:text-sm text-gray-400 mb-1 p-2">
-                                    <span class="flex items-center">
-                                        <i class="fas fa-question-circle mr-1"></i> Asked question
-                                    </span>
-                                    <span class="text-gray-400 text-xs italic">{{ post.created_at|timesince }} ago</span>
-                                </div>
-                                <a href="{% url 'post_detail' post.id %}" class="font-medium text-white hover:text-blue-400 text-sm sm:text-base block">
-                                    {{ post.title }}
-                                </a>
-                                <div class="text-xs sm:text-sm text-gray-400 mt-1">{{ post.content|truncatewords:15 }}</div>
-                            </div>
-                            {% endfor %}
-
-                            {% for reply in recent_replies %}
-                            <div class="border-l-4 border-green-500 pl-3 py-2 bg-gray-700/50 rounded-r">
-                                <div class="flex justify-between items-center text-xs sm:text-sm text-gray-400 mb-1 p-2">
-                                    <span class="flex items-center">
-                                        <i class="fas fa-reply mr-1"></i> Replied
-                                    </span>
-                                    <span class="text-gray-400 text-xs italic">{{ reply.created_at|timesince }} ago</span>
-                                </div>
-                                <a href="{% url 'post_detail' reply.post.id %}" class="font-medium text-white hover:text-green-400 text-sm sm:text-base block">
-                                    {{ reply.post.title }}
-                                </a>
-                                <div class="text-xs sm:text-sm text-gray-400 mt-1">{{ reply.content|truncatewords:15 }}</div>
-                            </div>
-                            {% endfor %}
-                            
-                            {% for child_reply in recent_child_replies %}
-                            <div class="border-l-4 border-yellow-500 pl-3 py-2 bg-gray-700/50 rounded-r">
-                                <div class="flex justify-between items-center text-xs sm:text-sm text-gray-400 mb-1 p-2">
-                                    <span class="flex items-center">
-                                        <i class="fas fa-comments mr-1"></i> Replied to reply
-                                    </span>
-                                    <span class="text-gray-400 text-xs italic">{{ child_reply.created_at|timesince }} ago</span>
-                                </div>
-                                <div class="font-medium text-gray-400 text-xs sm:text-sm">
-                                    @<a href="{% url 'view_profile' child_reply.replyier.id %}" class="hover:underline font-bold text-maroon">{{ child_reply.replyier.nickname }}
-                                    </a>
-                                    [{{ child_reply.content|truncatechars:15 }}]
-                                </div>
-                                <div class="text-xs sm:text-sm text-gray-400 mt-1">
-                                    {{ child_reply.content|truncatewords:10 }}
-                                </div>
-                            </div>
-                            {% endfor %}
+                        <div id="activity-loading" class="flex items-center gap-2 text-gray-400 text-sm py-4">
+                            <i class="fas fa-circle-notch fa-spin"></i> Loading...
                         </div>
-                        {% endif %}
+                        <div id="activity-list" class="space-y-3 hidden" data-user-id="{{ viewing_user.id }}"></div>
+                        <p id="activity-empty" class="hidden text-gray-400 text-sm">No recent activity yet.</p>
                     </div>
                 </div>
                 
@@ -234,5 +190,8 @@
 
 <!-- Include this at the bottom of your template -->
 {% include 'yuzzaz/partials/edit_profile_modal.html' %} {% endcomment %}
+
+{% load static %}
+<script src="{% static 'js/profile_activity.js' %}"></script>
 
 {% endblock %}

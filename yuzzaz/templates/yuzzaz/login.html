@@ -4,37 +4,18 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <meta name="google-site-verification" content="wEtt2II-thlRgNpqM24dfMRBAooIPCGV-CH6d56R-WY" />
-        <meta name="msvalidate.01" content="DEE2AF02ED59562E2DCA645D7F9B738F" />
-    <title>Login | ForumAbroad</title>
+    <meta name="google-site-verification" content="wEtt2II-thlRgNpqM24dfMRBAooIPCGV-CH6d56R-WY" />
+    <meta name="msvalidate.01" content="DEE2AF02ED59562E2DCA645D7F9B738F" />
+    <title>Sign In | ForumAbroad</title>
+    <link rel="shortcut icon" href="{% static 'images/fav.png' %}" type="image/x-icon" />
 
-    <link rel="shortcut icon" href="{% static 'images/fav.png' %}" type="image/x-icon">
     <!-- Font Awesome -->
-    <link
-      rel="stylesheet"
-      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
-    />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
 
-    <!-- Google Fonts - Karla -->
+    <!-- DM Sans -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Sen:wght@400..800&display=swap"
-      rel="stylesheet"
-    />
-    <link
-      rel="stylesheet"
-      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
-    />
-
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Sarina&display=swap"
-      rel="stylesheet"
-    />
-    <link rel="stylesheet" href="{% static 'css/output.css' %}" />
-    <link rel="stylesheet" href="{% static 'css/custom.css' %}" />
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&display=swap" rel="stylesheet" />
 
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -43,461 +24,232 @@
         theme: {
           extend: {
             colors: {
-              maroon: "#c4ad2bff",
-              dark: "#121212",
-              light: "#f8f9fa",
+              brand:  "#333D51",
+              gold:   "#D3AC2B",
+              cream:  "#F4F3EA",
+              border: "#CBD0D8",
             },
             fontFamily: {
-              karla: ["Sen", "sans-serif"],
-              saint: ["Sarina", "cursive"],
-            },
-            animation: {
-              "pulse-slow": "pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite",
+              sans: ["DM Sans", "sans-serif"],
             },
           },
         },
       };
     </script>
 
-    <!-- Custom Styles -->
-    <style>
-      @keyframes progress {
-        from {
-          width: 100%;
-        }
-
-        to {
-          width: 0%;
-        }
-      }
-
-      .animate-progress {
-        animation: progress 5s linear forwards;
-      }
-
-      .bg-login {
-        background-image: url("{% static 'images/education-illustration.svg' %}");
-        background-repeat: no-repeat;
-        background-size: cover;
-        background-attachment: fixed;
-        background-position: center;
-      }
-
-      .carousel-image {
-        filter: brightness(0.7);
-      }
-
-      .form-input {
-        transition: all 0.3s ease;
-      }
-
-      .form-input:focus {
-        box-shadow: 0 0 0 2px rgba(128, 0, 0, 0.3);
-      }
-    </style>
+    <link rel="stylesheet" href="{% static 'css/auth.css' %}">
   </head>
 
-  <body class="bg-login bg-dark font-karla text-gray-100 min-h-screen">
-    <!-- Navigation -->
-    <nav class="bg-dark border-b border-maroon/50 shadow-lg z-50 top-0 sticky">
-      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+  <body class="bg-[#F4F3EA] text-[#333D51] min-h-screen flex flex-col">
+
+    <!-- ===== NAVBAR ===== -->
+    <nav class="bg-white border-b border-[#CBD0D8] sticky top-0 z-50 shadow-sm">
+      <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="flex items-center justify-between h-16">
+
           <!-- Logo -->
-          <div class="flex-shrink-0 flex items-center">
-            <a href="{% url 'landing' %}" class="flex items-center space-x-2">
-              <img
-                class="h-8 w-8"
-                src="{% static 'images/fav.png' %}"
-                alt="ForumAbroad Logo"
-              />
-              
-              <div
-                class="hidden lg:flex lg:flex-col flex flex-row items-center"
-              >
-                <span
-                  class="text-xl font-bold text-white hover:text-maroon transition-colors uppercase"
-                  >ForumAbroad</span
-                >
-                <span
-                  class="text-xs font-saint text-gray-500 hover:text-maroon transition-colors"
-                  >Go beyond the Norm</span
-                >
-              </div>
-            </a>
-          </div>
-
-          <!-- Mobile menu button -->
-          <div class="md:hidden flex items-center">
-            <button
-              type="button"
-              class="text-gray-400 hover:text-white focus:outline-none"
-              aria-controls="mobile-menu"
-              aria-expanded="false"
-            >
-              <i class="fas fa-bars text-2xl"></i>
-            </button>
-          </div>
-
-          <!-- Desktop Menu -->
-          <div class="hidden md:block">
-            <div class="ml-10 flex items-center space-x-4">
-              <a
-                href="{% url 'landing' %}"
-                class="text-gray-300 hover:bg-gray-800 hover:text-white px-3 py-2 rounded-md text-sm font-medium transition-colors"
-              >
-                <i class="fas fa-home mr-1"></i> Home
-              </a>
-              <a
-                href="{% url 'landing' %}#contact"
-                class="text-gray-300 hover:bg-gray-800 hover:text-white px-3 py-2 rounded-md text-sm font-medium transition-colors"
-              >
-                <i class="fas fa-envelope mr-1"></i> Contact
-              </a>
-              {% if user.is_authenticated %} {% if user.is_staff %}
-              <a
-                href="{% url 'landing' %}"
-                class="text-gray-300 hover:bg-gray-800 hover:text-white px-3 py-2 rounded-md text-sm font-medium transition-colors"
-              >
-                <i class="fas fa-gauge-high mr-1"></i> Dashboard
-              </a>
-              {% endif %}
-              <a
-                href="{% url 'logout' %}"
-                class="text-gray-300 hover:bg-gray-800 hover:text-white px-3 py-2 rounded-md text-sm font-medium transition-colors"
-              >
-                <i class="fas fa-sign-out-alt mr-1"></i> Logout
-              </a>
-              {% else %}
-              <a
-                href="{% url 'login' %}"
-                class="bg-maroon text-white px-3 py-2 rounded-md text-sm font-medium hover:bg-maroon/90 transition-colors"
-              >
-                <i class="fas fa-sign-in-alt mr-1"></i> Login
-              </a>
-              {% endif %}
+          <a href="{% url 'landing' %}" class="flex items-center gap-2">
+            <img src="{% static 'images/fav.png' %}" alt="ForumAbroad" class="h-8 w-8" />
+            <div class="hidden sm:flex flex-col leading-tight">
+              <span class="font-bold text-[#333D51] text-base tracking-wide uppercase">ForumAbroad</span>
+              <span class="text-[10px] text-[#D3AC2B] font-medium">Big dreams deserve real answers</span>
             </div>
+          </a>
+
+          <!-- Mobile hamburger -->
+          <button type="button" class="md:hidden text-[#333D51] focus:outline-none" aria-controls="mobile-menu" aria-expanded="false">
+            <i class="fas fa-bars text-xl"></i>
+          </button>
+
+          <!-- Desktop nav links -->
+          <div class="hidden md:flex items-center gap-1">
+            <a href="{% url 'landing' %}" class="px-3 py-2 rounded-md text-sm font-medium text-[#333D51] hover:text-[#D3AC2B] transition-colors">
+              Home
+            </a>
+            <a href="{% url 'story_list' %}" class="px-3 py-2 rounded-md text-sm font-medium text-[#333D51] hover:text-[#D3AC2B] transition-colors">
+              Stories
+            </a>
+            {% if user.is_authenticated %}
+            <a href="{% url 'questions' %}" class="px-3 py-2 rounded-md text-sm font-medium text-[#333D51] hover:text-[#D3AC2B] transition-colors">
+              Forum
+            </a>
+            <a href="{% url 'logout' %}" class="ml-2 px-4 py-2 rounded-md text-sm font-semibold border border-[#CBD0D8] text-[#333D51] hover:border-[#D3AC2B] hover:text-[#D3AC2B] transition-colors">
+              Sign Out
+            </a>
+            {% else %}
+            <a href="{% url 'login' %}" class="ml-2 px-4 py-2 rounded-md text-sm font-semibold bg-[#D3AC2B] text-white hover:bg-[#b89420] transition-colors">
+              Sign In
+            </a>
+            {% endif %}
           </div>
         </div>
       </div>
 
       <!-- Mobile menu -->
       <div class="md:hidden hidden" id="mobile-menu">
-        <div class="px-2 pt-2 pb-3 space-y-1 sm:px-3">
-          <a
-            href="{% url 'landing' %}"
-            class="text-gray-300 hover:bg-gray-700 hover:text-white block px-3 py-2 rounded-md text-base font-medium"
-          >
-            <i class="fas fa-home mr-2"></i> Home
-          </a>
-          <a
-            href="{% url 'landing' %}#contact"
-            class="text-gray-300 hover:bg-gray-700 hover:text-white block px-3 py-2 rounded-md text-base font-medium"
-          >
-            <i class="fas fa-envelope mr-2"></i> Contact
-          </a>
-          {% if user.is_authenticated %} {% if user.is_staff %}
-          <a
-            href="{% url 'landing' %}"
-            class="text-gray-300 hover:bg-gray-700 hover:text-white block px-3 py-2 rounded-md text-base font-medium"
-          >
-            <i class="fas fa-gauge-high mr-2"></i> Dashboard
-          </a>
-          {% endif %}
-          <a
-            href="{% url 'logout' %}"
-            class="text-gray-300 hover:bg-gray-700 hover:text-white block px-3 py-2 rounded-md text-base font-medium"
-          >
-            <i class="fas fa-sign-out-alt mr-2"></i> Logout
-          </a>
+        <div class="px-4 pt-2 pb-4 space-y-1 border-t border-[#CBD0D8]">
+          <a href="{% url 'landing' %}" class="block px-3 py-2 rounded-md text-sm font-medium text-[#333D51] hover:text-[#D3AC2B]">Home</a>
+          <a href="{% url 'story_list' %}" class="block px-3 py-2 rounded-md text-sm font-medium text-[#333D51] hover:text-[#D3AC2B]">Stories</a>
+          {% if user.is_authenticated %}
+          <a href="{% url 'questions' %}" class="block px-3 py-2 rounded-md text-sm font-medium text-[#333D51] hover:text-[#D3AC2B]">Forum</a>
+          <a href="{% url 'logout' %}" class="block px-3 py-2 rounded-md text-sm font-medium text-[#333D51] hover:text-[#D3AC2B]">Sign Out</a>
           {% else %}
-          <a
-            href="{% url 'login' %}"
-            class="bg-maroon text-white block px-3 py-2 rounded-md text-base font-medium"
-          >
-            <i class="fas fa-sign-in-alt mr-2"></i> Login
-          </a>
+          <a href="{% url 'login' %}" class="block px-3 py-2 rounded-md text-sm font-semibold bg-[#D3AC2B] text-white text-center">Sign In</a>
           {% endif %}
         </div>
       </div>
     </nav>
 
-    <!-- Main Content -->
-    <div class="min-h-[calc(100vh-4rem)] flex items-center justify-center">
-      <div class="w-full max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-1">
-        <!-- Form Side -->
-        <div class="flex items-center justify-center p-6 sm:p-12">
-          <div
-            class="w-full max-w-md bg-gray-800/10 backdrop-blur-sm rounded-xl shadow-xl overflow-hidden border border-gray-700/50"
-          >
-            <div class="p-8 sm:p-10">
-              <div class="text-center mb-8">
-                <h2 class="text-3xl font-extrabold text-white">Welcome Back</h2>
-                <p class="mt-2 text-gray-400">
-                  Enter your credentials to access your account
-                </p>
+    <!-- ===== MAIN CONTENT ===== -->
+    <main class="flex-1 flex items-center justify-center px-4 py-12">
+      <div class="w-full max-w-md">
+
+        <!-- Brand header -->
+        <div class="text-center mb-8">
+          <img src="{% static 'images/fav.png' %}" alt="ForumAbroad" class="h-12 w-12 mx-auto mb-3" />
+          <h1 class="text-2xl font-bold text-[#333D51] tracking-tight">ForumAbroad</h1>
+          <p class="text-sm text-[#D3AC2B] font-medium mt-1">Big dreams deserve real answers</p>
+        </div>
+
+        <!-- Card -->
+        <div class="bg-white rounded-2xl shadow-sm border border-[#CBD0D8] overflow-hidden">
+          <div class="p-8">
+
+            <h2 class="text-xl font-semibold text-[#333D51] mb-6">Welcome back</h2>
+
+            <form method="POST" class="space-y-4">
+              {% csrf_token %}
+
+              <!-- Email -->
+              <div>
+                <label for="username" class="block text-sm font-medium text-[#333D51] mb-1">Email</label>
+                <div class="relative">
+                  <span class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-[#CBD0D8]">
+                    <i class="fas fa-envelope text-sm"></i>
+                  </span>
+                  <input
+                    type="text"
+                    id="username"
+                    name="username"
+                    required
+                    placeholder="your@email.com"
+                    class="w-full pl-9 pr-3 py-2.5 text-sm rounded-lg border border-[#CBD0D8] bg-[#F4F3EA] text-[#333D51] placeholder-[#aab0bc] transition-shadow"
+                  />
+                </div>
+                {% if form.username.errors %}
+                <p class="mt-1 text-xs text-red-500">{{ form.username.errors }}</p>
+                {% endif %}
               </div>
 
-              <form method="POST" class="space-y-6">
-                {% csrf_token %}
-
-                <!-- Username/Email Field -->
-                <div>
-                  <label
-                    for="username"
-                    class="block text-sm font-medium text-gray-300 mb-1"
-                  >
-                    Email
-                  </label>
-                  <div class="relative">
-                    <div
-                      class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none"
-                    >
-                      <i class="fas fa-envelope text-gray-500"></i>
-                    </div>
-                    <input
-                      type="text"
-                      id="username"
-                      name="username"
-                      required
-                      class="form-input bg-gray-700 border border-gray-600 text-white placeholder-gray-400 focus:ring-maroon focus:border-maroon block w-full pl-10 pr-3 py-3 rounded-lg"
-                      placeholder="your@email.com"
-                    />
-                  </div>
-                  {% if form.username.errors %}
-                  <p class="mt-1 text-sm text-red-500">
-                    {{ form.username.errors }}
-                  </p>
-                  {% endif %}
-                </div>
-
-                <!-- Password Field -->
-                <div>
-                  <label
-                    for="password"
-                    class="block text-sm font-medium text-gray-300 mb-1"
-                  >
-                    Password
-                  </label>
-                  <div class="relative">
-                    <div
-                      class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none"
-                    >
-                      <i class="fas fa-lock text-gray-500"></i>
-                    </div>
-                    <input
-                      type="password"
-                      id="password"
-                      name="password"
-                      required
-                      class="form-input bg-gray-700 border border-gray-600 text-white placeholder-gray-400 focus:ring-maroon focus:border-maroon block w-full pl-10 pr-3 py-3 rounded-lg"
-                      placeholder="••••••••"
-                    />
-                  </div>
-                  {% if form.password.errors %}
-                  <p class="mt-1 text-sm text-red-500">
-                    {{ form.password.errors }}
-                  </p>
-                  {% endif %}
-                </div>
-
-                <!-- Forgot Password Link -->
-                <div class="flex items-center justify-end">
-                  <a
-                    href="{% url 'password_reset' %}"
-                    class="text-base font-medium text-gray-500 hover:text-white/80 transition-colors"
-                  >
-                    <i class="fa fa-lock mr-2"></i>
-                    Forgot password?
-                  </a>
-                </div>
-
-                <!-- Submit Button -->
-                <!-- Sign In Button -->
-                <button
-                  type="submit"
-                  class="w-full flex justify-center items-center py-3 px-4 border border-transparent rounded-lg shadow-sm text-sm font-medium text-white bg-maroon hover:bg-maroon/90 transition focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-maroon"
-                >
-                  <i class="fas fa-sign-in-alt mr-2"></i> Sign In
-                </button>
-
-                <!-- OR Separator -->
-                <div class="flex items-center my-6">
-                  <hr class="flex-grow border-gray-300" />
-                  <span
-                    class="mx-4 text-gray-500 text-sm flex items-center gap-2"
-                  >
-                    <i class="fas fa-circle"></i>
-                    OR
-                    <i class="fas fa-circle"></i>
+              <!-- Password -->
+              <div>
+                <label for="password" class="block text-sm font-medium text-[#333D51] mb-1">Password</label>
+                <div class="relative">
+                  <span class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-[#CBD0D8]">
+                    <i class="fas fa-lock text-sm"></i>
                   </span>
-                  <hr class="flex-grow border-gray-300" />
+                  <input
+                    type="password"
+                    id="password"
+                    name="password"
+                    required
+                    placeholder="Enter your password"
+                    class="w-full pl-9 pr-3 py-2.5 text-sm rounded-lg border border-[#CBD0D8] bg-[#F4F3EA] text-[#333D51] placeholder-[#aab0bc] transition-shadow"
+                  />
                 </div>
+                {% if form.password.errors %}
+                <p class="mt-1 text-xs text-red-500">{{ form.password.errors }}</p>
+                {% endif %}
+              </div>
 
-                <!-- Google Auth Button -->
-                <a
-                  {% comment %} href="{% url 'social:begin' 'google-oauth2' %}?next={% url 'profile' %}" {% endcomment %}
-                  href="{% if not user.is_authenticated %}{% url 'social:begin' 'google-oauth2' %}?next={% url 'questions' %}{% else %}{% url 'set_user_type_and_login' %}{% endif %}"
-                  
-                  {% comment %} href="{% url 'logout-then-google' %}?next={{ request.path }}" {% endcomment %}
-                >
-                {% comment %} <a href="{% url 'social:begin' 'google-oauth2' %}?next={% url 'profile' %}"> {% endcomment %}
-
-                  <button
-                    type="button"
-                    class="w-full flex justify-center items-center py-3 px-4 border border-gray-300 rounded-lg shadow-sm text-sm font-medium text-gray-700 bg-white mt-4"
-                  >
-                    <i class="fab fa-google mr-2 text-blue-500"></i> Sign in with
-                    Google
-                  </button>
+              <!-- Forgot password -->
+              <div class="flex justify-end">
+                <a href="{% url 'password_reset' %}" class="text-xs text-[#333D51] hover:text-[#D3AC2B] transition-colors">
+                  Forgot password?
                 </a>
+              </div>
 
-                <!-- Register Options -->
-                <div class="text-center">
-                  <p class="text-sm text-gray-400">Don't have an account?</p>
-                  <div class="mt-2 relative inline-block text-left group">
-                    <a href="{% url 'register' %}">
-                      <button
-                        type="button"
-                        class="inline-flex justify-center items-center px-4 py-2 text-sm font-medium text-white bg-gray-700 rounded-lg hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-maroon"
-                      >
-                        Create One
-                      </button>
-                    </a>
-                  </div>
-                </div>
-              </form>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- Toast Messages -->
-    {% if messages %}
-    <div
-      class="toast-message fixed top-4 right-4 space-y-3 z-50 w-full max-w-xs"
-    >
-      {% for message in messages %}
-      <div class="overflow-hidden rounded-lg shadow-lg mb-4 animate-fade-in-up">
-        <div
-          class="{% if message.tags == 'success' %}bg-green-600 {% elif message.tags == 'error' %}bg-red-600 {% elif message.tags == 'warning' %}bg-yellow-600 {% elif message.tags == 'info' %}bg-blue-600 {% else %}bg-gray-800{% endif %} px-4 py-3 text-white"
-        >
-          <div class="flex items-start">
-            <div class="flex-shrink-0 pt-0.5">
-              {% if message.tags == 'success' %}
-              <i class="fas fa-check-circle"></i>
-              {% elif message.tags == 'error' %}
-              <i class="fas fa-exclamation-circle"></i>
-              {% elif message.tags == 'warning' %}
-              <i class="fas fa-exclamation-triangle"></i>
-              {% elif message.tags == 'info' %}
-              <i class="fas fa-info-circle"></i>
-              {% else %}
-              <i class="fas fa-bell"></i>
-              {% endif %}
-            </div>
-            <div class="ml-3 w-0 flex-1 pt-0.5">
-              <p class="text-sm font-medium">{{ message }}</p>
-            </div>
-            <div class="ml-4 flex-shrink-0 flex">
+              <!-- Sign In button -->
               <button
-                class="bg-transparent rounded-md inline-flex text-white hover:text-gray-300 focus:outline-none"
+                type="submit"
+                class="w-full py-2.5 px-4 rounded-lg bg-[#D3AC2B] hover:bg-[#b89420] text-white text-sm font-semibold transition-colors"
               >
-                <i class="fas fa-times"></i>
+                Sign In
               </button>
-            </div>
+
+              <!-- OR divider -->
+              <div class="flex items-center gap-3 my-2">
+                <hr class="flex-1 border-[#CBD0D8]" />
+                <span class="text-xs text-[#aab0bc] font-medium">OR</span>
+                <hr class="flex-1 border-[#CBD0D8]" />
+              </div>
+
+              <!-- Google Sign In -->
+              <a
+                href="{% if not user.is_authenticated %}{% url 'social:begin' 'google-oauth2' %}?next={% url 'questions' %}{% else %}{% url 'set_user_type_and_login' %}{% endif %}"
+                class="w-full flex items-center justify-center gap-3 py-2.5 px-4 rounded-lg border border-[#CBD0D8] bg-white hover:bg-[#F4F3EA] text-[#333D51] text-sm font-medium transition-colors"
+              >
+                <svg class="h-4 w-4 flex-shrink-0" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/>
+                  <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/>
+                  <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z" fill="#FBBC05"/>
+                  <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/>
+                </svg>
+                Sign in with Google
+              </a>
+
+              <!-- Register link -->
+              <p class="text-center text-sm text-[#333D51] mt-2">
+                Don't have an account?
+                <a href="{% url 'register' %}" class="font-semibold text-[#D3AC2B] hover:underline">Create one</a>
+              </p>
+
+            </form>
           </div>
         </div>
-        <div class="bg-black/20 h-1 w-full">
-          <div
-            class="{% if message.tags == 'success' %}bg-green-300 {% elif message.tags == 'error' %}bg-red-300 {% elif message.tags == 'warning' %}bg-yellow-300 {% elif message.tags == 'info' %}bg-blue-300 {% else %}bg-gray-300{% endif %} h-full animate-progress"
-          ></div>
+
+      </div>
+    </main>
+
+    <!-- ===== TOAST MESSAGES ===== -->
+    {% if messages %}
+    <div class="fixed top-4 right-4 z-50 space-y-3 w-full max-w-xs">
+      {% for message in messages %}
+      <div class="overflow-hidden rounded-xl shadow-lg">
+        <div class="flex items-start gap-3 px-4 py-3
+          {% if message.tags == 'success' %}bg-green-600
+          {% elif message.tags == 'error' %}bg-red-600
+          {% elif message.tags == 'warning' %}bg-yellow-500
+          {% elif message.tags == 'info' %}bg-blue-600
+          {% else %}bg-[#333D51]{% endif %}
+          text-white">
+          <div class="flex-shrink-0 pt-0.5">
+            {% if message.tags == 'success' %}<i class="fas fa-check-circle"></i>
+            {% elif message.tags == 'error' %}<i class="fas fa-exclamation-circle"></i>
+            {% elif message.tags == 'warning' %}<i class="fas fa-exclamation-triangle"></i>
+            {% elif message.tags == 'info' %}<i class="fas fa-info-circle"></i>
+            {% else %}<i class="fas fa-bell"></i>{% endif %}
+          </div>
+          <p class="flex-1 text-sm font-medium">{{ message }}</p>
+          <button class="flex-shrink-0 text-white/80 hover:text-white focus:outline-none" onclick="this.closest('.overflow-hidden').remove()">
+            <i class="fas fa-times text-sm"></i>
+          </button>
+        </div>
+        <div class="bg-black/20 h-1">
+          <div class="h-full animate-progress
+            {% if message.tags == 'success' %}bg-green-300
+            {% elif message.tags == 'error' %}bg-red-300
+            {% elif message.tags == 'warning' %}bg-yellow-300
+            {% elif message.tags == 'info' %}bg-blue-300
+            {% else %}bg-gray-300{% endif %}"></div>
         </div>
       </div>
       {% endfor %}
     </div>
-    <script>
-      // Auto-dismiss messages after 5 seconds
-      document.addEventListener("DOMContentLoaded", function () {
-        const toasts = document.querySelectorAll(".toast-message");
-
-        toasts.forEach((toast) => {
-          // Start progress bar animation
-          const progress = toast.querySelector(".toast-progress");
-          progress.style.transition = "transform 5s linear";
-          progress.style.transform = "scaleX(0)";
-
-          // Remove toast after 5 seconds
-          setTimeout(() => {
-            toast.remove();
-          }, 10000);
-        });
-      });
-    </script>
-
     {% endif %}
 
-    <!-- JavaScript -->
-    <script>
-      // Mobile menu toggle
-      document
-        .querySelector('[aria-controls="mobile-menu"]')
-        .addEventListener("click", function () {
-          document.getElementById("mobile-menu").classList.toggle("hidden");
-        });
+    <!-- ===== SCRIPTS ===== -->
+    <script src="{% static 'js/auth.js' %}"></script>
 
-      // Simple carousel functionality
-      document.addEventListener("DOMContentLoaded", function () {
-        // Carousel
-        const carouselItems = document.querySelectorAll("[data-carousel-item]");
-        let currentIndex = 0;
-
-        function showSlide(index) {
-          carouselItems.forEach((item, i) => {
-            item.classList.toggle("opacity-0", i !== index);
-          });
-        }
-
-        // Next button
-        document
-          .querySelector("[data-carousel-next]")
-          ?.addEventListener("click", function () {
-            currentIndex = (currentIndex + 1) % carouselItems.length;
-            showSlide(currentIndex);
-          });
-
-        // Previous button
-        document
-          .querySelector("[data-carousel-prev]")
-          ?.addEventListener("click", function () {
-            currentIndex =
-              (currentIndex - 1 + carouselItems.length) % carouselItems.length;
-            showSlide(currentIndex);
-          });
-
-        // Auto-advance carousel
-        setInterval(() => {
-          currentIndex = (currentIndex + 1) % carouselItems.length;
-          showSlide(currentIndex);
-        }, 5000);
-
-        // Initialize first slide
-        showSlide(0);
-
-        // Toast dismissal
-        document.querySelectorAll("[data-dismiss-toast]").forEach((button) => {
-          button.addEventListener("click", function () {
-            this.closest(".toast").remove();
-          });
-        });
-
-        // Auto-dismiss toasts after 5 seconds
-        setTimeout(() => {
-          document.querySelectorAll(".toast").forEach((toast) => {
-            toast.remove();
-          });
-        }, 5000);
-      });
-    </script>
   </body>
 </html>

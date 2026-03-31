@@ -21,7 +21,7 @@ sitemaps = {
 urlpatterns = [
 
     path('', views.questions, name='questions'),
-    path('about/', views.landing, name='about'),
+    path('about/', views.landing, name='landing'),
     path('profile/<int:id>/', views.view_profile, name='view_profile'),
     path('post/<int:id>/', views.post_detail, name='post_detail'),
     path('add-post/', views.add_post, name='add_post'),
@@ -45,6 +45,16 @@ urlpatterns = [
     # AI Assistant routes
     path('ai/', views.ai_assistant_view, name='ai_assistant'),
     path('api/ai-query/', views.ai_query_api, name='ai_query_api'),
+
+    # Public APIs
+    path('api/stats/', views.api_stats, name='api_stats'),
+    path('api/notifications/', views.api_notifications, name='api_notifications'),
+    path('api/activity/<int:user_id>/', views.api_recent_activity, name='api_recent_activity'),
+
+    # Stories
+    path('stories/', views.story_list, name='story_list'),
+    path('stories/<int:id>/', views.story_detail, name='story_detail'),
+    path('stories/create/', views.create_story, name='create_story'),
     
     
     

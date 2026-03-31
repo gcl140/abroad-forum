@@ -1,3 +1,4 @@
+{% load static %}
 <div class="pl-2 border-l-2 border-maroon mb-4">
         <!-- Top-Level Reply -->
         <div class="flex items-center gap-2 text-xs mb-1">
@@ -104,20 +105,4 @@
                   {% endfor %}
                 </div>
                 </div>
-
-
-                <script>
-                  function toggleReplyForm(groupId) {
-                      const container = document.getElementById(`reply-form-container-${groupId}`);
-                      const button = document.getElementById(`reply-button-${groupId}`);
-
-                      const isHidden = container.classList.contains('hidden');
-                      container.classList.toggle('hidden');
-
-                      if (isHidden) {
-                          button.classList.add('text-maroon');
-                      } else {
-                          button.classList.remove('text-maroon');
-                      }
-                  }
-                </script>
+<script src="{% static 'js/threaded_replies.js' %}"></script>

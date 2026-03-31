@@ -21,6 +21,43 @@ TAG_CHOICES = [
     ('announcement', 'Announcement'),
 ]
 
+STORY_TAG_CHOICES = [
+    ('admission', 'Admission Journey'),
+    ('scholarship', 'Scholarship'),
+    ('visa', 'Visa Experience'),
+    ('campus_life', 'Campus Life'),
+    ('summer_program', 'Summer Program'),
+    ('tips', 'Tips & Advice'),
+    ('other', 'Other'),
+]
+
+def story_cover_upload_path(instance, filename):
+    username = instance.author.username.replace('@', '_')
+    return f"stories/{username}/{filename}"
+
+
+class Story(models.Model):
+    author = models.ForeignKey(User, on_delete=models.CASCADE, related_name='stories')
+    title = models.CharField(max_length=200)
+    summary = models.CharField(max_length=300, help_text="One-line description shown in preview cards")
+    body = models.TextField(help_text="Full story content ,  markdown/plain text supported")
+    cover_image = models.ImageField(upload_to=story_cover_upload_path, null=True, blank=True)
+    tag = models.CharField(max_length=50, choices=STORY_TAG_CHOICES, default='other')
+    views = models.PositiveIntegerField(default=0)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        ordering = ['-created_at']
+        verbose_name = "Story"
+        verbose_name_plural = "Stories"
+
+    def __str__(self):
+        return f"{self.title} by {self.author.nickname}"
+
+    def get_absolute_url(self):
+        return reverse('story_detail', args=[self.id])
+
 class Notification(models.Model):
     user = models.ForeignKey(
         User,

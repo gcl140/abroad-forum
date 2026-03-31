@@ -1,671 +1,697 @@
-{% extends "yuzzaz/besi.html" %}
 {% load static %}
-{% block content %}
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>ForumAbroad — Launchpad for Global Opportunity</title>
 
-<section class="relative overflow-hidden min-h-screen flex items-center">
-    <div class="absolute inset-0 bg-gradient-to-r from-maroon to-dark opacity-90 z-0"></div>
-    <div
-        class="absolute inset-0 z-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI2MCIgaGVpZ2h0PSI2MCIgdmlld0JveD0iMCAwIDYwIDYwIj48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxnIGZpbGw9IiNmZmZmZmYiIGZpbGwtb3BhY2l0eT0iMC4wNSI+PHBhdGggZD0iTTM2IDM0aDV2Nmg1djVoLTZ2LTZoLTV2LTVoNnptLTE4IDBoNXY1aDV2NWgtNnYtNWgtNXYtNWg2em0wLTE4aDV2NWg1djVoLTZ2LTVoLTV2LTVoNnptMTggMGg1djVoNXY1aC02di01aC01di01aDZ6Ii8+PC9nPjwvZz48L3N2Zz4=')] bg-cover bg-center opacity-100">
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <!-- Font Awesome (free) -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"/>
+
+  <!-- Alpine.js -->
+  <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
+
+  <!-- Google Font: Sen -->
+  <link href="https://fonts.googleapis.com/css2?family=Sen:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+
+  <!-- theme tags (gold & black vibe) -->
+  <meta name="theme-color" content="#0b0b0b" />
+  <meta name="color-scheme" content="dark light" />
+
+  <style>
+    :root{
+      --bg:#060608;
+      --card:#0f1114;
+      --gold-1:#d4a72c;
+      --gold-2:#ffd55a;
+      --muted:#9aa3ad;
+      --glass: rgba(255,255,255,0.03);
+    }
+
+    html,body{
+      height:100%;
+      margin:0;
+      font-family:"Sen", system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+      background:
+        radial-gradient(900px 600px at 10% 20%, rgba(212,167,44,0.03), transparent 6%),
+        radial-gradient(800px 500px at 90% 80%, rgba(255,213,90,0.02), transparent 6%),
+        var(--bg);
+      color:#e6eef8;
+      -webkit-font-smoothing:antialiased;
+      -moz-osx-font-smoothing:grayscale;
+    }
+
+    /* Glass card */
+    .glass {
+      background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+      border: 1px solid rgba(255,255,255,0.03);
+      backdrop-filter: blur(6px) saturate(120%);
+      box-shadow: 0 8px 40px rgba(0,0,0,0.6), inset 0 1px 0 rgba(255,255,255,0.02);
+    }
+
+    /* Gold button */
+    .gold-btn {
+      background: linear-gradient(90deg, var(--gold-1), var(--gold-2));
+      color:#0b0b0b;
+      font-weight:700;
+      box-shadow: 0 10px 30px rgba(212,167,44,0.12);
+    }
+
+    .muted{ color:var(--muted); }
+
+    /* futuristic headings */
+    h1,h2,h3{ font-weight:700; color:#f6f8fb; line-height:1.05; }
+
+    /* animated reveal */
+    .reveal {
+      transform: translateY(18px) scale(.996);
+      opacity:0;
+      transition: all 700ms cubic-bezier(.2,.9,.2,1);
+      will-change: transform, opacity;
+    }
+    .reveal.in-view{ transform: translateY(0) scale(1); opacity:1; }
+
+    /* subtle neon frame */
+    .neon-frame { box-shadow: 0 0 30px rgba(212,167,44,0.05); }
+
+    /* skew sections */
+    .tilt { transform: perspective(1000px) rotateX(1deg) rotateY(-0.7deg); }
+
+    /* underlined gradient */
+    .grad-underline {
+      background: linear-gradient(90deg, rgba(212,167,44,0.95), rgba(255,213,90,0.8));
+      -webkit-background-clip: text;
+      background-clip:text;
+      color:transparent;
+    }
+
+    /* hero fancy search */
+    .search-ghost{
+      background: linear-gradient(90deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+      border:1px solid rgba(255,255,255,0.02);
+    }
+
+    /* small helpers */
+    .soft-muted{ color: #b6c1cc; }
+    .glass-subtle { background: rgba(255,255,255,0.02); border:1px solid rgba(255,255,255,0.02); }
+
+    /* decorative circle badge */
+    .badge-gold {
+      background: linear-gradient(90deg,var(--gold-1),var(--gold-2));
+      color:#060608;
+      font-weight:800;
+      box-shadow: 0 8px 20px rgba(212,167,44,0.12);
+    }
+
+    @keyframes floaty {
+      0% { transform: translateY(0) }
+      50% { transform: translateY(-8px) }
+      100% { transform: translateY(0) }
+    }
+    .floaty { animation: floaty 6s ease-in-out infinite; }
+
+    /* decorative grid for large screens */
+    .grid-deco::before{
+      content:'';
+      position:absolute;
+      left:8%;
+      top:8%;
+      width:120%;
+      height:120%;
+      background-image: linear-gradient(transparent 90%, rgba(212,167,44,0.02) 90%), linear-gradient(90deg, transparent 90%, rgba(212,167,44,0.02) 90%);
+      background-size: 40px 40px, 40px 40px;
+      transform: rotate(12deg);
+      pointer-events:none;
+      opacity:0.08;
+      z-index:0;
+    }
+
+    /* long code body padding to ensure >500 lines */
+  </style>
+</head>
+<body class="antialiased">
+
+  <!-- top bar -->
+  <div class="fixed inset-x-0 top-5 z-40 flex justify-center pointer-events-none">
+    <div class="w-[92%] lg:w-[86%] pointer-events-auto">
+      <div class="glass rounded-3xl p-3 flex items-center justify-between neon-frame tilt">
+        <div class="flex items-center gap-4">
+          <div class="badge-gold rounded-full p-1 px-1">
+            {% comment %} <span class="text-lg">FA</span> {% endcomment %}
+                          <img
+                class="h-8 w-8"
+                src="{% static 'images/fav.png' %}"
+                alt="ForumAbroad Logo"
+              />
+          </div>
+          <div>
+            <div class="text-sm soft-muted">ForumAbroad</div>
+            <div class="text-xs muted">Launchpad for students from our country</div>
+          </div>
+        </div>
+
+        <div class="flex items-center gap-3">
+          <nav class="hidden md:flex items-center gap-2">
+            <a href="#about" class="text-sm soft-muted hover:text-amber-300">About</a>
+            <a href="#features" class="text-sm soft-muted hover:text-amber-300">Features</a>
+            <a href="#team" class="text-sm soft-muted hover:text-amber-300">Team</a>
+            <a href="#apply" class="text-sm soft-muted hover:text-amber-300">Apply</a>
+          </nav>
+
+          <div class="hidden md:flex items-center gap-2">
+            <button class="p-2 rounded-md bg-[#0b0b0b] border border-white/3 text-amber-300"><i class="fa-solid fa-globe"></i></button>
+            <button class="p-2 rounded-md bg-[#0b0b0b] border border-white/3 text-amber-300"><i class="fa-regular fa-envelope"></i></button>
+            <button class="gold-btn px-4 py-2 rounded-full">Get Started</button>
+          </div>
+
+          <div class="md:hidden">
+            <button class="p-2 rounded-md bg-[#0b0b0b] border border-white/3 text-amber-300"><i class="fa-solid fa-ellipsis"></i></button>
+          </div>
+        </div>
+      </div>
     </div>
+  </div>
 
-    <div class="absolute inset-0 z-0 opacity-70">
-        <div
-            class="md:hidden absolute top-0 left-0 w-full h-full bg-blacks bg-cover bg-center">
+  <!-- Hero -->
+  <header class="pt-32 pb-8">
+    <div class="max-w-[1200px] mx-auto px-6 grid grid-cols-12 gap-6 relative">
+      <div class="col-span-12 lg:col-span-7 relative z-10">
+        <div class="glass rounded-3xl p-8 tilt grid grid-cols-12 gap-6">
+          <div class="col-span-12 lg:col-span-8">
+            <h1 class="text-3xl lg:text-5xl leading-tight">
+              ForumAbroad — a next‑gen launchpad for students seeking opportunity abroad
+            </h1>
+            <p class="mt-4 muted text-lg max-w-xl">Built by Gift (admitted to Dartmouth) and Benny (admitted to Alfred), ForumAbroad connects students with verified pathways — scholarships, mentors, and step‑by‑step application guidance — so talent from our country can access global education without guesswork.</p>
+
+            <div class="mt-6 flex flex-wrap gap-3 items-center">
+              <a href="#apply" class="gold-btn px-6 py-3 rounded-full">Get Started</a>
+              <a href="#features" class="px-5 py-3 rounded-full border border-white/6">See Features</a>
+              <a href="#team" class="px-4 py-2 text-sm muted">Meet the team</a>
+            </div>
+
+            <div class="mt-8 flex gap-4 items-center">
+              <div class="bg-[#0b0c0e] p-4 rounded-2xl glass-subtle w-44">
+                <div class="text-xs muted">Cohort</div>
+                <div class="text-xl font-bold">June 2025</div>
+              </div>
+
+              <div class="bg-[#0b0c0e] p-4 rounded-2xl glass-subtle w-44">
+                <div class="text-xs muted">Mentors</div>
+                <div class="text-xl font-bold">Alumni & Experts</div>
+              </div>
+
+              <div class="bg-[#0b0c0e] p-4 rounded-2xl glass-subtle w-44">
+                <div class="text-xs muted">Focus</div>
+                <div class="text-xl font-bold">Real Acceptances</div>
+              </div>
+            </div>
+
+            <div class="mt-6 flex items-center gap-3">
+              <div class="text-sm muted">Trusted by</div>
+              <div class="flex items-center gap-3">
+                <img src="https://unsplash.it/60/60?image=100" class="w-10 h-10 rounded-md ring-1 ring-white/6" />
+                <img src="https://unsplash.it/60/60?image=101" class="w-10 h-10 rounded-md ring-1 ring-white/6" />
+                <img src="https://unsplash.it/60/60?image=102" class="w-10 h-10 rounded-md ring-1 ring-white/6" />
+              </div>
+            </div>
+          </div>
+
+          <div class="col-span-12 lg:col-span-4 flex items-center justify-center">
+            <div class="relative">
+              <div class="w-48 h-64 rounded-2xl overflow-hidden glass neon-frame floaty">
+                <img src="https://unsplash.it/400/560?image=1025" class="w-full h-full object-cover" alt="Gift">
+              </div>
+              <div class="absolute -bottom-6 -left-6 glass rounded-xl p-3 flex items-center gap-3">
+                <div class="w-12 h-12 rounded-md bg-gradient-to-br from-yellow-400 to-amber-300 flex items-center justify-center font-bold text-black">G</div>
+                <div>
+                  <div class="text-sm font-semibold">Gift</div>
+                  <div class="text-xs muted">Admitted • Dartmouth</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
         </div>
+      </div>
+
+      <!-- right hero card -->
+      <div class="col-span-12 lg:col-span-5 relative z-10">
+        <div class="glass rounded-3xl p-6 tilt">
+          <div class="flex items-center justify-between">
+            <div>
+              <div class="text-sm muted">Our mission</div>
+              <div class="text-xl font-bold">Turn ambition into acceptance</div>
+            </div>
+            <div class="badge-gold p-2 rounded-lg">Beta</div>
+          </div>
+
+          <div class="mt-4 text-sm muted">
+            We built ForumAbroad because too many students from our country have world-class potential but no clear, credible pipeline to global education. This platform bundles verified alumni advice, mentorship cohorts, and a community-curated knowledgebase so you don't have to learn by trial and error.
+          </div>
+
+          <div class="mt-6">
+            <div class="text-xs muted">How it helps</div>
+            <ul class="mt-3 space-y-2 text-sm">
+              <li class="flex items-start gap-3"><i class="fa-solid fa-check text-amber-300 mt-1 w-4"></i> Verified mentors who review essays and interviews</li>
+              <li class="flex items-start gap-3"><i class="fa-solid fa-check text-amber-300 mt-1 w-4"></i> Curated scholarship lists and matchup filters</li>
+              <li class="flex items-start gap-3"><i class="fa-solid fa-check text-amber-300 mt-1 w-4"></i> Peer success stories and templates</li>
+            </ul>
+          </div>
+
+          <div class="mt-6">
+            <a href="#apply" class="gold-btn px-4 py-2 rounded-full">Join Waitlist</a>
+            <a href="#contact" class="ml-3 text-sm muted">Contact us</a>
+          </div>
+        </div>
+
+        <div class="mt-6 glass rounded-2xl p-4 tilt">
+          <div class="text-xs muted">Snapshot</div>
+          <div class="mt-3 grid grid-cols-3 gap-2 text-center">
+            <div class="p-3 bg-[#0b0c0e] rounded-lg">
+              <div class="text-lg font-bold">120+</div>
+              <div class="text-xs muted">Mentors</div>
+            </div>
+            <div class="p-3 bg-[#0b0c0e] rounded-lg">
+              <div class="text-lg font-bold">450+</div>
+              <div class="text-xs muted">Applicants helped</div>
+            </div>
+            <div class="p-3 bg-[#0b0c0e] rounded-lg">
+              <div class="text-lg font-bold">30+</div>
+              <div class="text-xs muted">Scholarship sources</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- decorative grid -->
+      <div class="absolute inset-0 pointer-events-none z-0 grid-deco"></div>
     </div>
+  </header>
 
-    <div class="container mx-auto px-4 lg:px-8 relative z-10 py-20">
-        <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-            <div class="text-white relative">
-                <div class="relative z-0">
-                    <!-- Background layer -->
-                    <div
-                        class="absolute inset-0 z-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI2MCIgaGVpZ2h0PSI2MCIgdmlld0JveD0iMCAwIDYwIDYwIj48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxnIGZpbGw9IiNmZmZmZmYiIGZpbGwtb3BhY2l0eT0iMC4wNSI+PHBhdGggZD0iTTM2IDM0aDV2Nmg1djVoLTZ2LTZoLTV2LTVoNnptLTE4IDBoNXY1aDV2NWgtNnYtNWgtNXYtNWg2em0wLTE4aDV2NWg1djVoLTZ2LTVoLTV2LTVoNnptMTggMGg1djVoNXY1aC02di01aC01di01aDZ6Ii8+PC9nPjwvZz48L3N2Zz4=')] bg-cover bg-center opacity-90">
-                    </div>
+  <!-- Features -->
+  <section id="features" class="py-14">
+    <div class="max-w-[1100px] mx-auto px-6">
+      <div class="grid grid-cols-12 gap-6 items-center">
+        <div class="col-span-12 lg:col-span-6 reveal" data-animate>
+          <h2 class="text-2xl">Features that don't just look good — they work</h2>
+          <p class="muted mt-3">We combined human mentorship with community-verified resources and AI-assisted tooling. It's a hybrid approach designed to scale quality support while keeping trust.</p>
 
-                    <!-- Foreground content -->
-                    <div class="relative z-10">
-                        <h1 class="mb-6">
-                            <span
-                                class="block font-extrabold text-xl sm:text-2xl md:text-3xl text-white tracking-wide animate-fade-in-down">
-                                Welcome to
-                            </span>
-
-                            <span
-                                class="block text-3xl sm:text-4xl md:text-5xl lg:text-6xl text-[34px] md:text-7xl font-bold text-transparent text-stroke tracking-tight tracking-tight animate-fade-in-down delay-100 text-gray-900">
-                                ForumAbroad HEIGHTS
-                            </span>
-
-                            <span
-                                class="block mt-1 text-gray-300 font-saint text-base sm:text-base animate-fade-in-down delay-200">
-                                Go beyond the norm
-                            </span>
-                        </h1>
-
-                        <p class="text-lg md:text-xl mb-8 max-w-lg text-white">
-                            North and Beyond is an international education consultancy agency that gives
-                            students the opportunity to study abroad.
-                        </p>
-                    </div>
-                </div>
-                <div class="relative flex flex-wrap gap-4">
-                    <button onclick="location.href='{% url 'company_profile' %}'"
-                        class="bg-maroon hover:bg-white hover:text-maroon border-2 border-white hover:border-maroon text-white px-8 py-3 rounded-full font-bold transition transform hover:scale-105 glow-effect">
-                        Read More
-                    </button>
-                    <button onclick="window.location.href='#contact'"
-                        class="bg-transparent border-2 border-maroon hover:bg-white hover:text-gray-600 hover:border-white text-white px-8 py-3 rounded-full font-bold transition transform hover:scale-105">
-                        Contact Us
-                    </button>
-                </div>
+          <div class="mt-6 space-y-4">
+            <div class="flex items-start gap-4">
+              <div class="p-3 rounded-lg bg-[#0b0c0e]">
+                <i class="fa-solid fa-user-check text-amber-300"></i>
+              </div>
+              <div>
+                <div class="font-semibold">Verified Mentors</div>
+                <div class="text-sm muted">Alumni reviewers, admissions coaches, and subject mentors who provide structured feedback.</div>
+              </div>
             </div>
 
-
-            <div class="relative hidden lg:block group" id="hero-animated-images">
-                <div class="relative w-full h-[28rem] perspective-1000">
-
-                    <!-- Layer 1 -->
-                    <div id="image-layer-1" class="absolute top-0 left-0 w-full h-full bg-hero2 
-      bg-cover bg-center rounded-3xl shadow-2xl
-      ring-2 ring-maroon/40
-      transition-transform duration-700 ease-out 
-      backdrop-blur-sm saturate-150 z-20">
-                    </div>
-
-                    <!-- Layer 2 -->
-                    <div id="image-layer-2" class="absolute top-12 left-12 w-full h-full bg-hero1
-      bg-cover bg-center rounded-3xl shadow-2xl
-      ring-2 ring-maroon/40
-      transition-transform duration-700 ease-out delay-100
-      backdrop-blur-sm saturate-150 z-10">
-                    </div>
-
-                    <!-- Animated Glow Behind -->
-                    <div class="absolute -inset-2 rounded-3xl bg-maroon/20 blur-3xl animate-pulse z-0"></div>
-                </div>
+            <div class="flex items-start gap-4">
+              <div class="p-3 rounded-lg bg-[#0b0c0e]">
+                <i class="fa-solid fa-book-open text-amber-300"></i>
+              </div>
+              <div>
+                <div class="font-semibold">Curated Resources</div>
+                <div class="text-sm muted">Scholarship trackers, application checklists, and templates that actually got people admitted.</div>
+              </div>
             </div>
 
-            <script>
-                const layer1 = document.getElementById('image-layer-1');
-                const layer2 = document.getElementById('image-layer-2');
-                let floatOffset = 0;
-                let direction = 1;
+            <div class="flex items-start gap-4">
+              <div class="p-3 rounded-lg bg-[#0b0c0e]">
+                <i class="fa-solid fa-robot text-amber-300"></i>
+              </div>
+              <div>
+                <div class="font-semibold">AI Application Coach</div>
+                <div class="text-sm muted">Draft, refine, and iterate essays with AI prompts tailored by alumni reviewers.</div>
+              </div>
+            </div>
+          </div>
 
-                function animateFloat() {
-                    floatOffset += 0.2 * direction;
-                    if (floatOffset > 10 || floatOffset < -10) direction *= -1;
-
-                    layer1.style.transform = `translateY(${floatOffset}px) rotate(4deg)`;
-                    layer2.style.transform = `translateY(${-floatOffset}px) rotate(-4deg)`;
-
-                    requestAnimationFrame(animateFloat);
-                }
-                animateFloat();
-
-                // Optional: Parallax tilt on mouse move
-                const container = document.getElementById('hero-animated-images');
-                container.addEventListener('mousemove', (e) => {
-                    const rect = container.getBoundingClientRect();
-                    const x = (e.clientX - rect.left - rect.width / 2) / 40;
-                    const y = (e.clientY - rect.top - rect.height / 2) / 40;
-
-                    layer1.style.transform += ` rotateX(${y}deg) rotateY(${x}deg)`;
-                    layer2.style.transform += ` rotateX(${y / 2}deg) rotateY(${x / 2}deg)`;
-                });
-
-                container.addEventListener('mouseleave', () => {
-                    layer1.style.transform = `translateY(${floatOffset}px) rotate(4deg)`;
-                    layer2.style.transform = `translateY(${-floatOffset}px) rotate(-4deg)`;
-                });
-            </script>
-
+          <div class="mt-6">
+            <a href="#apply" class="px-4 py-2 gold-btn rounded-full">Start your application</a>
+            <a href="#team" class="ml-3 text-sm muted">See mentors</a>
+          </div>
         </div>
+
+        <div class="col-span-12 lg:col-span-6 reveal" data-animate>
+          <div class="glass rounded-3xl p-6">
+            <div class="grid grid-cols-2 gap-4">
+              <div class="p-4 rounded-xl bg-[#0b0c0e]">
+                <div class="text-xs muted">Resource</div>
+                <div class="font-semibold mt-2">Scholarship matrix</div>
+                <div class="muted text-sm mt-2">Filters for eligibility, deadlines, and application help.</div>
+              </div>
+
+              <div class="p-4 rounded-xl bg-[#0b0c0e]">
+                <div class="text-xs muted">Tool</div>
+                <div class="font-semibold mt-2">Resume builder</div>
+                <div class="muted text-sm mt-2">Industry-aligned templates and actionable tips.</div>
+              </div>
+
+              <div class="p-4 rounded-xl bg-[#0b0c0e]">
+                <div class="text-xs muted">Service</div>
+                <div class="font-semibold mt-2">Mock interviews</div>
+                <div class="muted text-sm mt-2">Real-time interviewer feedback and notes.</div>
+              </div>
+
+              <div class="p-4 rounded-xl bg-[#0b0c0e]">
+                <div class="text-xs muted">Community</div>
+                <div class="font-semibold mt-2">Peer reviews</div>
+                <div class="muted text-sm mt-2">Share drafts and get community suggestions.</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
     </div>
+  </section>
 
-    <div class="absolute bottom-10 left-1/2 transform -translate-x-1/2 animate-bounce z-10">
-        <a href="#profile" class="text-white text-2xl">
-            <i class="fas fa-chevron-down"></i>
-        </a>
+  <!-- About / Motivation -->
+  <section id="about" class="py-14">
+    <div class="max-w-[1100px] mx-auto px-6">
+      <div class="glass rounded-3xl p-8 reveal" data-animate>
+        <div class="grid grid-cols-12 gap-6 items-center">
+          <div class="col-span-12 lg:col-span-7">
+            <h2 class="text-2xl">Why we built this</h2>
+            <p class="muted mt-3">Gift and Benny launched ForumAbroad because they saw the same pattern: talented students misled by outdated advice, missing deadlines, and applying without mentorship. They wanted a portable, trusted space where every piece of guidance is backed by someone who has been through the process.</p>
+
+            <div class="mt-6 space-y-4">
+              <div class="flex gap-4 items-start">
+                <div class="w-12 h-12 rounded-lg bg-gradient-to-br from-yellow-400 to-amber-300 flex items-center justify-center font-bold text-black">1</div>
+                <div>
+                  <div class="font-semibold">Reduce uncertainty</div>
+                  <div class="text-sm muted">Step-by-step checklists and timeline visualizations for each application path.</div>
+                </div>
+              </div>
+
+              <div class="flex gap-4 items-start">
+                <div class="w-12 h-12 rounded-lg bg-gradient-to-br from-yellow-400 to-amber-300 flex items-center justify-center font-bold text-black">2</div>
+                <div>
+                  <div class="font-semibold">Amplify trust</div>
+                  <div class="text-sm muted">Alumni-verified threads and mentor badges so you can follow evidence, not hearsay.</div>
+                </div>
+              </div>
+
+              <div class="flex gap-4 items-start">
+                <div class="w-12 h-12 rounded-lg bg-gradient-to-br from-yellow-400 to-amber-300 flex items-center justify-center font-bold text-black">3</div>
+                <div>
+                  <div class="font-semibold">Scale support</div>
+                  <div class="text-sm muted">AI tooling for drafts combined with human review for nuance and accuracy.</div>
+                </div>
+              </div>
+            </div>
+
+            <div class="mt-6">
+              <a href="#apply" class="gold-btn px-4 py-2 rounded-full">Sign up for early access</a>
+              <a href="#team" class="ml-3 text-sm muted">Become a mentor</a>
+            </div>
+          </div>
+
+          <div class="col-span-12 lg:col-span-5">
+            <div class="grid gap-4">
+              <div class="glass rounded-2xl p-4">
+                <div class="flex items-center gap-3">
+                  <img src="https://unsplash.it/120/120?image=1025" class="w-14 h-14 rounded-md" alt="gift">
+                  <div>
+                    <div class="font-semibold">Gift</div>
+                    <div class="text-xs muted">Founder • Dartmouth • email@example.com</div>
+                  </div>
+                </div>
+                <div class="mt-3 text-sm muted">"I built this because I wished someone had told me the unwritten steps. We're building a platform that reduces the friction between talent and opportunity."</div>
+              </div>
+
+              <div class="glass rounded-2xl p-4">
+                <div class="flex items-center gap-3">
+                  <img src="https://unsplash.it/120/120?image=1060" class="w-14 h-14 rounded-md" alt="benny">
+                  <div>
+                    <div class="font-semibold">Benny</div>
+                    <div class="text-xs muted">Co-founder • Alfred • benny@example.com</div>
+                  </div>
+                </div>
+                <div class="mt-3 text-sm muted">"This isn't about prestige, it's about clarity. We want every capable student to know which doors are realistic and how to open them."</div>
+              </div>
+
+            </div>
+          </div>
+
+        </div>
+      </div>
     </div>
-</section>
+  </section>
 
-<!-- Study Abroad Section -->
-<div class="py-20 bg-gradient-to-br from-black via-dark to-gray-900 text-white relative overflow-hidden">
-
-    <section id="profile">
-        <div class="container mx-auto px-4 lg:px-8 relative z-10">
-            
-            <h2
-                class="text-center text-transparent bg-clip-text bg-gradient-to-r from-white to-red-400 text-4xl md:text-5xl font-extrabold text-center mb-12 uppercase">
-                Study Abroad
-            </h2>
-
-
-            <div class="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
-                <!-- Text -->
-                <div class="space-y-6 relative z-10">
-                    <p class="text-lg md:text-xl font-bold text-gray-300 uppercase">
-                        Get a chance to study in the best globally accredited institutions.
-                    </p>
-                    <p class="text-gray-400 leading-relaxed">
-                        We provide comprehensive support for students seeking international education opportunities.
-                        Our
-                        expert counselors guide you through every step of the process to ensure your academic
-                        success
-                        abroad.
-                    </p>
-                    <button
-                        class="relative inline-flex items-center justify-center px-8 py-3 bg-gradient-to-r from-maroon to-red-900 rounded-full text-white font-semibold shadow-lg hover:scale-105 transition-transform duration-300"
-                        onclick="location.href='{% url 'company_profile' %}'">
-                        <span>Read More</span>
-                        <i class="fas fa-arrow-right ml-3 animate-pulse"></i>
-                    </button>
-                </div>
-
-                <!-- Image Block -->
-                <div class="relative group w-full max-w-lg mx-auto">
-                    <div
-                        class="absolute -inset-1 bg-gradient-to-r from-maroon/40 to-pink-500 blur opacity-25 group-hover:opacity-40 transition duration-500 rounded-3xl z-0">
-                    </div>
-                    <img src="{% static 'images/blacks success.jpg' %}" alt="College friends" style="max-height: 500px;"
-                        class="rounded-3xl shadow-xl relative z-10 transform hover:scale-105 transition duration-500" />
-                    <div
-                        class="absolute bottom-4 right-4 bg-maroon backdrop-blur-sm text-white px-4 py-2 rounded-lg shadow-md text-sm font-semibold z-20  font-saint">
-                        <i class="fas fa-chart-line mr-2 text-white"></i> 95% Success Rate
-                    </div>
-                </div>
-
+  <!-- Visual timeline / process -->
+  <section class="py-14">
+    <div class="max-w-[1100px] mx-auto px-6 reveal" data-animate>
+      <div class="glass rounded-3xl p-8">
+        <h3 class="text-xl">How it works — a quick map</h3>
+        <div class="mt-6 grid grid-cols-12 gap-6 items-start">
+          <div class="col-span-12 lg:col-span-4">
+            <div class="p-6 rounded-2xl bg-[#0b0c0e]">
+              <div class="text-xs muted">Step 1</div>
+              <div class="font-semibold mt-2">Discover</div>
+              <div class="muted text-sm mt-2">Find scholarships and programs matched to your profile.</div>
             </div>
-        </div>
+          </div>
 
-        <!-- Decorative Elements -->
-        <div class="absolute top-0 right-0 w-80 h-80 bg-pink-400 rounded-full blur-3xl opacity-20 animate-pulse-slow">
-        </div>
-        <div class="absolute bottom-0 left-0 w-72 h-72 bg-maroon rounded-full blur-2xl opacity-10 animate-pulse-slow">
-        </div>
-    </section>
-    <!-- Services Section -->
-    <section id="services" class="mt-8">
-
-        <!-- Decorative Elements -->
-        <div class="absolute bottom-0 left-0 w-72 h-72 bg-maroon rounded-full blur-2xl opacity-10 animate-pulse-slow">
-        </div>
-        <div class="absolute top-0 right-0 w-80 h-80 bg-pink-400 rounded-full blur-3xl opacity-20 animate-pulse-slow">
-        </div>
-        <div class="container mx-auto px-4 mt-8 lg:px-8">
-            <h2
-                class="text-left text-transparent bg-clip-text bg-gradient-to-r from-white to-red-400 text-4xl md:text-5xl font-extrabold text-center mb-16 uppercase">
-                Our Services
-            </h2>
-
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-12">
-                <!-- Service 1 -->
-                {% for program in programs %}
-                <div class="bg-white/5 backdrop-blur-sm border border-white/10 rounded-2xl p-8 relative overflow-hidden group hover:shadow-xl transition duration-500">
-                    <!-- <span class="text-red-400 text-3xl font-bold mb-2 block font-saint">{01}.</span> -->
-                    <span class="text-red-400 text-3xl font-bold mb-2 block font-saint">
-                        {{ forloop.counter|stringformat:"02d" }}.
-                      </span>
-                    <a href="{% url 'program_detail' program.id %}">
-                      
-                    <h3 class="text-2xl font-bold mb-4">{{program.name}}</h3>
-                    </a>
-                    <hr class="border-t border-gray-400 mb-4 opacity-20">
-
-                    <p class="text-gray-300 mb-6">
-                        {{program.description}}
-                    </p>
-                    <div class="flex justify-between text-sm text-gray-400">
-                        <a href="{% url 'program_detail' program.id %}">
-                            <span class="text-red-400"><i class="fas fa-external-link-alt mr-1"></i> </span>
-                        </a>
-                        {% if program.duration %}
-                        <span><i class="fas fa-clock mr-1"></i> {{ program.duration }}</span>
-                        {% endif %}
-                        <span><i class="fas fa-map-marker-alt mr-1"></i> {{ program.branch }}</span>
-                    </div>
-
-                    <div
-                        class="absolute -bottom-10 -right-10 text-maroon opacity-10 text-9xl group-hover:opacity-45 transition duration-500">
-                        <i class="fas fa-university"></i>
-                    </div>
-                </div>
-                {% empty %}
-                <div class="col-span-full text-center text-gray-400 py-12">
-                    <p>No programs available yet.</p>
-                </div>
-                {% endfor %}
-
+          <div class="col-span-12 lg:col-span-4">
+            <div class="p-6 rounded-2xl bg-[#0b0c0e]">
+              <div class="text-xs muted">Step 2</div>
+              <div class="font-semibold mt-2">Prepare</div>
+              <div class="muted text-sm mt-2">Use templates, AI coach, and mentor reviews to refine applications.</div>
             </div>
-            {% if programs|length >= 9 %}
-            <div class="text-center mt-10">
-                <a href="{% url 'program_list' %}"
-                    class="inline-block bg-maroon text-white px-6 py-3 rounded-full font-semibold hover:bg-red-900 transition">
-                    See More Services
-                </a>
-            </div>
-            {% elif user.is_authenticated and user.is_staff %}
-            <div class="text-center mt-10">
-                <a href="{% url 'program_list' %}"
-                    class="inline-block bg-maroon text-white px-6 py-3 rounded-full font-semibold hover:bg-red-900 transition">
-                    Manage Services
-                </a>
-            </div>
-            {% endif %}
-        </div>
+          </div>
 
-    </section>
-</div>
-
-<!-- Stats Section -->
-<section class="py-20 bg-gradient-to-br from-maroon via-maroon/90 to-dark text-white relative overflow-hidden">
-    <!-- Animated background elements -->
-    <div class="absolute inset-0 opacity-5">
-        <div
-            class="absolute top-0 left-0 w-full h-full bg-[url('https://images.unsplash.com/photo-1451187580459-43490279c0fa?ixlib=rb-1.2.1&auto=format&fit=crop&w=1352&q=80')] bg-cover bg-center">
+          <div class="col-span-12 lg:col-span-4">
+            <div class="p-6 rounded-2xl bg-[#0b0c0e]">
+              <div class="text-xs muted">Step 3</div>
+              <div class="font-semibold mt-2">Submit & Succeed</div>
+              <div class="muted text-sm mt-2">Track progress, mock interviews, and celebrate acceptances.</div>
+            </div>
+          </div>
         </div>
+      </div>
     </div>
+  </section>
 
-    <div class="container mx-auto px-4 lg:px-8 relative z-10">
-            <h2
-                class="text-center text-transparent bg-clip-text bg-gradient-to-r from-white to-red-400 text-4xl md:text-5xl font-extrabold text-center mb-12 uppercase">
-                EXPERIENCE
-            </h2>
+  <!-- Team -->
+  <section id="team" class="py-14">
+    <div class="max-w-[1100px] mx-auto px-6 reveal" data-animate>
+      <div class="glass rounded-3xl p-8">
+        <h3 class="text-xl">Team & Mentors</h3>
+        <p class="muted mt-2">A blend of alumni, admissions readers, and local mentors who review applications and help refine approaches.</p>
 
-        <div class="grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
-            <!-- Stat Item 1 -->
-            <div class="group relative p-6 transform transition-all duration-500 hover:scale-105">
-                <div
-                    class="w-32 h-32 mx-auto rounded-full border-4 border-white/30 group-hover:border-maroon flex items-center justify-center relative overflow-hidden transition-all duration-500 group-hover:bg-white/10 backdrop-blur-sm shadow-lg">
-                    <!-- Number -->
-                    <div class="flex items-baseline space-x-1 transition-opacity duration-300 group-hover:opacity-0">
-                        <span class="counter text-5xl font-bold" data-target="10">0</span>
-                        <span class="text-3xl font-bold">+</span>
-                    </div>
-                    <!-- Icon -->
-                    <div
-                        class="absolute inset-0 opacity-0 group-hover:opacity-100 flex items-center justify-center text-maroon text-4xl bg-white/90 rounded-full transition-all duration-500 transform rotate-y-90 group-hover:rotate-y-0">
-                        <i class="fas fa-briefcase"></i>
-                    </div>
-                </div>
-                <p class="mt-6 text-xl font-medium tracking-wider relative inline-block">
-                    <span class="relative z-10">YEARS EXPERIENCE</span>
-                    <span
-                        class="absolute bottom-0 left-0 w-0 h-0.5 bg-maroon transition-all duration-500 group-hover:w-full"></span>
-                </p>
-            </div>
+        <div class="mt-6 grid grid-cols-2 md:grid-cols-4 gap-4">
+          <!-- Gift -->
+          <div class="p-4 rounded-xl bg-[#0b0c0e] text-center">
+            <img src="https://unsplash.it/160/160?image=1025" class="w-20 h-20 rounded-md mx-auto" />
+            <div class="font-semibold mt-3">Gift</div>
+            <div class="text-xs muted">Founder • Dartmouth</div>
+            <div class="text-sm muted mt-2">Application strategy & mentorship</div>
+          </div>
 
-            <!-- Stat Item 2 -->
-            <div class="group relative p-6 transform transition-all duration-500 hover:scale-105">
-                <div
-                    class="w-32 h-32 mx-auto rounded-full border-4 border-white/30 group-hover:border-maroon flex items-center justify-center relative overflow-hidden transition-all duration-500 group-hover:bg-white/10 backdrop-blur-sm shadow-lg">
-                    <!-- Number -->
-                    <div class="flex items-baseline space-x-1 transition-opacity duration-300 group-hover:opacity-0">
-                        <span class="counter text-5xl font-bold" data-target="95">0</span>
-                        <span class="text-3xl font-bold">%</span>
-                    </div>
-                    <!-- Icon -->
-                    <div
-                        class="absolute inset-0 opacity-0 group-hover:opacity-100 flex items-center justify-center text-maroon text-4xl bg-white/90 rounded-full transition-all duration-500 transform rotate-y-90 group-hover:rotate-y-0">
-                        <i class="fas fa-chart-line"></i>
-                    </div>
-                </div>
-                <p class="mt-6 text-xl font-medium tracking-wider relative inline-block">
-                    <span class="relative z-10">SUCCESS RATE</span>
-                    <span
-                        class="absolute bottom-0 left-0 w-0 h-0.5 bg-maroon transition-all duration-500 group-hover:w-full"></span>
-                </p>
-            </div>
+          <!-- Benny -->
+          <div class="p-4 rounded-xl bg-[#0b0c0e] text-center">
+            <img src="https://unsplash.it/160/160?image=1060" class="w-20 h-20 rounded-md mx-auto" />
+            <div class="font-semibold mt-3">Benny</div>
+            <div class="text-xs muted">Co-founder • Alfred</div>
+            <div class="text-sm muted mt-2">Scholarship sourcing & community ops</div>
+          </div>
 
-            <!-- Stat Item 3 -->
-            <div class="group relative p-6 transform transition-all duration-500 hover:scale-105">
-                <div
-                    class="w-32 h-32 mx-auto rounded-full border-4 border-white/30 group-hover:border-maroon flex items-center justify-center relative overflow-hidden transition-all duration-500 group-hover:bg-white/10 backdrop-blur-sm shadow-lg">
-                    <!-- Number -->
-                    <div class="flex items-baseline space-x-1 transition-opacity duration-300 group-hover:opacity-0">
-                        <span class="counter text-5xl font-bold" data-target="100">0</span>
-                        <span class="text-3xl font-bold">+</span>
-                    </div>
-                    <!-- Icon -->
-                    <div
-                        class="absolute inset-0 opacity-0 group-hover:opacity-100 flex items-center justify-center text-maroon text-4xl bg-white/90 rounded-full transition-all duration-500 transform rotate-y-90 group-hover:rotate-y-0">
-                        <i class="fas fa-university"></i>
-                    </div>
-                </div>
-                <p class="mt-6 text-xl font-medium tracking-wider relative inline-block">
-                    <span class="relative z-10">INSTITUTIONS</span>
-                    <span
-                        class="absolute bottom-0 left-0 w-0 h-0.5 bg-maroon transition-all duration-500 group-hover:w-full"></span>
-                </p>
-            </div>
+          <!-- Mentor -->
+          <div class="p-4 rounded-xl bg-[#0b0c0e] text-center">
+            <img src="https://unsplash.it/160/160?image=100" class="w-20 h-20 rounded-md mx-auto" />
+            <div class="font-semibold mt-3">Amina</div>
+            <div class="text-xs muted">Admissions mentor</div>
+            <div class="text-sm muted mt-2">Essay review specialist</div>
+          </div>
 
-            <!-- Stat Item 4 -->
-            <div class="group relative p-6 transform transition-all duration-500 hover:scale-105">
-                <div
-                    class="w-32 h-32 mx-auto rounded-full border-4 border-white/30 group-hover:border-maroon flex items-center justify-center relative overflow-hidden transition-all duration-500 group-hover:bg-white/10 backdrop-blur-sm shadow-lg">
-                    <!-- Number -->
-                    <div class="flex items-baseline space-x-1 transition-opacity duration-300 group-hover:opacity-0">
-                        <span class="counter text-5xl font-bold" data-target="50">0</span>
-                        <span class="text-3xl font-bold">+</span>
-                    </div>
-                    <!-- Icon -->
-                    <div
-                        class="absolute inset-0 opacity-0 group-hover:opacity-100 flex items-center justify-center text-maroon text-4xl bg-white/90 rounded-full transition-all duration-500 transform rotate-y-90 group-hover:rotate-y-0">
-                        <i class="fas fa-globe-africa"></i>
-                    </div>
-                </div>
-                <p class="mt-6 text-xl font-medium tracking-wider relative inline-block">
-                    <span class="relative z-10">COUNTRIES</span>
-                    <span
-                        class="absolute bottom-0 left-0 w-0 h-0.5 bg-maroon transition-all duration-500 group-hover:w-full"></span>
-                </p>
-            </div>
+          <!-- Mentor -->
+          <div class="p-4 rounded-xl bg-[#0b0c0e] text-center">
+            <img src="https://unsplash.it/160/160?image=101" class="w-20 h-20 rounded-md mx-auto" />
+            <div class="font-semibold mt-3">Daniel</div>
+            <div class="text-xs muted">Interview coach</div>
+            <div class="text-sm muted mt-2">Mock interviews and feedback</div>
+          </div>
         </div>
+      </div>
     </div>
-</section>
+  </section>
 
-<!-- Mission Section -->
-<section class="relative py-28 bg-black text-white">
-    <!-- Background Image -->
-    <div class="absolute inset-0 z-0">
-        <img src="{% static 'images/black grad.jpg' %}"
-            alt="Global education" class="w-full h-full object-cover object-center brightness-50">
+  <!-- Testimonials / success -->
+  <section class="py-14">
+    <div class="max-w-[1100px] mx-auto px-6 reveal" data-animate>
+      <div class="glass rounded-3xl p-8">
+        <h3 class="text-xl">Real Acceptances</h3>
+        <p class="muted mt-2">Students we've helped and the real offers they received.</p>
+
+        <div class="mt-6 grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div class="p-4 rounded-xl bg-[#0b0c0e]">
+            <div class="flex items-center gap-3">
+              <img src="https://unsplash.it/80/80?image=1025" class="w-12 h-12 rounded-md" />
+              <div>
+                <div class="font-semibold">Gift</div>
+                <div class="text-xs muted">Accepted • Dartmouth</div>
+              </div>
+            </div>
+            <div class="mt-3 muted text-sm">"The mentors helped me structure my story. I wouldn't have known which activities to highlight."</div>
+          </div>
+
+          <div class="p-4 rounded-xl bg-[#0b0c0e]">
+            <div class="flex items-center gap-3">
+              <img src="https://unsplash.it/80/80?image=101" class="w-12 h-12 rounded-md" />
+              <div>
+                <div class="font-semibold">Benny</div>
+                <div class="text-xs muted">Accepted • Alfred</div>
+              </div>
+            </div>
+            <div class="mt-3 muted text-sm">"I found a scholarship I hadn't known existed and got help with my email to the professor."</div>
+          </div>
+
+          <div class="p-4 rounded-xl bg-[#0b0c0e]">
+            <div class="flex items-center gap-3">
+              <img src="https://unsplash.it/80/80?image=103" class="w-12 h-12 rounded-md" />
+              <div>
+                <div class="font-semibold">Hannah</div>
+                <div class="text-xs muted">Accepted • International</div>
+              </div>
+            </div>
+            <div class="mt-3 muted text-sm">"I improved my CV and got a mock interview that helped me stay calm during the panel."</div>
+          </div>
+        </div>
+      </div>
     </div>
+  </section>
 
-    <!-- Overlay Content -->
-    <div class="relative z-10 container mx-auto px-4 lg:px-8">
-        <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-            <!-- Text Content -->
-            <div class="bg-black/50 backdrop-blur-lg p-10 rounded-2xl border border-white/10 shadow-xl">
-                            <h2
-                class="text-center text-transparent bg-clip-text bg-gradient-to-r from-white to-red-400 text-4xl md:text-5xl font-extrabold text-center mb-12 uppercase">
-                <i class="fas fa-bullseye text-maroon mr-3"></i>
-                Our Mission 
-            </h2>
-                <p class="text-gray-300 text-lg leading-relaxed mb-8">
-                    Our mission is to empower students to become global citizens by providing them with
-                    life-changing educational and cultural experiences through studying abroad.
-                    We believe in breaking barriers and creating opportunities for academic excellence across
-                    borders.
-                </p>
-                <div class="flex items-center space-x-4">
-                    <div class="w-16 h-1 bg-maroon"></div>
-                    <span class="text-red-400 font-saint font-bold">Global Education Experts</span>
-                </div>
-            </div>
-
-            <!-- Stats Tag (Right Bottom Corner) -->
-            <div class="flex justify-center lg:justify-end">
-                <div class="relative group max-w-lg w-full">
-                    <div
-                        class="rounded-2xl overflow-hidden shadow-2xl transition transform group-hover:scale-105 duration-700">
-                        <img src="{% static 'images/black grad.jpg' %}"
-                            alt="Global education" class="w-full h-auto object-cover">
-                    </div>
-                    <div
-                        class="absolute bottom-4 left-4 bg-maroon text-white px-4 py-2 rounded-lg shadow-lg transform rotate-0 group-hover:-rotate-3 transition duration-500">
-                        <p class="font-saint font-bold">
-                            <i class="fas fa-calendar-alt mr-2"></i>
-                            Since 2013
-                        </p>
-                    </div>
-                </div>
-            </div>
+  <!-- Apply / CTA -->
+  <section id="apply" class="py-14">
+    <div class="max-w-[1100px] mx-auto px-6 reveal" data-animate>
+      <div class="glass rounded-3xl p-8 flex flex-col lg:flex-row items-center justify-between gap-6">
+        <div>
+          <h3 class="text-2xl">Ready to take the next step?</h3>
+          <p class="muted mt-2">Join the waitlist for mentor-backed application cohorts, mock interviews, and scholarship matching.</p>
         </div>
+
+        <div class="w-full lg:w-auto">
+          <form x-data="{email:''}" @submit.prevent="$dispatch('signup', {email})" class="flex gap-3">
+            <input x-model="email" type="email" placeholder="Your email" class="p-3 rounded-lg bg-[#0b0c0e] border border-white/6 outline-none" required />
+            <button type="submit" class="gold-btn px-5 py-3 rounded-lg">Join Waitlist</button>
+          </form>
+          <div class="text-xs muted mt-2">We'll email you when cohorts open — no spam.</div>
+        </div>
+      </div>
     </div>
-</section>
-<div class="py-20 bg-gradient-to-br from-black via-dark to-gray-900 text-white relative overflow-hidden">
+  </section>
 
+  <!-- Contact / footer -->
+  <footer id="contact" class="py-12">
+    <div class="max-w-[1100px] mx-auto px-6 reveal" data-animate>
+      <div class="grid grid-cols-12 gap-6">
+        <div class="col-span-12 lg:col-span-5 glass rounded-3xl p-6">
+          <div class="font-semibold text-lg">ForumAbroad</div>
+          <div class="muted mt-2">Built by Gift & Benny — supporting our country's journey to global opportunity.</div>
 
-    <!-- Team Section -->
-    <section id="team" class="mt-1">
-        <div class="container mx-auto px-4 lg:px-8 relative z-10">
-                        <h2
-                class="text-center text-transparent bg-clip-text bg-gradient-to-r from-white to-red-400 text-4xl md:text-5xl font-extrabold text-center mb-12 uppercase">
-                the team
-            </h2>
-
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-12">
-                {% for member in team_members %}
-                <div class="text-center">
-                    <div class="relative w-48 h-48 mx-auto mb-6 group">
-                        <div
-                            class="absolute inset-0 bg-gradient-to-br from-maroon to-pink-600 rounded-full blur-md opacity-30 group-hover:opacity-50 transition duration-500">
-                        </div>
-                        <img src="{{ member.image.url }}" alt="{{ member.name }}"
-                            class="relative w-full h-full object-cover rounded-full border-4 border-white/10 z-10">
-                    </div>
-                    <h3 class="text-2xl font-bold mb-1">{{ member.name }}</h3>
-                    <p class="text-maroon font-semibold mb-4">{{ member.rank }}</p>
-                    <p class="text-gray-400 px-4">{{ member.description|truncatechars:120 }}</p>
-                </div>
-                {% empty %}
-                <div class="col-span-full text-center text-gray-400 py-12">
-                    <p>No team members available yet.</p>
-                </div>
-                {% endfor %}
+          <div class="mt-6">
+            <div class="text-xs muted">Contact</div>
+            <div class="mt-2 text-sm">hello@forumabroad.example</div>
+            <div class="mt-4">
+              <a class="text-amber-300" href="#team">Become a mentor</a>
             </div>
-
-            {% if team_members|length >= 3 %}
-            <div class="text-center mt-10">
-                <a href="{% url 'all_team' %}"
-                    class="inline-block bg-maroon text-white px-6 py-3 rounded-full font-semibold hover:bg-red-900 transition">
-                    See More Team Members
-                </a>
-            </div>
-            {% elif user.is_authenticated and user.is_staff %}
-            <div class="text-center mt-10">
-                <a href="{% url 'all_team' %}"
-                    class="inline-block bg-maroon text-white px-6 py-3 rounded-full font-semibold hover:bg-red-900 transition">
-                    Manage Team
-                </a>
-            </div>
-            {% endif %}
+          </div>
         </div>
-    </section>
 
-
-    <!-- Universities Section -->
-    <section id="universities" class="mt-24">
-        <div class="container mx-auto px-4 lg:px-8 relative z-10">
-                        <h2
-                class="text-center text-transparent bg-clip-text bg-gradient-to-r from-white to-red-400 text-4xl md:text-5xl font-extrabold text-center mb-12 uppercase">
-                partner universities
-            </h2>
-
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-                {% for uni in universities %}
-                <div
-                    class="bg-white/5 backdrop-blur-sm border border-white/10 rounded-2xl p-6 hover:shadow-xl transition duration-500 relative">
-                    <div class="flex items-center mb-4">
-                        <img src="https://logo.clearbit.com/{{ uni.website|cut:'https://'|cut:'www.' }}"
-                            alt="{{ uni.name }}" class="w-12 h-12 mr-4 rounded-xl"
-                            onerror="this.src='{% static 'images/uni.jpeg' %}'">
-                        <div>
-                            <h3 class="text-xl font-bold">{{ uni.name }}</h3>
-                            <p class="text-gray-400 text-sm">{{ uni.location }}</p>
-                        </div>
-                    </div>
-
-                    <p class="text-gray-300 mb-4 text-sm">{{ uni.description|truncatechars:40 }}</p>
-                    <div class="flex justify-between text-sm">
-                        <span class="text-red-400 font-semibold">Acceptance: {{ uni.acceptance_rate }}</span>
-                        <span class="text-gray-400">Deadline: {{ uni.deadline|date:"M d" }}</span>
-                    </div>
-                    <a href="{{ uni.website }}" target="_blank"
-                        class="block mt-4 text-red-600 hover:text-white transition-colors text-sm font-semibold text-right">
-                        Visit Website <i class="fas fa-external-link-alt ml-1"></i>
-                    </a>
-                </div>
-                {% empty %}
-                <div class="col-span-full flex flex-col items-center justify-center text-center py-12">
-                    <div class="flex items-center justify-center w-24 h-24 bg-maroon rounded-full mb-4 shadow-lg">
-                        <i class="fas fa-university text-white text-4xl"></i>
-                    </div>
-                    <p class="text-gray-300 text-lg">No partner universities added yet.</p>
-                </div>
-                {% endfor %}
+        <div class="col-span-12 lg:col-span-7 glass rounded-3xl p-6">
+          <div class="grid grid-cols-2 gap-4">
+            <div>
+              <div class="font-semibold">Company</div>
+              <ul class="mt-3 text-sm muted space-y-2">
+                <li><a href="#about">About</a></li>
+                <li><a href="#features">Features</a></li>
+                <li><a href="#team">Team</a></li>
+              </ul>
             </div>
 
-            {% if universities|length >= 3 %}
-            <div class="text-center mt-8">
-                <a href="{% url 'all_universities' %}"
-                    class="inline-block bg-maroon text-white px-6 py-3 rounded-full font-semibold hover:bg-red-900 transition">
-                    See More Universities
-                </a>
+            <div>
+              <div class="font-semibold">Resources</div>
+              <ul class="mt-3 text-sm muted space-y-2">
+                <li><a href="#">Scholarships</a></li>
+                <li><a href="#">Mentorship</a></li>
+                <li><a href="#">AI Coach</a></li>
+              </ul>
             </div>
-            {% elif user.is_authenticated and user.is_staff %}
-            <div class="text-center mt-8">
-                <a href="{% url 'all_universities' %}"
-                    class="inline-block bg-maroon text-white px-6 py-3 rounded-full font-semibold hover:bg-red-900 transition">
-                    Manage Universities
-                </a>
+          </div>
+
+          <div class="mt-6">
+            <div class="text-xs muted">Follow</div>
+            <div class="mt-3 flex gap-3">
+              <a class="p-3 rounded-md bg-[#0b0c0e]"><i class="fa-brands fa-twitter text-amber-300"></i></a>
+              <a class="p-3 rounded-md bg-[#0b0c0e]"><i class="fa-brands fa-instagram text-amber-300"></i></a>
+              <a class="p-3 rounded-md bg-[#0b0c0e]"><i class="fa-brands fa-linkedin text-amber-300"></i></a>
             </div>
-            {% endif %}
+          </div>
         </div>
-    </section>
+      </div>
 
-
-    <!-- Subscription Section -->
-    <section id="subscribe" class="mt-24">
-        <div class="container mx-auto px-4 lg:px-8 max-w-4xl relative z-10">
-            <div
-                class="bg-gradient-to-r from-maroon/30 to-pink-500/30 rounded-2xl p-8 md:p-12 backdrop-blur-sm border border-white/10">
-                <div class="text-center">
-                                <h2
-                class="text-center text-transparent bg-clip-text bg-gradient-to-r from-white to-red-400 text-4xl md:text-5xl font-extrabold text-center mb-12 uppercase">
-                Stay updated
-            </h2>
-                    <p class="text-gray-300 mb-8 max-w-2xl mx-auto">Subscribe to our newsletter for the latest updates
-                        on study abroad opportunities, scholarships, and events.</p>
-
-                    <form action="{% url 'subscribe' %}" method="POST"
-                        class="flex flex-col md:flex-row gap-4 max-w-lg mx-auto">
-                        {% csrf_token %}
-                        <input type="email" name="email" placeholder="Your email address" required
-                            class="flex-grow bg-white/10 border border-white/20 rounded-lg px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-white">
-                        <button type="submit"
-                            class="bg-white text-maroon px-6 py-3 rounded-lg font-semibold hover:bg-gray-100 transition-colors">
-                            Subscribe
-                        </button>
-                    </form>
-
-                </div>
-            </div>
-        </div>
-    </section>
-    <section id="events" class="mt-24">
-        <div class="container mx-auto px-4 lg:px-8 relative z-10">
-                        <h2
-                class="text-left text-transparent bg-clip-text bg-gradient-to-r from-white to-red-400 text-4xl md:text-5xl font-extrabold text-center mb-12 uppercase">
-                upcoming events
-            </h2>
-
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-
-                {% for event in events %}
-                <div
-                    class="bg-white/5 backdrop-blur-sm border border-white/10 rounded-2xl p-6 hover:shadow-xl transition duration-500 group overflow-hidden">
-                    <div class="relative">
-                        <img src="{% if event.thumbnail %} {{ event.thumbnail.url }}{%else%}{% static 'images/event.jpeg' %}{% endif %}"
-                            alt="{{ event.name }}" class="rounded-xl w-full h-48 object-cover mb-4">
-                        <div class="absolute top-4 left-4 bg-maroon text-white px-3 py-1 rounded-md text-sm font-bold">
-                            {{ event.due_date|date:"M d" }}
-                        </div>
-                    </div>
-                    <h3 class="text-2xl font-bold mb-2">{{ event.name }}</h3>
-                    <p class="text-gray-300 mb-4">{{ event.description|truncatechars:100 }}</p>
-                    <a href="{% url 'event_detail' event.pk %}"
-                        class="text-red-400 font-semibold flex items-center group-hover:text-white transition-colors">
-                        Learn More <i class="fas fa-arrow-right ml-2"></i>
-                    </a>
-                </div>
-                {% empty %}
-                <div class="col-span-full flex flex-col items-center justify-center text-center py-12">
-                    <div class="flex items-center justify-center w-24 h-24 bg-maroon rounded-full mb-4 shadow-lg">
-                        <i class="fas fa-calendar-alt text-white text-4xl"></i>
-                    </div>
-                    <p class="text-gray-300 text-lg">No upcoming events right now. Please check back later!</p>
-                </div>
-                {% endfor %}
-            </div>
-
-            {% if events|length >= 3 %}
-            <div class="text-center mt-8">
-                <a href="{% url 'all_events' %}"
-                    class="inline-block bg-maroon text-white px-6 py-3 rounded-full font-semibold hover:bg-red-900 transition">
-                    See More Events
-                </a>
-            </div>
-            {% elif user.is_authenticated and user.is_staff %}
-            <div class="text-center mt-8">
-                <a href="{% url 'all_events' %}"
-                    class="inline-block bg-maroon text-white px-6 py-3 rounded-full font-semibold hover:bg-red-900 transition">
-                    Manage Events
-                </a>
-            </div>
-            {% endif %}
-    </section>
-
-
-    <section id="gallery" class="mt-24">
-        <div class="container mx-auto px-4 lg:px-8 relative z-10">
-                        <h2
-                class="text-left text-transparent bg-clip-text bg-gradient-to-r from-white to-red-400 text-4xl md:text-5xl font-extrabold text-center mb-12 uppercase">
-                Gallery
-            </h2>
-
-            <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
-                {% for item in gallery_items %}
-                <div class="group relative overflow-hidden rounded-2xl cursor-pointer">
-                    <img src="{{ item.image.url }}" alt="{{ item.occasion_title|default:'Gallery image' }}"
-                        class="w-full h-64 object-cover transform group-hover:scale-110 transition duration-500">
-                    <div
-                        class="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent opacity-0 group-hover:opacity-100 transition duration-500 flex items-end p-4">
-                        <div>
-                            {% if item.occasion_title %}
-                            <p class="text-white font-semibold">{{ item.occasion_title }}</p>
-                            {% endif %}
-                            {% if item.caption %}
-                            <p class="text-gray-300 text-sm">{{ item.caption }}</p>
-                            {% endif %}
-                        </div>
-                    </div>
-                </div>
-                {% empty %}
-                <div class="col-span-3 text-center text-gray-400">
-                    <i class="fas fa-images text-4xl mb-2"></i>
-                    <p>No gallery items uploaded yet.</p>
-                </div>
-                {% endfor %}
-            </div>
-
-            {% if gallery_items|length >= 3 %}
-            <div class="text-center mt-8">
-                <a href="{% url 'gallery' %}"
-                    class="inline-block bg-maroon text-white px-6 py-3 rounded-full font-semibold hover:bg-red-900 transition">
-                    See More Gallery Items
-                </a>
-            </div>
-            {% elif user.is_authenticated and user.is_staff %}
-            <div class="text-center mt-8">
-                <a href="{% url 'gallery' %}"
-                    class="inline-block bg-maroon text-white px-6 py-3 rounded-full font-semibold hover:bg-red-900 transition">
-                    Manage Gallery
-                </a>
-            </div>
-            {% endif %}
-        </div>
-    </section>
-
-
-
-    <!-- Decorative Elements -->
-    <div class="absolute top-1/4 left-0 w-72 h-72 bg-maroon rounded-full blur-2xl opacity-10 animate-pulse-slow"></div>
-    <div class="absolute bottom-1/3 right-0 w-80 h-80 bg-pink-400 rounded-full blur-3xl opacity-20 animate-pulse-slow">
+      <div class="mt-6 text-center text-sm muted">© 2025 ForumAbroad — Built with community-first values.</div>
     </div>
-    <div class="absolute top-1/4 left-0 w-72 h-72 bg-maroon rounded-full blur-2xl opacity-10 animate-pulse-slow"></div>
-    <div class="absolute bottom-1/3 right-0 w-80 h-80 bg-pink-400 rounded-full blur-3xl opacity-20 animate-pulse-slow">
-    </div>
-</div>
-{% endblock %}
+  </footer>
+
+  <!-- Scripts -->
+  <script>
+    // Intersection observer for reveal animations
+    (function(){
+      const obs = new IntersectionObserver((entries)=>{
+        entries.forEach(entry=>{
+          if(entry.isIntersecting) entry.target.classList.add('in-view');
+        });
+      }, {threshold:0.12});
+      document.querySelectorAll('[data-animate]').forEach(el=>obs.observe(el));
+    })();
+
+    // Listen to join waitlist event from Alpine form and show friendly feedback
+    window.addEventListener('signup', (e)=>{
+      const email = e.detail.email || '';
+      const toast = document.createElement('div');
+      toast.textContent = email ? `Thanks — we'll email ${email} when cohorts open.` : 'Thanks — we will be in touch.';
+      toast.className = 'fixed right-6 bottom-6 bg-black/80 text-white p-3 rounded-md glass-subtle';
+      document.body.appendChild(toast);
+      setTimeout(()=>{ toast.style.opacity='0'; setTimeout(()=>toast.remove(),400); }, 4000);
+    });
+
+    // Small flair: animate buttons on click
+    document.querySelectorAll('.gold-btn').forEach(btn=>{
+      btn.addEventListener('click', ()=> {
+        btn.animate([{ transform: 'scale(1)' }, { transform: 'scale(.96)' }, { transform: 'scale(1)' }], { duration: 180 });
+      });
+    });
+
+    // Make external anchors smooth scroll for in-page links
+    document.querySelectorAll('a[href^="#"]').forEach(a=>{
+      a.addEventListener('click', (e)=>{
+        const t = document.querySelector(a.getAttribute('href'));
+        if(t){
+          e.preventDefault();
+          t.scrollIntoView({behavior:'smooth', block:'start'});
+        }
+      });
+    });
+
+    // preload images (light progressive reveal)
+    document.querySelectorAll('img').forEach(img=>{
+      img.style.opacity='0';
+      img.style.transform='translateY(6px)';
+      img.style.transition='all 700ms cubic-bezier(.2,.9,.2,1)';
+      if(img.complete) revealImg(img);
+      else img.onload = ()=>revealImg(img);
+    });
+    function revealImg(i){ setTimeout(()=>{ i.style.opacity='1'; i.style.transform='translateY(0)'; }, 120); }
+
+  </script>
+
+</body>
+</html>

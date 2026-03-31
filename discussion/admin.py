@@ -2,7 +2,7 @@ from django.contrib import admin
 from django.contrib.auth import get_user_model
 from django.utils.html import format_html
 from .models import (
-    Notification, 
+    Notification,
     UserNotificationStatus,
     Post,
     Reply,
@@ -11,7 +11,8 @@ from .models import (
     ReplytoReplyInteraction,
     ReplyInteraction,
     ReplyToAnotherReply,
-    ReplyToAnotherReplyInteraction
+    ReplyToAnotherReplyInteraction,
+    Story,
 )
 
 User = get_user_model()
@@ -240,7 +241,7 @@ class ReplyToReplyAdmin(admin.ModelAdmin):
         if parent_obj and parent_obj.content:
             content = parent_obj.content
             return content[:50] + '...' if len(content) > 50 else content
-        return "—"
+        return ", "
 
     
     def media_preview(self, obj):
@@ -317,7 +318,7 @@ class ReplyToAnotherReplyAdmin(admin.ModelAdmin):
     list_filter = ('tag', 'created_at')
 
     def parent_summary(self, obj):
-        return obj.reply.content[:50] if obj.reply else "—"
+        return obj.reply.content[:50] if obj.reply else ", "
     parent_summary.short_description = 'Replying To'
 
 
@@ -372,6 +373,14 @@ class ReplyToAnotherReplyAdmin(admin.ModelAdmin):
 #             return "Document file uploaded"
 #         return "No media"
 #     media_preview.short_description = "Media Preview"
+
+
+@admin.register(Story)
+class StoryAdmin(admin.ModelAdmin):
+    list_display = ('title', 'author', 'tag', 'views', 'created_at')
+    list_filter = ('tag', 'created_at')
+    search_fields = ('title', 'summary', 'body', 'author__username')
+    readonly_fields = ('created_at', 'updated_at', 'views')
 
 
 @admin.register(ReplyToAnotherReplyInteraction)

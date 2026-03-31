@@ -4,267 +4,51 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>ForumAbroad — Big dreams deserve real answers.</title>
+  <title>ForumAbroad ,  Big dreams deserve real answers.</title>
 
   <!-- Tailwind CSS CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
-  
 
-  <!-- Font Awesome (free) -->
+  <!-- Font Awesome 6.4.0 -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"/>
-    <link rel="icon" href="{% static 'images/fav.png' %}">
+  <link rel="icon" href="{% static 'images/fav.png' %}">
 
   <!-- Alpine.js -->
   <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
 
-  <!-- Google Font: Sen -->
-  <link href="https://fonts.googleapis.com/css2?family=Sen:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+  <!-- Google Font: DM Sans -->
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,600;0,9..40,700;0,9..40,800;1,9..40,400&display=swap" rel="stylesheet">
 
-  <!-- theme tags (gold & black vibe) -->
-  <meta name="theme-color" content="#0b0b0b" />
-  <meta name="color-scheme" content="dark light" />
+  <meta name="theme-color" content="#F4F3EA" />
 
-  <style>
-    :root{
-      --bg:#060608;
-      --card:#0f1114;
-      --gold-1:#d4a72c;
-      --gold-2:#ffd55a;
-      --muted:#9aa3ad;
-      --glass: rgba(255,255,255,0.03);
-    }
-
-    html,body{
-      height:100%;
-      margin:0;
-      font-family:"Sen", system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
-      background:
-        radial-gradient(900px 600px at 10% 20%, rgba(212,167,44,0.03), transparent 6%),
-        radial-gradient(800px 500px at 90% 80%, rgba(255,213,90,0.02), transparent 6%),
-        var(--bg);
-      color:#e6eef8;
-      -webkit-font-smoothing:antialiased;
-      -moz-osx-font-smoothing:grayscale;
-    }
-
-    /* Glass card */
-    .glass {
-      background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
-      border: 1px solid rgba(255,255,255,0.03);
-      backdrop-filter: blur(6px) saturate(120%);
-      box-shadow: 0 8px 40px rgba(0,0,0,0.6), inset 0 1px 0 rgba(255,255,255,0.02);
-    }
-
-    /* Gold button */
-    .gold-btn {
-      background: linear-gradient(90deg, var(--gold-1), var(--gold-2));
-      color:#0b0b0b;
-      font-weight:700;
-      box-shadow: 0 10px 30px rgba(212,167,44,0.12);
-      transition: all 0.3s ease;
-    }
-    
-    .gold-btn:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 12px 35px rgba(212,167,44,0.2);
-    }
-
-    .muted{ color:var(--muted); }
-
-    /* futuristic headings */
-    h1,h2,h3{ font-weight:700; color:#f6f8fb; line-height:1.05; }
-
-    /* animated reveal */
-    .reveal {
-      transform: translateY(18px) scale(.996);
-      opacity:0;
-      transition: all 700ms cubic-bezier(.2,.9,.2,1);
-      will-change: transform, opacity;
-    }
-    .reveal.in-view{ transform: translateY(0) scale(1); opacity:1; }
-
-    /* subtle neon frame */
-    .neon-frame { box-shadow: 0 0 30px rgba(212,167,44,0.05); }
-
-    /* skew sections */
-    .tilt { transform: perspective(1000px) rotateX(1deg) rotateY(-0.7deg); }
-
-    /* underlined gradient */
-    .grad-underline {
-      background: linear-gradient(90deg, rgba(212,167,44,0.95), rgba(255,213,90,0.8));
-      -webkit-background-clip: text;
-      background-clip:text;
-      color:transparent;
-    }
-
-    /* hero fancy search */
-    .search-ghost{
-      background: linear-gradient(90deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
-      border:1px solid rgba(255,255,255,0.02);
-    }
-
-    /* small helpers */
-    .soft-muted{ color: #b6c1cc; }
-    .glass-subtle { background: rgba(255,255,255,0.02); border:1px solid rgba(255,255,255,0.02); }
-
-    /* decorative circle badge */
-    .badge-gold {
-      background: linear-gradient(90deg,var(--gold-1),var(--gold-2));
-      color:#060608;
-      font-weight:800;
-      box-shadow: 0 8px 20px rgba(212,167,44,0.12);
-    }
-
-    @keyframes floaty {
-      0% { transform: translateY(0) }
-      50% { transform: translateY(-8px) }
-      100% { transform: translateY(0) }
-    }
-    .floaty { animation: floaty 6s ease-in-out infinite; }
-
-    /* decorative grid for large screens */
-    .grid-deco::before{
-      content:'';
-      position:absolute;
-      left:8%;
-      top:8%;
-      width:120%;
-      height:120%;
-      background-image: linear-gradient(transparent 90%, rgba(212,167,44,0.02) 90%), linear-gradient(90deg, transparent 90%, rgba(212,167,44,0.02) 90%);
-      background-size: 40px 40px, 40px 40px;
-      transform: rotate(12deg);
-      pointer-events:none;
-      opacity:0.08;
-      z-index:0;
-    }
-    
-    /* Mobile menu */
-    .mobile-menu {
-      position: fixed;
-      top: 0;
-      right: -100%;
-      width: 80%;
-      max-width: 320px;
-      height: 100vh;
-      background: var(--card);
-      z-index: 50;
-      transition: right 0.3s ease;
-      padding: 80px 20px 20px;
-      box-shadow: -10px 0 30px rgba(0,0,0,0.5);
-    }
-    
-    .mobile-menu.open {
-      right: 0;
-    }
-    
-    .overlay {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background: rgba(0,0,0,0.7);
-      z-index: 40;
-      opacity: 0;
-      visibility: hidden;
-      transition: all 0.3s ease;
-    }
-    
-    .overlay.active {
-      opacity: 1;
-      visibility: visible;
-    }
-
-    /* Responsive improvements */
-    @media (max-width: 1024px) {
-      .tilt {
-        transform: none;
-      }
-      
-      .grid-deco::before {
-        opacity: 0.04;
-      }
-    }
-    
-    @media (max-width: 768px) {
-      .hero-stats {
-        flex-direction: column;
-        align-items: flex-start;
-      }
-      
-      .hero-stats > div {
-        width: 100%;
-        margin-bottom: 12px;
-      }
-      
-      .trusted-by {
-        flex-direction: column;
-        align-items: flex-start;
-      }
-      
-      .trusted-images {
-        margin-top: 12px;
-      }
-    }
-    
-    @media (max-width: 640px) {
-      .feature-grid {
-        grid-template-columns: 1fr !important;
-      }
-      
-      .team-grid {
-        grid-template-columns: 1fr 1fr !important;
-      }
-      
-      .testimonial-grid {
-        grid-template-columns: 1fr !important;
-      }
-      
-      .footer-grid {
-        grid-template-columns: 1fr !important;
-        gap: 24px !important;
-      }
-    }
-
-    /* long code body padding to ensure >500 lines */
-  </style>
+  <link rel="stylesheet" href="{% static 'css/landing.css' %}">
 </head>
 <body class="antialiased">
 
   <!-- Mobile menu overlay -->
   <div class="overlay" id="overlay"></div>
 
-  <!-- Mobile menu -->
+  <!-- Mobile slide-in menu -->
   <div class="mobile-menu" id="mobileMenu">
     <nav class="flex flex-col gap-6">
-      <a href="#about" class="text-lg soft-muted hover:text-amber-300 py-2 border-b border-white/5">About</a>
-      <a href="#features" class="text-lg soft-muted hover:text-amber-300 py-2 border-b border-white/5">Features</a>
-      {% comment %} <a href="#team" class="text-lg soft-muted hover:text-amber-300 py-2 border-b border-white/5">Team</a>
-      <a href="#apply" class="text-lg soft-muted hover:text-amber-300 py-2 border-b border-white/5">Apply</a> {% endcomment %}
+      <a href="#about"    class="text-lg text-[#333D51] hover:text-amber-600 py-2 border-b border-gray-100">About</a>
+      <a href="#features" class="text-lg text-[#333D51] hover:text-amber-600 py-2 border-b border-gray-100">Features</a>
+      <a href="mailto:support@tztoabroad.tech" class="text-lg text-[#333D51] hover:text-amber-600 py-2 border-b border-gray-100">Contact</a>
     </nav>
-    
     <div class="mt-8 flex flex-col gap-4">
-      <button class="p-3 rounded-md bg-[#0b0b0b] border border-white/3 text-amber-300 text-left flex items-center gap-2">
-        <i class="fa-solid fa-globe"></i> Language
-      </button>
-      <button class="p-3 rounded-md bg-[#0b0b0b] border border-white/3 text-amber-300 text-left flex items-center gap-2">
-        <i class="fa-regular fa-envelope"></i> Contact
-      </button>
-      <button class="gold-btn px-4 py-3 rounded-full text-center mt-4">Get Started</button>
+      <a href="{% url 'login' %}" class="gold-btn px-4 py-3 rounded-full text-center font-bold">Get Started</a>
     </div>
   </div>
 
-  <!-- top bar -->
+  <!-- Floating navbar -->
   <div class="fixed inset-x-0 top-5 z-40 flex justify-center pointer-events-none">
     <div class="w-[92%] lg:w-[86%] pointer-events-auto">
       <div class="glass rounded-3xl p-3 flex items-center justify-between neon-frame tilt">
+
+        <!-- Logo -->
         <div class="flex items-center gap-4">
-          <div class="badge-gold rounded-full p-1 px-1">
-            <img
-              class="h-8 w-8"
-              src="{% static 'images/fav.png' %}"
-              alt="ForumAbroad Logo"
-            />
+          <div class="badge-gold rounded-full p-1">
+            <img class="h-8 w-8" src="{% static 'images/fav.png' %}" alt="ForumAbroad Logo" />
           </div>
           <div class="hidden sm:block">
             <div class="text-base soft-muted font-bold">ForumAbroad</div>
@@ -272,26 +56,25 @@
           </div>
         </div>
 
-        <div class="flex items-center justify-around gap-4">
-          <nav class="hidden md:flex items-center justify-around gap-8">
-            <a href="#about" class="text-sm soft-muted hover:text-amber-300">About</a>
-            <a href="#features" class="text-sm soft-muted hover:text-amber-300">Features</a>
-            <a href="mailto:support@tztoabroad.tech" class="text-sm soft-muted hover:text-amber-300">Contact</a>
-            {% comment %} <a href="#apply" class="text-sm soft-muted hover:text-amber-300">Apply</a> {% endcomment %}
+        <!-- Desktop nav -->
+        <div class="flex items-center gap-4">
+          <nav class="hidden md:flex items-center gap-8">
+            <a href="#about"    class="text-sm soft-muted hover:text-amber-600 transition-colors">About</a>
+            <a href="#features" class="text-sm soft-muted hover:text-amber-600 transition-colors">Features</a>
+            <a href="mailto:support@tztoabroad.tech" class="text-sm soft-muted hover:text-amber-600 transition-colors">Contact</a>
           </nav>
-
-          <div class="hidden md:flex items-center justify-around gap-5">
-            {% comment %} <button class="p-2 rounded-md bg-[#0b0b0b] border border-white/3 text-amber-300" onclick="changeLanguage()"><i class="fa-solid fa-globe"></i></button>
-            <button class="p-2 rounded-md bg-[#0b0b0b] border border-white/3 text-amber-300"><i class="fa-regular fa-envelope"></i></button> {% endcomment %}
-            <button class="bg-[#0b0b0b] border-2 border-amber-300 px-4 py-2 rounded-full" onclick="location.href='{% url 'login' %}'">Get Started</button>
+          <div class="hidden md:flex items-center gap-3">
+            <a href="{% url 'login' %}" class="bg-white border-2 border-amber-400 text-[#333D51] font-semibold px-4 py-2 rounded-full hover:bg-amber-50 transition-colors text-sm">Get Started</a>
           </div>
 
+          <!-- Hamburger -->
           <div class="md:hidden">
-            <button class="p-2 rounded-md bg-[#0b0b0b] border border-white/3 text-amber-300" id="menuToggle">
+            <button class="p-2 rounded-md bg-[#EDE9DF] border border-gray-200 text-amber-600" id="menuToggle">
               <i class="fa-solid fa-bars"></i>
             </button>
           </div>
         </div>
+
       </div>
     </div>
   </div>
@@ -299,55 +82,55 @@
   <!-- Hero -->
   <header class="pt-32 pb-8 px-4">
     <div class="max-w-[1200px] mx-auto grid grid-cols-12 gap-6 relative">
+
+      <!-- Left hero panel -->
       <div class="col-span-12 lg:col-span-7 relative z-10">
         <div class="glass rounded-3xl p-6 md:p-8 tilt grid grid-cols-12 gap-6">
+
           <div class="col-span-12 lg:col-span-8">
             <h1 class="text-3xl md:text-4xl lg:text-5xl leading-tight">
-              ForumAbroad — opening doors for students with global dreams
+              ForumAbroad. Opening doors for students with global dreams.
             </h1>
             <p class="mt-4 muted text-base md:text-lg max-w-xl">
-              We started ForumAbroad as two students who made the leap ourselves — Gift Christian (now at Dartmouth) and Benny (now at Alfred). 
-              Along the way, we realized how confusing and isolating the process can feel. ForumAbroad is our way of giving back: a community 
-              where students from our country can find clear guidance, real mentors, and trusted opportunities to study abroad — without the 
-              endless guesswork.
+              We started ForumAbroad as two students who made the leap ourselves. Gift Christian (now at Dartmouth) and Benny (now at Alfred) know how confusing and isolating the process can feel. This platform is our way of giving back: a community where students can find clear guidance, real mentors, and trusted opportunities, without the endless guesswork.
             </p>
 
             <div class="mt-6 flex flex-wrap gap-3 items-center">
-              <a href="{% url 'login' %}" class="gold-btn px-5 py-3 rounded-full text-sm md:text-base">Get Started</a>
-              <a href="#features" class="px-4 py-2.5 rounded-full border border-white/6 text-sm md:text-base">See Features</a>
-              <a href="#team" class="gold-btn px-5 py-3 rounded-full text-sm md:text-base">Meet the team</a>
+              <a href="{% url 'login' %}"    class="gold-btn px-5 py-3 rounded-full text-sm md:text-base">Get Started</a>
+              <a href="#features"            class="px-4 py-2.5 rounded-full border border-[#CBD0D8] text-sm md:text-base hover:bg-white/60 transition-colors">See Features</a>
+              <a href="#about"               class="gold-btn px-5 py-3 rounded-full text-sm md:text-base">Meet the team</a>
             </div>
 
             <div class="mt-8 flex flex-wrap gap-4 items-center hero-stats">
-              <div class="bg-[#0b0c0e] p-3 md:p-4 rounded-2xl glass-subtle w-full sm:w-40">
+              <div class="bg-[#EDE9DF] p-3 md:p-4 rounded-2xl glass-subtle w-full sm:w-40">
                 <div class="text-xs muted">Cohort</div>
-                <div class="text-lg md:text-xl font-bold">{{ year}}</div>
+                <div class="text-lg md:text-xl font-bold">{{ year }}</div>
               </div>
-
-              <div class="bg-[#0b0c0e] p-3 md:p-4 rounded-2xl glass-subtle w-full sm:w-40">
+              <div class="bg-[#EDE9DF] p-3 md:p-4 rounded-2xl glass-subtle w-full sm:w-40">
                 <div class="text-xs muted">Focus</div>
                 <div class="text-lg md:text-xl font-bold">Real Acceptances</div>
               </div>
             </div>
 
-            <div class="mt-6 flex flex-wrap items-center gap-3 trusted-by">
+            <div class="mt-6 flex flex-wrap items-center gap-3">
               <div class="text-sm muted">Trusted by</div>
-              <div class="flex items-center gap-3 trusted-images">
-                <img src="{% static 'images/tansaf.png' %}" class="w-8 h-8 md:w-10 md:h-10 rounded-md ring-1 ring-white/6 object-cover" />
-          </div>
+              <div class="flex items-center gap-3">
+                <img src="{% static 'images/tansaf.png' %}" class="w-8 h-8 md:w-10 md:h-10 rounded-md ring-1 ring-white/30 object-cover" alt="Tansaf" />
+              </div>
             </div>
           </div>
 
+          <!-- Founder photo -->
           <div class="col-span-12 lg:col-span-4 flex items-center justify-center mt-6 lg:mt-0">
             <div class="relative">
               <div class="w-40 h-56 md:w-48 md:h-64 rounded-2xl overflow-hidden glass neon-frame floaty">
-                <img src="https://raw.githubusercontent.com/gcl140/gcl140.github.io/main/images/profile.jpg" class="w-full h-full object-cover" alt="Gift Christian">
+                <img src="https://media.licdn.com/dms/image/v2/D4E03AQHQyPTEV-Y5TQ/profile-displayphoto-scale_400_400/B4EZvAN0b8HkAg-/0/1768456407355?e=1776297600&v=beta&t=hFLH6q9oh5htjws0REsKvYdkSJuygYVk8wvHDtmShh8" class="w-full h-full object-cover" alt="Gift Christian">
               </div>
               <div class="absolute -bottom-4 -left-4 md:-bottom-6 md:-left-6 glass rounded-xl p-2 md:p-3 flex items-center gap-2 md:gap-3">
                 <div class="w-8 h-8 md:w-12 md:h-12 rounded-md bg-gradient-to-br from-yellow-400 to-amber-300 flex items-center justify-center font-bold text-black text-sm md:text-base">G</div>
                 <div>
                   <div class="text-xs md:text-sm font-semibold">Gift Christian</div>
-                  <div class="text-xs text-amber-300">Student • Dartmouth</div>
+                  <div class="text-xs text-amber-600">Student at Dartmouth</div>
                 </div>
               </div>
             </div>
@@ -356,509 +139,343 @@
         </div>
       </div>
 
-      <!-- right hero card -->
-<div class="col-span-12 lg:col-span-5 relative z-10 mt-6 lg:mt-0">
-  <div class="glass rounded-3xl p-5 md:p-6 tilt">
-    <div class="flex items-center justify-between">
-      <div>
-        <div class="text-sm muted">Our mission</div>
-        <div class="text-lg md:text-xl font-bold">Helping dreams cross borders</div>
+      <!-- Right hero panel -->
+      <div class="col-span-12 lg:col-span-5 relative z-10 mt-6 lg:mt-0">
+        <div class="glass rounded-3xl p-5 md:p-6 tilt">
+          <div class="flex items-center justify-between">
+            <div>
+              <div class="text-sm muted">Our mission</div>
+              <div class="text-lg md:text-xl font-bold">Helping dreams cross borders</div>
+            </div>
+            <div class="badge-gold p-1.5 md:p-2 rounded-lg text-xs md:text-sm">Beta</div>
+          </div>
+
+          <div class="mt-4 text-sm muted">
+            We know the struggle firsthand. Too many students have the talent and drive but get lost in confusing applications, unreliable advice, and missed deadlines. ForumAbroad is our answer: real mentors, real stories, and practical resources to make the journey clearer and less lonely.
+          </div>
+
+          <div class="mt-6">
+            <div class="text-xs muted">What you will find here</div>
+            <ul class="mt-3 space-y-2 text-sm">
+              <li class="flex items-start gap-3">
+                <i class="fa-solid fa-check text-amber-600 mt-1 w-4"></i> Mentors who have been through the process and give honest feedback
+              </li>
+              <li class="flex items-start gap-3">
+                <i class="fa-solid fa-check text-amber-600 mt-1 w-4"></i> Updated scholarship lists and tools matched to your profile
+              </li>
+              <li class="flex items-start gap-3">
+                <i class="fa-solid fa-check text-amber-600 mt-1 w-4"></i> Stories and templates from peers who actually made it abroad
+              </li>
+            </ul>
+          </div>
+
+          <div class="mt-6 flex items-center gap-4">
+            <a href="{% url 'register' %}" class="gold-btn px-4 py-2 rounded-full text-sm md:text-base">Join Us</a>
+            <a href="mailto:support@tztoabroad.tech" class="text-sm muted hover:text-amber-600 transition-colors">Contact us</a>
+          </div>
+        </div>
+
+        <!-- Snapshot (stats from API) -->
+        <div class="mt-6 glass rounded-2xl p-4 tilt">
+          <div class="text-xs muted">Snapshot</div>
+          <div class="mt-3 grid grid-cols-3 gap-2 text-center">
+            <div class="p-2 md:p-3 bg-[#EDE9DF] rounded-lg">
+              <div class="text-base md:text-lg font-bold">12+</div>
+              <div class="text-xs muted">Mentors</div>
+            </div>
+            <div class="p-2 md:p-3 bg-[#EDE9DF] rounded-lg">
+              <div class="text-base md:text-lg font-bold" id="stat-users">...</div>
+              <div class="text-xs muted">Users</div>
+            </div>
+            <div class="p-2 md:p-3 bg-[#EDE9DF] rounded-lg">
+              <div class="text-base md:text-lg font-bold" id="stat-posts">...</div>
+              <div class="text-xs muted">Posts</div>
+            </div>
+          </div>
+        </div>
       </div>
-      <div class="badge-gold p-1.5 md:p-2 rounded-lg text-xs md:text-sm">Beta</div>
-    </div>
 
-    <div class="mt-4 text-sm muted">
-      We started ForumAbroad because we know the struggle firsthand. Too many students back home have the talent and drive but get lost in confusing applications, unreliable advice, and missed deadlines. This platform is our way of opening doors: real mentors, real stories, and practical resources to make the journey clearer—and less lonely.
-    </div>
-
-    <div class="mt-6">
-      <div class="text-xs muted">What you’ll find here</div>
-      <ul class="mt-3 space-y-2 text-sm">
-        <li class="flex items-start gap-3">
-          <i class="fa-solid fa-check text-amber-300 mt-1 w-4"></i> Mentors who’ve been through the process and can give honest feedback
-        </li>
-        <li class="flex items-start gap-3">
-          <i class="fa-solid fa-check text-amber-300 mt-1 w-4"></i> Updated lists of scholarships and tools to match what fits you
-        </li>
-        <li class="flex items-start gap-3">
-          <i class="fa-solid fa-check text-amber-300 mt-1 w-4"></i> Stories and templates from peers who actually made it abroad
-        </li>
-      </ul>
-    </div>
-
-    <div class="mt-6">
-      <a href="{% url 'register' %}" class="gold-btn px-4 py-2 rounded-full text-sm md:text-base">Join Us</a>
-      <a href="mailto:support@tztoabroad.tech" class="ml-3 text-sm muted">Contact us</a>
-    </div>
-  </div>
-
-  <div class="mt-6 glass rounded-2xl p-4 tilt">
-    <div class="text-xs muted">Snapshot</div>
-    <div class="mt-3 grid grid-cols-3 gap-2 text-center">
-      <div class="p-2 md:p-3 bg-[#0b0c0e] rounded-lg">
-        <div class="text-base md:text-lg font-bold">12+</div>
-        <div class="text-xs muted">Mentors</div>
-      </div>
-      <div class="p-2 md:p-3 bg-[#0b0c0e] rounded-lg">
-        <div class="text-base md:text-lg font-bold">{{all_users}}+</div>
-        <div class="text-xs muted">Applicants supported</div>
-      </div>
-      <div class="p-2 md:p-3 bg-[#0b0c0e] rounded-lg">
-        <div class="text-base md:text-lg font-bold">{{all_posts}}+</div>
-        <div class="text-xs muted">Resources shared</div>
-      </div>
-    </div>
-  </div>
-</div>
-
-
-      <!-- decorative grid -->
+      <!-- Decorative grid overlay -->
       <div class="absolute inset-0 pointer-events-none z-0 grid-deco"></div>
     </div>
   </header>
 
-  <!-- Features -->
-<section id="features" class="py-14 px-4">
-  <div class="max-w-[1100px] mx-auto">
-    <div class="grid grid-cols-12 gap-6 items-center">
-      
-      <!-- Left column -->
-      <div class="col-span-12 lg:col-span-6 reveal" data-animate>
-        <h2 class="text-2xl md:text-3xl">Built for students chasing global opportunities</h2>
-        <p class="muted mt-3">
-          ForumAbroad isn’t just another info site. It’s a verified hub where applicants, alumni, and mentors connect to share real experiences, track scholarships, and simplify applications. 
-          Everything here is designed to cut through the noise and make your path abroad clearer.
-        </p>
-
-        <div class="mt-6 space-y-4">
-          <div class="flex items-start gap-4">
-            <div class="p-3 rounded-lg bg-[#0b0c0e] flex-shrink-0">
-              <i class="fa-solid fa-users text-amber-300"></i>
-            </div>
-            <div>
-              <div class="font-semibold">Community Support</div>
-              <div class="text-sm muted">Ask questions, swap drafts, and learn from people applying to the same programs as you.</div>
-            </div>
-          </div>
-
-          <div class="flex items-start gap-4">
-            <div class="p-3 rounded-lg bg-[#0b0c0e] flex-shrink-0">
-              <i class="fa-solid fa-circle-check text-amber-300"></i>
-            </div>
-            <div>
-              <div class="font-semibold">Verified Guidance</div>
-              <div class="text-sm muted">Scholarship deadlines, visa steps, and admission tips checked by alumni and moderators.</div>
-            </div>
-          </div>
-
-          <div class="flex items-start gap-4">
-            <div class="p-3 rounded-lg bg-[#0b0c0e] flex-shrink-0">
-              <i class="fa-solid fa-lightbulb text-amber-300"></i>
-            </div>
-            <div>
-              <div class="font-semibold">Practical Tools</div>
-              <div class="text-sm muted">Track scholarships, access country guides, and use templates built from real admissions wins.</div>
-            </div>
-          </div>
+  <!-- Stories preview -->
+  <section id="stories" class="py-14 px-4">
+    <div class="max-w-[1100px] mx-auto">
+      <div class="flex items-center justify-between mb-8">
+        <div>
+          <h2 class="text-2xl md:text-3xl">Real stories from students who made it</h2>
+          <p class="text-[var(--muted)] mt-2 text-sm">Admission journeys, scholarship wins, visa tips. Written by people who have been through it.</p>
         </div>
-
-   
+        <a href="{% url 'story_list' %}" class="hidden sm:inline-flex items-center gap-2 gold-btn px-4 py-2 rounded-full text-sm">
+          All stories <i class="fas fa-arrow-right"></i>
+        </a>
       </div>
 
-      <!-- Right column -->
-      <div class="col-span-12 lg:col-span-6 reveal" data-animate>
-        <div class="glass rounded-3xl p-4 md:p-6">
-          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 feature-grid">
-
-            <div class="p-3 md:p-4 rounded-xl bg-[#0b0c0e]">
-              <div class="text-xs muted">Resource</div>
-              <div class="font-semibold mt-2">Scholarship tracker</div>
-              <div class="muted text-sm mt-2">Up-to-date filters for deadlines, eligibility, and application tips.</div>
-            </div>
-
-            <div class="p-3 md:p-4 rounded-xl bg-[#0b0c0e]">
-              <div class="text-xs muted">Tool</div>
-              <div class="font-semibold mt-2">Essay library</div>
-              <div class="muted text-sm mt-2">Browse successful essays and see alumni commentary on what worked.</div>
-            </div>
-
-            <div class="p-3 md:p-4 rounded-xl bg-[#0b0c0e]">
-              <div class="text-xs muted">Guide</div>
-              <div class="font-semibold mt-2">Country checklists</div>
-              <div class="muted text-sm mt-2">Step-by-step visa, cultural, and admissions prep guides from peers abroad.</div>
-            </div>
-
-            <div class="p-3 md:p-4 rounded-xl bg-[#0b0c0e]">
-              <div class="text-xs muted">Community</div>
-              <div class="font-semibold mt-2">Peer reviews</div>
-              <div class="muted text-sm mt-2">Get feedback on resumes, SOPs, and applications from fellow students.</div>
-            </div>
-
+      {% if latest_stories %}
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+        {% for story in latest_stories %}
+        <a href="{% url 'story_detail' story.id %}" class="block glass rounded-2xl overflow-hidden hover:shadow-lg transition group">
+          {% if story.cover_image %}
+          <div class="h-36 overflow-hidden">
+            <img src="{{ story.cover_image.url }}" alt="{{ story.title }}" class="w-full h-full object-cover group-hover:scale-105 transition duration-300">
           </div>
-        </div>
+          {% else %}
+          <div class="h-36 bg-[#EDE9DF] flex items-center justify-center text-amber-600">
+            <i class="fas fa-book-open text-3xl"></i>
+          </div>
+          {% endif %}
+          <div class="p-4">
+            <span class="text-xs px-2 py-0.5 rounded-full bg-[#EDE9DF] text-[#333D51] font-medium">{{ story.get_tag_display }}</span>
+            <h3 class="font-bold mt-2 text-[#1E2B3C] group-hover:text-amber-700 transition">{{ story.title|truncatewords:8 }}</h3>
+            <p class="text-sm text-[var(--muted)] mt-1 line-clamp-2">{{ story.summary }}</p>
+            <div class="mt-3 flex items-center gap-2 text-xs text-[var(--muted)]">
+              <span>{{ story.author.nickname }}</span>
+              <span>·</span>
+              <span>{{ story.created_at|timesince }} ago</span>
+            </div>
+          </div>
+        </a>
+        {% endfor %}
       </div>
-
+      <div class="mt-6 text-center sm:hidden">
+        <a href="{% url 'story_list' %}" class="gold-btn px-5 py-2 rounded-full text-sm">View all stories</a>
+      </div>
+      {% else %}
+      <div class="glass rounded-2xl p-8 text-center">
+        <i class="fas fa-book-open text-3xl text-amber-600 mb-3 block"></i>
+        <p class="text-[var(--muted)]">Stories coming soon. Be the first to share yours.</p>
+        <a href="{% url 'login' %}" class="gold-btn inline-block mt-4 px-5 py-2 rounded-full text-sm">Get started</a>
+      </div>
+      {% endif %}
     </div>
-  </div>
-</section>
+  </section>
 
-
-  <!-- About / Motivation -->
-<section id="about" class="py-14 px-4">
-  <div class="max-w-[1100px] mx-auto">
-    <div class="glass rounded-3xl p-6 md:p-8 reveal" data-animate>
+  <!-- Features -->
+  <section id="features" class="py-14 px-4">
+    <div class="max-w-[1100px] mx-auto">
       <div class="grid grid-cols-12 gap-6 items-center">
-        
-        <!-- Left -->
-        <div class="col-span-12 lg:col-span-7">
-          <h2 class="text-2xl md:text-3xl">Why we built TZtoAbroad</h2>
+
+        <!-- Left: text -->
+        <div class="col-span-12 lg:col-span-6 reveal" data-animate>
+          <h2 class="text-2xl md:text-3xl">Built for students chasing global opportunities</h2>
           <p class="muted mt-3">
-            Hey fam 🌍✨ — after two gap years of navigating confusing deadlines, hidden scholarships, 
-            and a lot of silence, I realized how isolating the journey to studying abroad can feel.  
-            Just before I left Tanzania myself, I thought: <span class="font-semibold">what if there was a space 
-            where we could ask, share, and guide each other through this process?</span>  
-            That’s how <strong>TZtoAbroad</strong> was born 💡.
-          </p>
-          <p class="muted mt-3">
-            This isn’t just my story — it’s for every student still searching for the right info, 
-            the right chance, the right push. While Tansaf gave us an incredible platform, 
-            so many others are still out there without guidance.  
-            If we can help even one more person find their path, it’s worth it 🕊️.
+            ForumAbroad is not just another info site. It is a verified hub where applicants, alumni, and mentors connect to share real experiences, track scholarships, and simplify applications. Everything here is designed to cut through the noise and make your path abroad clearer.
           </p>
 
           <div class="mt-6 space-y-4">
-            <div class="flex gap-4 items-start">
-              <div class="w-10 h-10 md:w-12 md:h-12 rounded-lg bg-gradient-to-br from-yellow-400 to-amber-300 flex items-center justify-center font-bold text-black">1</div>
+            <div class="flex items-start gap-4">
+              <div class="p-3 rounded-lg bg-[#EDE9DF] flex-shrink-0">
+                <i class="fa-solid fa-users text-amber-600"></i>
+              </div>
               <div>
-                <div class="font-semibold">Reduce uncertainty</div>
-                <div class="text-sm muted">Checklists, deadlines, and timelines so you don’t have to guess your next step.</div>
+                <div class="font-semibold">Community Support</div>
+                <div class="text-sm muted">Ask questions, swap drafts, and learn from people applying to the same programs as you.</div>
               </div>
             </div>
-            <div class="flex gap-4 items-start">
-              <div class="w-10 h-10 md:w-12 md:h-12 rounded-lg bg-gradient-to-br from-yellow-400 to-amber-300 flex items-center justify-center font-bold text-black">2</div>
+
+            <div class="flex items-start gap-4">
+              <div class="p-3 rounded-lg bg-[#EDE9DF] flex-shrink-0">
+                <i class="fa-solid fa-circle-check text-amber-600"></i>
+              </div>
               <div>
-                <div class="font-semibold">Build trust</div>
-                <div class="text-sm muted">Guidance from alumni, mentors, and peers who’ve been exactly where you are.</div>
+                <div class="font-semibold">Verified Guidance</div>
+                <div class="text-sm muted">Scholarship deadlines, visa steps, and admission tips checked by alumni and moderators.</div>
               </div>
             </div>
-            <div class="flex gap-4 items-start">
-              <div class="w-10 h-10 md:w-12 md:h-12 rounded-lg bg-gradient-to-br from-yellow-400 to-amber-300 flex items-center justify-center font-bold text-black">3</div>
+
+            <div class="flex items-start gap-4">
+              <div class="p-3 rounded-lg bg-[#EDE9DF] flex-shrink-0">
+                <i class="fa-solid fa-lightbulb text-amber-600"></i>
+              </div>
               <div>
-                <div class="font-semibold">Grow together</div>
-                <div class="text-sm muted">A space that reminds us this journey is shared — we rise by lifting each other.</div>
+                <div class="font-semibold">Practical Tools</div>
+                <div class="text-sm muted">Track scholarships, access country guides, and use templates built from real admissions wins.</div>
               </div>
             </div>
           </div>
         </div>
 
-        <!-- Right -->
-        <div class="col-span-12 lg:col-span-5 mt-8 lg:mt-0">
-          <div class="grid gap-4">
+        <!-- Right: feature cards -->
+        <div class="col-span-12 lg:col-span-6 reveal" data-animate>
+          <div class="glass rounded-3xl p-4 md:p-6">
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 feature-grid">
 
-            <div class="glass rounded-2xl p-4">
-              <div class="flex items-center gap-3">
-                <img src="https://raw.githubusercontent.com/gcl140/gcl140.github.io/main/images/profile.jpg" class="w-12 h-12 md:w-14 md:h-14 rounded-md" alt="gift christian">
-                <div>
-                  <div class="font-semibold">Gift Christian</div>
-                  <div class="text-xs muted">Founder • Dartmouth</div>
-                </div>
+              <div class="p-3 md:p-4 rounded-xl bg-[#EDE9DF]">
+                <div class="text-xs muted">Resource</div>
+                <div class="font-semibold mt-2">Scholarship tracker</div>
+                <div class="muted text-sm mt-2">Up-to-date filters for deadlines, eligibility, and application tips.</div>
               </div>
-              <div class="mt-3 text-sm muted">"I built this because I wished someone had told me the unwritten steps. TZtoAbroad is about removing that guesswork."</div>
-            </div>
 
-            <div class="glass rounded-2xl p-4">
-              <div class="flex items-center gap-3">
-                <img src="https://miminajamii.netlify.app/assets/img/team/team-12.jpg" class="w-12 h-12 md:w-14 md:h-14 rounded-md" alt="benny">
-                <div>
-                  <div class="font-semibold">Benny</div>
-                  <div class="text-xs muted">Co-founder • Alfred</div>
-                </div>
+              <div class="p-3 md:p-4 rounded-xl bg-[#EDE9DF]">
+                <div class="text-xs muted">Tool</div>
+                <div class="font-semibold mt-2">Essay library</div>
+                <div class="muted text-sm mt-2">Browse successful essays and see alumni commentary on what worked.</div>
               </div>
-              <div class="mt-3 text-sm muted">"This isn’t about prestige, it’s about clarity. Every capable student deserves to see which doors are open — and how to walk through them."</div>
-            </div>
 
+              <div class="p-3 md:p-4 rounded-xl bg-[#EDE9DF]">
+                <div class="text-xs muted">Guide</div>
+                <div class="font-semibold mt-2">Country checklists</div>
+                <div class="muted text-sm mt-2">Step-by-step visa, cultural, and admissions prep guides from peers abroad.</div>
+              </div>
+
+              <div class="p-3 md:p-4 rounded-xl bg-[#EDE9DF]">
+                <div class="text-xs muted">Community</div>
+                <div class="font-semibold mt-2">Peer reviews</div>
+                <div class="muted text-sm mt-2">Get feedback on resumes, SOPs, and applications from fellow students.</div>
+              </div>
+
+            </div>
           </div>
         </div>
 
       </div>
     </div>
-  </div>
-</section>
+  </section>
 
+  <!-- About / Motivation -->
+  <section id="about" class="py-14 px-4">
+    <div class="max-w-[1100px] mx-auto">
+      <div class="glass rounded-3xl p-6 md:p-8 reveal" data-animate>
+        <div class="grid grid-cols-12 gap-6 items-center">
 
-  {% comment %} <section class="py-14 px-4">
-    <div class="max-w-[1100px] mx-auto reveal" data-animate>
-      <div class="glass rounded-3xl p-6 md:p-8">
-        <h3 class="text-xl md:text-2xl">How it works — a quick map</h3>
-        <div class="mt-6 grid grid-cols-12 gap-6 items-start">
-          <div class="col-span-12 md:col-span-6 lg:col-span-4">
-            <div class="p-4 md:p-6 rounded-2xl bg-[#0b0c0e]">
-              <div class="text-xs muted">Step 1</div>
-              <div class="font-semibold mt-2">Discover</div>
-              <div class="muted text-sm mt-2">Find scholarships and programs matched to your profile.</div>
+          <!-- Left -->
+          <div class="col-span-12 lg:col-span-7">
+            <h2 class="text-2xl md:text-3xl">Why we built TZtoAbroad</h2>
+            <p class="muted mt-3">
+              After two gap years of navigating confusing deadlines, hidden scholarships, and a lot of silence, we realized how isolating the journey to studying abroad can feel. Just before leaving Tanzania, we asked ourselves: what if there was a space where students could ask, share, and guide each other through this process? That is how TZtoAbroad was born.
+            </p>
+            <p class="muted mt-3">
+              This is not just our story. It is for every student still searching for the right information, the right chance, the right push. While Tansaf gave us an incredible platform, so many others are still out there without guidance. If we can help even one more person find their path, it is worth it.
+            </p>
+
+            <div class="mt-6 space-y-4">
+              <div class="flex gap-4 items-start">
+                <div class="w-10 h-10 md:w-12 md:h-12 rounded-lg bg-gradient-to-br from-yellow-400 to-amber-300 flex items-center justify-center font-bold text-black flex-shrink-0">1</div>
+                <div>
+                  <div class="font-semibold">Reduce uncertainty</div>
+                  <div class="text-sm muted">Checklists, deadlines, and timelines so you do not have to guess your next step.</div>
+                </div>
+              </div>
+              <div class="flex gap-4 items-start">
+                <div class="w-10 h-10 md:w-12 md:h-12 rounded-lg bg-gradient-to-br from-yellow-400 to-amber-300 flex items-center justify-center font-bold text-black flex-shrink-0">2</div>
+                <div>
+                  <div class="font-semibold">Build trust</div>
+                  <div class="text-sm muted">Guidance from alumni, mentors, and peers who have been exactly where you are.</div>
+                </div>
+              </div>
+              <div class="flex gap-4 items-start">
+                <div class="w-10 h-10 md:w-12 md:h-12 rounded-lg bg-gradient-to-br from-yellow-400 to-amber-300 flex items-center justify-center font-bold text-black flex-shrink-0">3</div>
+                <div>
+                  <div class="font-semibold">Grow together</div>
+                  <div class="text-sm muted">A space that reminds us this journey is shared. We rise by lifting each other.</div>
+                </div>
+              </div>
             </div>
           </div>
 
-          <div class="col-span-12 md:col-span-6 lg:col-span-4">
-            <div class="p-4 md:p-6 rounded-2xl bg-[#0b0c0e]">
-              <div class="text-xs muted">Step 2</div>
-              <div class="font-semibold mt-2">Prepare</div>
-              <div class="muted text-sm mt-2">Use templates, AI coach, and mentor reviews to refine applications.</div>
+          <!-- Right: team cards -->
+          <div class="col-span-12 lg:col-span-5 mt-8 lg:mt-0">
+            <div class="grid gap-4">
+
+              <div class="glass rounded-2xl p-4">
+                <div class="flex items-center gap-3">
+                  <img src="https://media.licdn.com/dms/image/v2/D4E03AQHQyPTEV-Y5TQ/profile-displayphoto-scale_400_400/B4EZvAN0b8HkAg-/0/1768456407355?e=1776297600&v=beta&t=hFLH6q9oh5htjws0REsKvYdkSJuygYVk8wvHDtmShh8" class="w-12 h-12 md:w-14 md:h-14 rounded-md object-cover" alt="Gift Christian">
+                  <div>
+                    <div class="font-semibold">Gift Christian</div>
+                    <div class="text-xs muted">Founder, Dartmouth</div>
+                  </div>
+                </div>
+                <div class="mt-3 text-sm muted">"I built this because I wished someone had told me the unwritten steps. TZtoAbroad is about removing that guesswork."</div>
+              </div>
+
+              <div class="glass rounded-2xl p-4">
+                <div class="flex items-center gap-3">
+                  <img src="https://miminajamii.netlify.app/assets/img/team/team-12.jpg" class="w-12 h-12 md:w-14 md:h-14 rounded-md object-cover" alt="Benny">
+                  <div>
+                    <div class="font-semibold">Benny</div>
+                    <div class="text-xs muted">Co-founder, Alfred</div>
+                  </div>
+                </div>
+                <div class="mt-3 text-sm muted">"This is not about prestige. It is about clarity. Every capable student deserves to see which doors are open and how to walk through them."</div>
+              </div>
+
             </div>
           </div>
 
-          <div class="col-span-12 md:col-span-12 lg:col-span-4">
-            <div class="p-4 md:p-6 rounded-2xl bg-[#0b0c0e]">
-              <div class="text-xs muted">Step 3</div>
-              <div class="font-semibold mt-2">Submit & Succeed</div>
-              <div class="muted text-sm mt-2">Track progress, mock interviews, and celebrate acceptances.</div>
-            </div>
-          </div>
         </div>
       </div>
     </div>
   </section>
 
-  <section id="team" class="py-14 px-4">
-    <div class="max-w-[1100px] mx-auto reveal" data-animate>
-      <div class="glass rounded-3xl p-6 md:p-8">
-        <h3 class="text-xl md:text-2xl">Team & Mentors</h3>
-        <p class="muted mt-2">A blend of alumni, admissions readers, and local mentors who review applications and help refine approaches.</p>
-
-        <div class="mt-6 grid grid-cols-2 md:grid-cols-4 gap-4 team-grid">
-          <!-- Gift Christian -->
-          <div class="p-3 md:p-4 rounded-xl bg-[#0b0c0e] text-center">
-            <img src="https://unsplash.it/160/160?image=1025" class="w-16 h-16 md:w-20 md:h-20 rounded-md mx-auto" />
-            <div class="font-semibold mt-3">Gift Christian</div>
-            <div class="text-xs muted">Founder • Dartmouth</div>
-            <div class="text-xs md:text-sm muted mt-2">Application strategy & mentorship</div>
-          </div>
-
-          <!-- Benny -->
-          <div class="p-3 md:p-4 rounded-xl bg-[#0b0c0e] text-center">
-            <img src="https://unsplash.it/160/160?image=1060" class="w-16 h-16 md:w-20 md:h-20 rounded-md mx-auto" />
-            <div class="font-semibold mt-3">Benny</div>
-            <div class="text-xs muted">Co-founder • Alfred</div>
-            <div class="text-xs md:text-sm muted mt-2">Scholarship sourcing & community ops</div>
-          </div>
-
-          <!-- Mentor -->
-          <div class="p-3 md:p-4 rounded-xl bg-[#0b0c0e] text-center">
-            <img src="https://unsplash.it/160/160?image=100" class="w-16 h-16 md:w-20 md:h-20 rounded-md mx-auto" />
-            <div class="font-semibold mt-3">Amina</div>
-            <div class="text-xs muted">Admissions mentor</div>
-            <div class="text-xs md:text-sm muted mt-2">Essay review specialist</div>
-          </div>
-
-          <!-- Mentor -->
-          <div class="p-3 md:p-4 rounded-xl bg-[#0b0c0e] text-center">
-            <img src="https://unsplash.it/160/160?image=101" class="w-16 h-16 md:w-20 md:h-20 rounded-md mx-auto" />
-            <div class="font-semibold mt-3">Daniel</div>
-            <div class="text-xs muted">Interview coach</div>
-            <div class="text-xs md:text-sm muted mt-2">Mock interviews and feedback</div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </section> {% endcomment %}
-
-  <!-- Testimonials / success -->
-{% comment %} <section class="py-14 px-4">
-  <div class="max-w-[1100px] mx-auto reveal" data-animate>
-    <div class="glass rounded-3xl p-6 md:p-8">
-      <h3 class="text-xl md:text-2xl">Real Acceptances</h3>
-      <p class="muted mt-2">ForumAbroad isn’t theory — these are real students and their actual offers.</p>
-
-      <div class="mt-6 grid grid-cols-1 md:grid-cols-3 gap-4 testimonial-grid">
-        <!-- Gift -->
-        <div class="p-4 rounded-xl bg-[#0b0c0e]">
-          <div class="flex items-center gap-3">
-            <img src="https://unsplash.it/80/80?image=1025" class="w-10 h-10 md:w-12 md:h-12 rounded-md" />
-            <div>
-              <div class="font-semibold">Gift Christian</div>
-              <div class="text-xs muted">Accepted • Dartmouth College</div>
-            </div>
-          </div>
-          <div class="mt-3 muted text-sm">"ForumAbroad gave me clarity on which parts of my journey mattered most. The mentorship shaped my essays into a true story."</div>
-        </div>
-
-        <!-- Benny -->
-        <div class="p-4 rounded-xl bg-[#0b0c0e]">
-          <div class="flex items-center gap-3">
-            <img src="https://unsplash.it/80/80?image=101" class="w-10 h-10 md:w-12 md:h-12 rounded-md" />
-            <div>
-              <div class="font-semibold">Benny</div>
-              <div class="text-xs muted">Accepted • Alfred University</div>
-            </div>
-          </div>
-          <div class="mt-3 muted text-sm">"I discovered funding options I didn’t even know existed. With guidance, I confidently reached out to professors and got responses."</div>
-        </div>
-
-        <!-- Another Student -->
-        <div class="p-4 rounded-xl bg-[#0b0c0e]">
-          <div class="flex items-center gap-3">
-            <img src="https://unsplash.it/80/80?image=103" class="w-10 h-10 md:w-12 md:h-12 rounded-md" />
-            <div>
-              <div class="font-semibold">Hannah</div>
-              <div class="text-xs muted">Accepted • International Program</div>
-            </div>
-          </div>
-          <div class="mt-3 muted text-sm">"From CV edits to mock interviews, the support kept me grounded. I walked into the panel knowing I was ready."</div>
-        </div>
-      </div>
-    </div>
-  </div>
-</section> {% endcomment %}
-
-
-  <!-- Apply / CTA -->
-  {% comment %} <section id="apply" class="py-14 px-4">
-    <div class="max-w-[1100px] mx-auto reveal" data-animate>
-      <div class="glass rounded-3xl p-6 md:p-8 flex flex-col lg:flex-row items-center justify-between gap-6">
-        <div class="text-center lg:text-left">
-          <h3 class="text-xl md:text-2xl">Ready to take the next step?</h3>
-          <p class="muted mt-2">Join the waitlist for mentor-backed application cohorts, mock interviews, and scholarship matching.</p>
-        </div>
-
-        <div class="w-full lg:w-auto">
-          <form x-data="{email:''}" @submit.prevent="$dispatch('signup', {email})" class="flex flex-col sm:flex-row gap-3">
-            <input x-model="email" type="email" placeholder="Your email" class="flex-grow p-3 rounded-lg bg-[#0b0c0e] border border-white/6 outline-none" required />
-            <button type="submit" class="gold-btn px-5 py-3 rounded-lg">Join Waitlist</button>
-          </form>
-          <div class="text-xs muted mt-2">We'll email you when cohorts open — no spam.</div>
-        </div>
-      </div>
-    </div>
-  </section> {% endcomment %}
-
-  <!-- Contact / footer -->
-  {% comment %} <footer id="contact" class="py-12 px-4">
-    <div class="max-w-[1100px] mx-auto reveal" data-animate>
+  <!-- Footer -->
+  <footer class="py-12 px-4 mt-6">
+    <div class="max-w-[1100px] mx-auto">
       <div class="grid grid-cols-12 gap-6 footer-grid">
+
+        <!-- Brand -->
         <div class="col-span-12 lg:col-span-5 glass rounded-3xl p-5 md:p-6">
-          <div class="font-semibold text-lg">ForumAbroad</div>
-          <div class="muted mt-2">Built by Gift Christian & Benny — supporting our country's journey to global opportunity.</div>
+          <div class="flex items-center gap-3 mb-3">
+            <div class="badge-gold rounded-full p-1">
+              <img class="h-7 w-7" src="{% static 'images/fav.png' %}" alt="ForumAbroad Logo" />
+            </div>
+            <div class="font-bold text-lg">ForumAbroad</div>
+          </div>
+          <div class="muted text-sm">Built by Gift Christian and Benny. Supporting our country's journey to global opportunity.</div>
 
           <div class="mt-6">
-            <div class="text-xs muted">Contact</div>
-            <div class="mt-2 text-sm"><a href="mailto:support@tztoabroad.tech">support@tztoabroad.tech</a></div>
+            <div class="text-xs muted">Get in touch</div>
+            <div class="mt-2 text-sm">
+              <a href="mailto:support@tztoabroad.tech" class="text-amber-600 hover:underline">support@tztoabroad.tech</a>
+            </div>
             <div class="mt-4">
-              <a class="text-amber-300" href="{% url 'register' %}">Become a member</a>
+              <a href="{% url 'register' %}" class="text-sm text-amber-600 hover:underline">Become a member</a>
             </div>
           </div>
         </div>
 
+        <!-- Links -->
         <div class="col-span-12 lg:col-span-7 glass rounded-3xl p-5 md:p-6">
-          <div class="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-4">
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div>
-              <div class="font-semibold">Company</div>
-              <ul class="mt-3 text-sm muted space-y-2">
-                <li><a href="#about" class="hover:text-amber-300">About</a></li>
-                <li><a href="#features" class="hover:text-amber-300">Features</a></li>
-                <li><a href="#team" class="hover:text-amber-300">Team</a></li>
+              <div class="font-semibold mb-3">Navigate</div>
+              <ul class="text-sm muted space-y-2">
+                <li><a href="#about"    class="hover:text-amber-600 transition-colors">About</a></li>
+                <li><a href="#features" class="hover:text-amber-600 transition-colors">Features</a></li>
+                <li><a href="#stories"  class="hover:text-amber-600 transition-colors">Stories</a></li>
               </ul>
             </div>
-
             <div>
-              <div class="font-semibold">Resources</div>
-              <ul class="mt-3 text-sm muted space-y-2">
-                <li><a href="#" class="hover:text-amber-300">Scholarships</a></li>
-                <li><a href="#" class="hover:text-amber-300">Mentorship</a></li>
-                <li><a href="#" class="hover:text-amber-300">AI Coach</a></li>
+              <div class="font-semibold mb-3">Account</div>
+              <ul class="text-sm muted space-y-2">
+                <li><a href="{% url 'login' %}"    class="hover:text-amber-600 transition-colors">Log in</a></li>
+                <li><a href="{% url 'register' %}" class="hover:text-amber-600 transition-colors">Register</a></li>
+                <li><a href="{% url 'story_list' %}" class="hover:text-amber-600 transition-colors">All stories</a></li>
               </ul>
             </div>
           </div>
 
           <div class="mt-6">
-            <div class="text-xs muted">Follow</div>
-            <div class="mt-3 flex gap-3">
-              <a class="p-2 md:p-3 rounded-md bg-[#0b0c0e] hover:bg-amber-300/10 transition-colors"><i class="fa-brands fa-twitter text-amber-300"></i></a>
-              <a class="p-2 md:p-3 rounded-md bg-[#0b0c0e] hover:bg-amber-300/10 transition-colors"><i class="fa-brands fa-instagram text-amber-300"></i></a>
-              <a class="p-2 md:p-3 rounded-md bg-[#0b0c0e] hover:bg-amber-300/10 transition-colors"><i class="fa-brands fa-linkedin text-amber-300"></i></a>
+            <div class="text-xs muted mb-3">Follow us</div>
+            <div class="flex gap-3">
+              <a href="#" class="p-2 md:p-3 rounded-md bg-[#EDE9DF] hover:bg-amber-300/20 transition-colors"><i class="fa-brands fa-twitter text-amber-600"></i></a>
+              <a href="#" class="p-2 md:p-3 rounded-md bg-[#EDE9DF] hover:bg-amber-300/20 transition-colors"><i class="fa-brands fa-instagram text-amber-600"></i></a>
+              <a href="#" class="p-2 md:p-3 rounded-md bg-[#EDE9DF] hover:bg-amber-300/20 transition-colors"><i class="fa-brands fa-linkedin text-amber-600"></i></a>
             </div>
           </div>
         </div>
+
       </div>
 
-      <div class="mt-6 text-center text-sm muted">© 2025 ForumAbroad — Built with community-first values.</div>
+      <div class="mt-8 text-center text-sm muted">
+        &copy; 2025 ForumAbroad. Built with community-first values.
+      </div>
     </div>
-  </footer> {% endcomment %}
+  </footer>
 
   <!-- Scripts -->
-  <script>
-    // Intersection observer for reveal animations
-    (function(){
-      const obs = new IntersectionObserver((entries)=>{
-        entries.forEach(entry=>{
-          if(entry.isIntersecting) entry.target.classList.add('in-view');
-        });
-      }, {threshold:0.12});
-      document.querySelectorAll('[data-animate]').forEach(el=>obs.observe(el));
-    })();
-
-    // Mobile menu functionality
-    const menuToggle = document.getElementById('menuToggle');
-    const mobileMenu = document.getElementById('mobileMenu');
-    const overlay = document.getElementById('overlay');
-    
-    function toggleMenu() {
-      mobileMenu.classList.toggle('open');
-      overlay.classList.toggle('active');
-      document.body.style.overflow = overlay.classList.contains('active') ? 'hidden' : '';
-    }
-    
-    if (menuToggle && mobileMenu && overlay) {
-      menuToggle.addEventListener('click', toggleMenu);
-      overlay.addEventListener('click', toggleMenu);
-      
-      // Close menu when clicking on links
-      document.querySelectorAll('.mobile-menu a').forEach(link => {
-        link.addEventListener('click', toggleMenu);
-      });
-    }
-
-    // Listen to join waitlist event from Alpine form and show friendly feedback
-    window.addEventListener('signup', (e)=>{
-      const email = e.detail.email || '';
-      const toast = document.createElement('div');
-      toast.textContent = email ? `Thanks — we'll email ${email} when cohorts open.` : 'Thanks — we will be in touch.';
-      toast.className = 'fixed right-4 bottom-4 md:right-6 md:bottom-6 bg-black/80 text-white p-3 rounded-md glass-subtle z-50';
-      document.body.appendChild(toast);
-      setTimeout(()=>{ toast.style.opacity='0'; setTimeout(()=>toast.remove(),400); }, 4000);
-    });
-
-    // Small flair: animate buttons on click
-    document.querySelectorAll('.gold-btn').forEach(btn=>{
-      btn.addEventListener('click', ()=> {
-        btn.animate([{ transform: 'scale(1)' }, { transform: 'scale(.96)' }, { transform: 'scale(1)' }], { duration: 180 });
-      });
-    });
-
-    // Make external anchors smooth scroll for in-page links
-    document.querySelectorAll('a[href^="#"]').forEach(a=>{
-      a.addEventListener('click', (e)=>{
-        const href = a.getAttribute('href');
-        if (href === '#') return;
-        
-        const t = document.querySelector(href);
-        if(t){
-          e.preventDefault();
-          t.scrollIntoView({behavior:'smooth', block:'start'});
-        }
-      });
-    });
-
-    // preload images (light progressive reveal)
-    document.querySelectorAll('img').forEach(img=>{
-      img.style.opacity='0';
-      img.style.transform='translateY(6px)';
-      img.style.transition='all 700ms cubic-bezier(.2,.9,.2,1)';
-      if(img.complete) revealImg(img);
-      else img.onload = ()=>revealImg(img);
-    });
-    function revealImg(i){ setTimeout(()=>{ i.style.opacity='1'; i.style.transform='translateY(0)'; }, 120); }
-
-  </script>
+  <script src="{% static 'js/landing.js' %}"></script>
 
 </body>
 </html>

@@ -1,3 +1,4 @@
+{% load static %}
 <div class="mt-3">
               <div class="flex items-center gap-2 text-xs mb-1">
                 <div class="w-5 h-5 rounded-full bg-gray-600 text-white flex justify-center items-center">
@@ -97,19 +98,4 @@
           </div>
               </div>
             </div>
-
-                            <script>
-                  function toggleReplyParent2Form(groupId) {
-                      const container = document.getElementById(`reply-to-parent2-form-container-${groupId}`);
-                      const button = document.getElementById(`reply-parent-button-${groupId}`);
-
-                      const isHidden = container.classList.contains('hidden');
-                      container.classList.toggle('hidden');
-
-                      if (isHidden) {
-                          button.classList.add('text-maroon');
-                      } else {
-                          button.classList.remove('text-maroon');
-                      }
-                  }
-                </script>
+<script src="{% static 'js/grandchild_replies.js' %}"></script>

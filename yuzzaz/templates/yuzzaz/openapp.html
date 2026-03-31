@@ -1,3 +1,4 @@
+{% load static %}
 
 
     <!-- Application Sections -->
@@ -131,12 +132,6 @@
     {% endif %}
   </div>
 
-  <script>
-    function confirmToggle() {
-      const checkbox = document.getElementById('id_is_portal_open');
-      const action = checkbox.checked ? 'open' : 'close';
-      return confirm(`Are you sure you want to ${action} the portal?`);
-    }
-  </script>
+  <script src="{% static 'js/openapp.js' %}"></script>
 </body>
 </html>

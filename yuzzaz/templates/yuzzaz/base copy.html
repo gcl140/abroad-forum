@@ -17,6 +17,7 @@
 
   <!-- Tailwind CSS -->
   <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="{% static 'css/besi.css' %}">
   <script>
     tailwind.config = {
       theme: {
@@ -38,42 +39,6 @@
     }
   </script>
 
-  <!-- Custom Styles -->
-  <style>
-    @keyframes progress {
-      from {
-        width: 100%;
-      }
-
-      to {
-        width: 0%;
-      }
-    }
-
-    .animate-progress {
-      animation: progress 5s linear forwards;
-    }
-
-    .bg-login {
-      background-image: url("{% static 'images/education-illustration.svg' %}");
-      background-repeat: no-repeat;
-      background-size: cover;
-      background-attachment: fixed;
-      background-position: center;
-    }
-
-    .carousel-image {
-      filter: brightness(0.7);
-    }
-
-    .form-input {
-      transition: all 0.3s ease;
-    }
-
-    .form-input:focus {
-      box-shadow: 0 0 0 2px rgba(128, 0, 0, 0.3);
-    }
-  </style>
 </head>
 
 <body class="bg-login bg-dark font-karla text-gray-100 min-h-screen">
@@ -233,100 +198,9 @@
   {% endfor %}
 </div>
 
-<script>
-  document.addEventListener("DOMContentLoaded", function() {
-    const toastMessages = document.querySelectorAll('.animate-fade-in-up');
-    
-    toastMessages.forEach(toast => {
-      // Auto-dismiss after 5 seconds
-      setTimeout(() => {
-        toast.style.opacity = '0';
-        setTimeout(() => toast.remove(), 300);
-      }, 10000);
-      
-      // Pause animation on hover
-      toast.addEventListener('mouseenter', () => {
-        const progressBar = toast.querySelector('.animate-progress');
-        progressBar.style.animationPlayState = 'paused';
-      });
-      
-      // Resume animation when mouse leaves
-      toast.addEventListener('mouseleave', () => {
-        const progressBar = toast.querySelector('.animate-progress');
-        progressBar.style.animationPlayState = 'running';
-      });
-    });
-  });
-</script>
-<style>
-  @keyframes fadeInUp {
-    from {
-      opacity: 0;
-      transform: translateY(10px);
-    }
-    to {
-      opacity: 1;
-      transform: translateY(0);
-    }
-  }
-  
-  @keyframes progress {
-    from { width: 100%; }
-    to { width: 0%; }
-  }
-  
-  .animate-fade-in-up {
-    animation: fadeInUp 0.3s ease-out forwards;
-  }
-  
-  .animate-progress {
-    animation: progress 10s linear forwards;
-  }
-</style>
 {% endif %}
 
-  <!-- JavaScript -->
-  <script>
-    // Mobile menu toggle
-    document.querySelector('[aria-controls="mobile-menu"]').addEventListener('click', function () {
-      document.getElementById('mobile-menu').classList.toggle('hidden');
-    });
-
-    // Simple carousel functionality
-    document.addEventListener('DOMContentLoaded', function () {
-      // Carousel
-      const carouselItems = document.querySelectorAll('[data-carousel-item]');
-      let currentIndex = 0;
-
-      function showSlide(index) {
-        carouselItems.forEach((item, i) => {
-          item.classList.toggle('opacity-0', i !== index);
-        });
-      }
-
-      // Next button
-      document.querySelector('[data-carousel-next]')?.addEventListener('click', function () {
-        currentIndex = (currentIndex + 1) % carouselItems.length;
-        showSlide(currentIndex);
-      });
-
-      // Previous button
-      document.querySelector('[data-carousel-prev]')?.addEventListener('click', function () {
-        currentIndex = (currentIndex - 1 + carouselItems.length) % carouselItems.length;
-        showSlide(currentIndex);
-      });
-
-      // Auto-advance carousel
-      setInterval(() => {
-        currentIndex = (currentIndex + 1) % carouselItems.length;
-        showSlide(currentIndex);
-      }, 5000);
-
-      // Initialize first slide
-      showSlide(0);
-
-    });
-  </script>
+  <script src="{% static 'js/base-copy.js' %}"></script>
 </body>
 
 </html>

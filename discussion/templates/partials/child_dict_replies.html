@@ -1,3 +1,4 @@
+{% load static %}
           <div class="pl-4 mt-3 border-l-2 border-gray-700">
             <div class="flex items-center gap-2 text-xs mb-1">
               <div class="w-5 h-5 rounded-full bg-gray-600 text-white flex justify-center items-center">
@@ -106,21 +107,4 @@
 </div>
 
           </div>
-
-
-
-                <script>
-                  function toggleReplyParentForm(groupId) {
-                      const container = document.getElementById(`reply-to-parent-form-container-${groupId}`);
-                      const button = document.getElementById(`reply-parent-button-${groupId}`);
-
-                      const isHidden = container.classList.contains('hidden');
-                      container.classList.toggle('hidden');
-
-                      if (isHidden) {
-                          button.classList.add('text-maroon');
-                      } else {
-                          button.classList.remove('text-maroon');
-                      }
-                  }
-                </script>
+<script src="{% static 'js/child_dict_replies.js' %}"></script>

@@ -24,6 +24,104 @@ from django.http import JsonResponse
 
 logger = logging.getLogger(__name__)
 
+def api_stats(request):
+    from .models import Post, Story
+    return JsonResponse({
+        'users': CustomUser.objects.count(),
+        'posts': Post.objects.count(),
+        'stories': Story.objects.count(),
+    })
+
+
+def api_recent_activity(request, user_id):
+    from django.utils.timesince import timesince
+    target = get_object_or_404(CustomUser, id=user_id)
+    items = []
+
+    for post in Post.objects.filter(author=target).order_by('-created_at')[:5]:
+        items.append({
+            'type': 'post',
+            'label': 'Asked question',
+            'title': post.title,
+            'snippet': ' '.join(post.content.split()[:15]),
+            'url': f'/discuss/post/{post.id}/',
+            'time': timesince(post.created_at) + ' ago',
+            'color': 'blue',
+        })
+
+    for reply in Reply.objects.filter(replyier=target).order_by('-created_at')[:5]:
+        items.append({
+            'type': 'reply',
+            'label': 'Replied',
+            'title': reply.post.title,
+            'snippet': ' '.join(reply.content.split()[:15]),
+            'url': f'/discuss/post/{reply.post.id}/',
+            'time': timesince(reply.created_at) + ' ago',
+            'color': 'green',
+        })
+
+    for rtr in ReplytoAReply.objects.filter(replyier=target).order_by('-created_at')[:5]:
+        items.append({
+            'type': 'rtr',
+            'label': 'Replied to reply',
+            'title': None,
+            'snippet': ' '.join(rtr.content.split()[:10]),
+            'url': None,
+            'time': timesince(rtr.created_at) + ' ago',
+            'color': 'yellow',
+        })
+
+    items.sort(key=lambda x: x['time'])
+    return JsonResponse({'activity': items[:5]})
+
+
+@login_required
+def api_notifications(request):
+    page = int(request.GET.get('page', 1))
+    per_page = 10
+    offset = (page - 1) * per_page
+    qs = Notification.objects.filter(
+        Q(user=request.user) | Q(is_public=True)
+    ).order_by('-created_at')
+    total = qs.count()
+    items = qs[offset:offset + per_page]
+    unread_ids = set(
+        UserNotificationStatus.objects.filter(
+            user=request.user, notification__in=items, is_read=True
+        ).values_list('notification_id', flat=True)
+    )
+    data = []
+    for n in items:
+        data.append({
+            'id': n.id,
+            'title': n.title,
+            'message': n.message,
+            'created_at': n.created_at.strftime('%b %d, %Y'),
+            'is_read': n.id in unread_ids,
+        })
+    return JsonResponse({
+        'notifications': data,
+        'total': total,
+        'has_more': offset + per_page < total,
+        'page': page,
+        'unread_count': qs.exclude(
+            id__in=UserNotificationStatus.objects.filter(
+                user=request.user, is_read=True
+            ).values_list('notification_id', flat=True)
+        ).count(),
+    })
+
+
+def landing(request):
+    from .models import Story
+    context = {
+        'year': datetime.now().year,
+        "all_users": CustomUser.objects.all().count(),
+        "all_posts": Post.objects.all().count(),
+        "latest_stories": Story.objects.select_related('author').all()[:3],
+    }
+    return render(request, 'yuzzaz/landing.html', context)
+
 
 def landing(request):
     context = {
@@ -176,8 +274,9 @@ def search_content(request):
     
     return render(request, 'discussion/search.html', context)
 
-@login_required
 def questions(request):
+    if not request.user.is_authenticated:
+        return redirect('landing')
     online_users, online_count, everyone_count = get_online_users()  # session-based
     filter_option = request.GET.get('filter', 'recent')
     posts = Post.objects.all()
@@ -296,20 +395,21 @@ def questions(request):
 def view_profile(request, id):
     viewing_user = get_object_or_404(CustomUser, id=id)
     is_own_profile = request.user.id == viewing_user.id
-    recent_posts = Post.objects.filter(author=viewing_user).order_by('-created_at')[:2]
-    recent_replies = Reply.objects.filter(replyier=viewing_user).order_by('-created_at')[:2] 
-    recent_child_replies = ReplytoAReply.objects.filter(replyier=viewing_user).order_by('-created_at')[:2] 
-    
+    online_users, online_count, everyone_count = get_online_users()
+    unreadnotificationcount = Notification.objects.filter(
+        statuses__user=request.user, statuses__is_read=False
+    ).count() if request.user.is_authenticated else 0
+
     context = {
         'viewing_user': viewing_user,
         'is_own_profile': is_own_profile,
-        'recent_posts': recent_posts,
-        'recent_replies': recent_replies,
-        'recent_child_replies': recent_child_replies,
         'tag_choices': get_tag_choices(),
-        'color': "#{:06x}".format(random.randint(0, 0xFFFFFF))
+        'color': "#{:06x}".format(random.randint(0, 0xFFFFFF)),
+        'unreadnotificationcount': unreadnotificationcount,
+        'online_count': online_count,
+        'everyone_count': everyone_count,
     }
-    
+
     return render(request, 'yuzzaz/view_profiles.html', context)
 
 
@@ -785,3 +885,95 @@ def ai_query_api(request):
         return JsonResponse({'error': 'Invalid JSON data'}, status=400)
     except Exception as e:
         return JsonResponse({'error': str(e)}, status=500)
+
+
+# ── Stories ────────────────────────────────────────────────────────────────────
+
+def story_list(request):
+    from .models import Story, STORY_TAG_CHOICES
+    stories = Story.objects.select_related('author').all()
+    tag_filter = request.GET.get('tag')
+    if tag_filter:
+        stories = stories.filter(tag=tag_filter)
+    context = {
+        'stories': stories,
+        'tag_filter': tag_filter,
+        'story_tags': STORY_TAG_CHOICES,
+    }
+    if request.user.is_authenticated:
+        online_users, online_count, everyone_count = get_online_users()
+        notifications = Notification.objects.filter(user=request.user).order_by('-created_at')
+        unreadnotificationcount = Notification.objects.filter(
+            statuses__user=request.user, statuses__is_read=False
+        ).count()
+        context.update({
+            'online_users': online_users,
+            'online_count': online_count,
+            'everyone_count': everyone_count,
+            'notifications': notifications,
+            'unreadnotificationcount': unreadnotificationcount,
+            'viewing_user': request.user,
+        })
+    return render(request, 'discussion/stories_list.html', context)
+
+
+def story_detail(request, id):
+    from .models import Story
+    story = get_object_or_404(Story, id=id)
+    story.views += 1
+    story.save(update_fields=['views'])
+    context = {'story': story}
+    if request.user.is_authenticated:
+        online_users, online_count, everyone_count = get_online_users()
+        notifications = Notification.objects.filter(user=request.user).order_by('-created_at')
+        unreadnotificationcount = Notification.objects.filter(
+            statuses__user=request.user, statuses__is_read=False
+        ).count()
+        context.update({
+            'online_users': online_users,
+            'online_count': online_count,
+            'everyone_count': everyone_count,
+            'notifications': notifications,
+            'unreadnotificationcount': unreadnotificationcount,
+            'viewing_user': request.user,
+        })
+    return render(request, 'discussion/story_detail.html', context)
+
+
+@login_required
+def create_story(request):
+    from .models import Story, STORY_TAG_CHOICES
+    if request.method == 'POST':
+        title = request.POST.get('title', '').strip()
+        summary = request.POST.get('summary', '').strip()
+        body = request.POST.get('body', '').strip()
+        tag = request.POST.get('tag', 'other')
+        cover_image = request.FILES.get('cover_image')
+        if title and summary and body:
+            story = Story.objects.create(
+                author=request.user,
+                title=title,
+                summary=summary,
+                body=body,
+                tag=tag,
+                cover_image=cover_image,
+            )
+            messages.success(request, 'Your story has been published!')
+            return redirect('story_detail', id=story.id)
+        else:
+            messages.error(request, 'Please fill in all required fields.')
+    online_users, online_count, everyone_count = get_online_users()
+    notifications = Notification.objects.filter(user=request.user).order_by('-created_at')
+    unreadnotificationcount = Notification.objects.filter(
+        statuses__user=request.user, statuses__is_read=False
+    ).count()
+    context = {
+        'story_tags': STORY_TAG_CHOICES,
+        'online_users': online_users,
+        'online_count': online_count,
+        'everyone_count': everyone_count,
+        'notifications': notifications,
+        'unreadnotificationcount': unreadnotificationcount,
+        'viewing_user': request.user,
+    }
+    return render(request, 'discussion/create_story.html', context)

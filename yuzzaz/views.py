@@ -23,8 +23,12 @@ import random
 User = get_user_model()
 
 def landing(request):
+    from discussion.models import Story, Post
     context = {
         'year': datetime.now().year,
+        'all_users': User.objects.all().count(),
+        'all_posts': Post.objects.all().count(),
+        'latest_stories': Story.objects.select_related('author').all()[:3],
     }
     return render(request, 'yuzzaz/landing.html', context)
 
@@ -153,7 +157,7 @@ def login(request):
             if user.is_staff:
                 return redirect('questions')
             else:
-                return redirect('questions')  # Standard redirect — adjust to your default user landing page
+                return redirect('questions')  # Standard redirect ,  adjust to your default user landing page
 
         messages.error(request, "Invalid credentials, please try again.")
 

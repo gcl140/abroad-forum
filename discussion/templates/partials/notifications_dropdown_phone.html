@@ -1,42 +1,51 @@
-            <div x-show="open" @click.away="open = false"
-                 class="absolute right-0 bottom-full mt-2 w-72 max-h-96 overflow-y-auto bg-gray-900 rounded-md shadow-lg py-2 z-50 border border-gray-800"
-                 x-transition:enter="transition ease-out duration-100"
-                 x-transition:enter-start="transform opacity-0 scale-95"
-                 x-transition:enter-end="transform opacity-100 scale-100"
-                 x-transition:leave="transition ease-in duration-75"
-                 x-transition:leave-start="transform opacity-100 scale-100"
-                 x-transition:leave-end="transform opacity-0 scale-95">
+<div x-show="open" @click.away="open = false"
+     x-transition:enter="transition ease-out duration-150"
+     x-transition:enter-start="transform opacity-0 scale-95"
+     x-transition:enter-end="transform opacity-100 scale-100"
+     x-transition:leave="transition ease-in duration-100"
+     x-transition:leave-start="transform opacity-100 scale-100"
+     x-transition:leave-end="transform opacity-0 scale-95"
+     class="absolute right-0 bottom-full mb-2 w-80 bg-white rounded-xl shadow-xl border border-[#CBD0D8] z-50 overflow-hidden"
+     id="notif-dropdown-phone"
+     x-init="$watch('open', v => { if(v) loadNotificationsPhone(1) })">
 
-                <p class="px-4 py-2 text-sm text-gray-400 font-semibold">Notifications</p>
-                <div class="border-t border-gray-700/50 mb-1"></div>
-                {% for notification in notifications %}
-                    <div
-                        class="block px-4 py-3 text-sm transition-all duration-150
-                        {% if notification.is_read %}
-                            bg-gray-900 text-gray-300
-                        {% else %}
-                            bg-gray-800 text-gray-100
-                        {% endif %}
-                        hover:bg-gray-700">
-                        
-                        <h3 class="text-base font-semibold underline 
-                            {% if notification.is_read %}
-                                text-gray-300
-                            {% else %}
-                                text-gray-200
-                            {% endif %}">
-                            {{ notification.title }}
-                        </h3>
+  <!-- Header -->
+  <div class="flex items-center justify-between px-4 py-3 border-b border-[#CBD0D8] bg-[#F4F3EA]">
+    <span class="font-semibold text-[#333D51] text-sm">Notifications</span>
+    <button
+      hx-post="{% url 'mark_all_notifications_read' %}"
+      hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'
+      hx-trigger="click"
+      hx-swap="none"
+      onclick="const el=document.getElementById('unread-2-count'); if(el){el.textContent=''; el.style.display='none';}"
+      class="text-xs text-[#D3AC2B] hover:text-[#b89420] font-medium flex items-center gap-1">
+      <i class="fas fa-check-double"></i> Mark all read
+    </button>
+  </div>
 
-                        <p class="mt-1">{{ notification.message|safe }}</p>
-                        
-                        <span class="block text-xs text-gray-500 mt-2">
-                            {{ notification.created_at|timesince }} ago
-                        </span>
-                    </div>
-                {% empty %}
-                    <p class="px-4 py-3 text-sm text-gray-500 text-center">
-                        No new notifications.
-                    </p>
-                {% endfor %}
-            </div>
+  <!-- Loading state -->
+  <div id="notif-loading-phone" class="flex items-center justify-center py-8 text-[#687080] text-sm">
+    <i class="fas fa-circle-notch fa-spin mr-2"></i> Loading...
+  </div>
+
+  <!-- Notification list -->
+  <div id="notif-list-phone" class="max-h-72 overflow-y-auto divide-y divide-[#EDE9DF] hidden"></div>
+
+  <!-- See more button -->
+  <div id="notif-more-wrap-phone" class="hidden border-t border-[#CBD0D8]">
+    <button id="notif-more-btn-phone" onclick="loadMoreNotificationsPhone()"
+      class="w-full py-2.5 text-xs text-[#D3AC2B] hover:text-[#b89420] font-medium flex items-center justify-center gap-1">
+      <i class="fas fa-chevron-down"></i> See more
+    </button>
+  </div>
+
+  <!-- Empty state -->
+  <div id="notif-empty-phone" class="hidden py-10 text-center text-[#687080] text-sm">
+    <i class="fas fa-bell-slash text-2xl text-[#CBD0D8] mb-2 block"></i>
+    No notifications yet.
+  </div>
+
+</div>
+
+{% load static %}
+<script src="{% static 'js/notifications_dropdown_phone.js' %}"></script>

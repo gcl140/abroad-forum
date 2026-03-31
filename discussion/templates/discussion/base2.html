@@ -16,8 +16,10 @@
     Q&A Community
     {% endblock %} | ForumAbroad 
     </title>
-    <!-- Google Fonts - Sen -->
-    <link href="https://fonts.googleapis.com/css2?family=Sen:wght@400;700;800&display=swap" rel="stylesheet">
+    <!-- Google Fonts - DM Sans -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,700;1,9..40,400&display=swap" rel="stylesheet">
     <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <!-- Favicon -->
@@ -42,6 +44,14 @@
     </script>
 {% block extra_head %}
 {% endblock %}
+    <!-- Theme init: run before body renders to avoid flash -->
+    <script>
+      (function(){
+        var t = localStorage.getItem('fa-theme') || 'light';
+        document.documentElement.setAttribute('data-theme', t);
+      })();
+    </script>
+    <link rel="stylesheet" href="{% static 'css/base2.css' %}">
     <style type="text/tailwindcss">
         @layer utilities {
             .scrollbar-hide::-webkit-scrollbar {
@@ -98,6 +108,10 @@
                     <i class="fas fa-user w-5"></i>
                     <span>Profile</span>
                 </a>
+                <button onclick="toggleTheme()" class="w-full flex items-center gap-3 p-2 rounded hover:bg-maroon hover:bg-opacity-20 text-gray-300 hover:text-white transition">
+                    <i id="theme-icon-b2-sidebar" class="fas fa-sun w-5"></i>
+                    <span id="theme-label-b2-sidebar">Toggle theme</span>
+                </button>
             </nav>
                         <!-- Rules -->
             <div class="bg-dark rounded-lg p-4 my-6 border border-gray-800">
@@ -222,6 +236,9 @@
                 x-transition:leave-end="transform opacity-0 scale-95">
                 <a href="{% url 'view_profile' user.id %}" class="block px-4 py-2 text-sm text-gray-400 hover:bg-gray-100">Your Profile</a>
                 <a href="mailto:gftinity01@gmail.com" class="block px-4 py-2 text-sm text-gray-400 hover:bg-gray-100">Help Center</a>
+                <button onclick="toggleTheme()" class="w-full text-left flex items-center gap-2 px-4 py-2 text-sm text-gray-400 hover:bg-gray-700">
+                  <i class="fas fa-sun w-4"></i> Toggle theme
+                </button>
                 <div class="border-t border-gray-500/10"></div>
                 <a href="{% url 'logout' %}" class="block px-4 py-2 text-sm text-gray-500 hover:bg-gray-100 hover:text-red-400">Sign out</a>
             </div>
@@ -279,16 +296,37 @@
                         <a href="{% url 'view_profile' user.id %}"
                             class="block px-4 py-2 text-sm text-gray-400 hover:bg-gray-100">Your Profile</a>
                         <a href="mailto:gftinity01@gmail.com"
-                            class="block px-4 py-2 text-sm text-gray-400 hover:bg-gray-100">Help
-                            Center</a>
+                            class="block px-4 py-2 text-sm text-gray-400 hover:bg-gray-100">Help Center</a>
+                        <button onclick="toggleTheme()" class="w-full text-left flex items-center gap-2 px-4 py-2 text-sm text-gray-400 hover:bg-gray-700">
+                          <i id="theme-icon-b2" class="fas fa-sun w-4"></i>
+                          <span id="theme-label-b2">Toggle theme</span>
+                        </button>
                         <div class="border-t border-gray-500/10"></div>
                         <a href="{% url 'logout' %}"
-                            class="block px-4 py-2 text-sm text-gray-500 hover:bg-gray-100 hover:text-red-400">Sign
-                            out</a>
+                            class="block px-4 py-2 text-sm text-gray-500 hover:bg-gray-100 hover:text-red-400">Sign out</a>
                     </div>
                 </div>
                     {% else %}
-                    <i class="fas fa-user"></i>
+                    <div class="relative" x-data="{ open: false }">
+                        <button @click="open = !open" class="focus:outline-none w-10 h-10 rounded-full bg-maroon flex items-center justify-center text-white">
+                            <i class="fas fa-user"></i>
+                        </button>
+                        <div x-show="open" @click.away="open = false"
+                            class="absolute right-0 mt-2 w-48 bg-gray-900 rounded-md shadow-lg py-1 z-50 border border-gray-800"
+                            x-transition:enter="transition ease-out duration-100"
+                            x-transition:enter-start="transform opacity-0 scale-95"
+                            x-transition:enter-end="transform opacity-100 scale-100"
+                            x-transition:leave="transition ease-in duration-75"
+                            x-transition:leave-start="transform opacity-100 scale-100"
+                            x-transition:leave-end="transform opacity-0 scale-95">
+                            <a href="{% url 'view_profile' user.id %}" class="block px-4 py-2 text-sm text-gray-400 hover:bg-gray-700">Your Profile</a>
+                            <button onclick="toggleTheme()" class="w-full text-left flex items-center gap-2 px-4 py-2 text-sm text-gray-400 hover:bg-gray-700">
+                                <i class="fas fa-sun w-4"></i> Toggle theme
+                            </button>
+                            <div class="border-t border-gray-700"></div>
+                            <a href="{% url 'logout' %}" class="block px-4 py-2 text-sm text-gray-500 hover:bg-gray-700 hover:text-red-400">Sign out</a>
+                        </div>
+                    </div>
                     {% endif %}
                     
                 </div>
@@ -337,13 +375,13 @@
 <div class="bg-dark rounded-lg p-4 my-6 border border-gray-800">
     <h3 class="font-bold text-lg mb-3 text-white">Posting Guidelines</h3>
         <ol class="list-decimal list-inside text-sm space-y-2 text-gray-300">
-        <li>Stick to the topic — studying abroad, applications, scholarships, visas, etc.</li>
-        <li>Be clear and specific — include details like deadlines, programs, or your background.</li>
-        <li>No spam, ads, or irrelevant links — this space is for real help only.</li>
-        <li>Be kind and respectful — everyone here is figuring things out.</li>
-        <li>Check if your question already exists — use the search bar first.</li>
-        <li>Write helpful titles — avoid vague stuff like “Help plz.”</li>
-        <li>Share verified info — or ask clearly if you're unsure about something.</li>
+        <li>Stick to the topic , studying abroad, applications, scholarships, visas, etc.</li>
+        <li>Be clear and specific , include details like deadlines, programs, or your background.</li>
+        <li>No spam, ads, or irrelevant links , this space is for real help only.</li>
+        <li>Be kind and respectful , everyone here is figuring things out.</li>
+        <li>Check if your question already exists , use the search bar first.</li>
+        <li>Write helpful titles , avoid vague stuff like “Help plz.”</li>
+        <li>Share verified info , or ask clearly if you're unsure about something.</li>
         <li>If it’s personal (e.g. finances or rejection letters), feel free to go anonymous.</li>
     </ol>
 </div>
@@ -362,7 +400,7 @@
     </div>
     <div class="p-4">
         <p class="text-sm text-gray-300 mb-4">
-            🌍 *Big dreams deserve real answers.* ForumAbroad is where students across Tanzania come to ask, share, and learn everything about studying abroad — from applications and scholarships to life abroad. No fluff. Just honest help, from people who’ve been there or are going there.
+            🌍 *Big dreams deserve real answers.* ForumAbroad is where students across Tanzania come to ask, share, and learn everything about studying abroad , from applications and scholarships to life abroad. No fluff. Just honest help, from people who’ve been there or are going there.
         </p>
         <div class="grid grid-cols-3 gap-2 text-center mb-4">
             <div class="bg-gray-900 rounded p-2">
@@ -448,120 +486,10 @@
         {% endfor %}
     </div>
 
-    <script>
-        document.addEventListener("DOMContentLoaded", function () {
-            const toastMessages = document.querySelectorAll('.animate-fade-in-up');
-
-            toastMessages.forEach(toast => {
-                // Auto-dismiss after 5 seconds
-                setTimeout(() => {
-                    toast.style.opacity = '0';
-                    setTimeout(() => toast.remove(), 300);
-                }, 10000);
-
-                // Pause animation on hover
-                toast.addEventListener('mouseenter', () => {
-                    const progressBar = toast.querySelector('.animate-progress');
-                    progressBar.style.animationPlayState = 'paused';
-                });
-
-                // Resume animation when mouse leaves
-                toast.addEventListener('mouseleave', () => {
-                    const progressBar = toast.querySelector('.animate-progress');
-                    progressBar.style.animationPlayState = 'running';
-                });
-            });
-        });
-    </script>
-    <style>
-        @keyframes fadeInUp {
-            from {
-                opacity: 0;
-                transform: translateY(10px);
-            }
-
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        @keyframes progress {
-            from {
-                width: 100%;
-            }
-
-            to {
-                width: 0%;
-            }
-        }
-
-        .animate-fade-in-up {
-            animation: fadeInUp 0.3s ease-out forwards;
-        }
-
-        .animate-progress {
-            animation: progress 10s linear forwards;
-        }
-    </style>
     {% endif %}
 
-    <script>
-  const sidebarToggle = document.getElementById("sidebarToggle");
-  const mobileSidebar = document.getElementById("mobileSidebar");
-const toggleIcon = document.getElementById("toggleIcon");
-
-sidebarToggle.addEventListener("click", () => {
-  mobileSidebar.classList.toggle("hidden");
-  // Swap icon
-  if (mobileSidebar.classList.contains("hidden")) {
-    toggleIcon.classList.remove("fa-times");
-    toggleIcon.classList.add("fa-bars");
-  } else {
-    toggleIcon.classList.remove("fa-bars");
-    toggleIcon.classList.add("fa-times");
-  }
-});
-  // Optional: close sidebar on outside click
-  document.addEventListener("click", (e) => {
-    if (
-      !mobileSidebar.contains(e.target) &&
-      !sidebarToggle.contains(e.target) &&
-      !mobileSidebar.classList.contains("hidden")
-    ) {
-      mobileSidebar.classList.add("hidden");
-    }
-  });
-
-
-        // Back to Top Button
-        const backToTopButton = document.getElementById('back-to-top');
-
-        window.addEventListener('scroll', () => {
-            if (window.pageYOffset > 300) {
-                backToTopButton.classList.remove('opacity-0', 'invisible');
-                backToTopButton.classList.add('opacity-100', 'visible');
-            } else {
-                backToTopButton.classList.add('opacity-0', 'invisible');
-                backToTopButton.classList.remove('opacity-100', 'visible');
-            }
-        });
-
-        backToTopButton.addEventListener('click', () => {
-            window.scrollTo({ top: 0, behavior: 'smooth' });
-        });
-</script>
-    <script>    // Initialize Alpine.js for dropdown functionality
-        document.addEventListener('alpine:init', () => {
-            Alpine.data('dropdown', () => ({
-                open: false,
-                toggle() {
-                    this.open = !this.open
-                }
-            }))
-        });
-    </script>
     <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <script src="{% static 'js/base2.js' %}"></script>
 
 </body>
 </html>
