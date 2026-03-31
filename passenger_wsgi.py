@@ -13,6 +13,9 @@
 #     return [response.encode()]
 
 
+import pymysql
+pymysql.install_as_MySQLdb()
+
 import sys
 import os
 import imp
