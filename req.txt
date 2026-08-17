@@ -97,3 +97,4 @@ urllib3==2.5.0
 websockets==15.0.1
 zope.interface==8.0.1
 zstandard==0.24.0
+PyMySQL==1.2.0

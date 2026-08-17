@@ -32,7 +32,7 @@ SECRET_KEY = os.getenv('SECRET_KEY')
 DEBUG = False
 
 # ALLOWED_HOSTS = []
-ALLOWED_HOSTS = ['tztoabroad.tech', 'www.tztoabroad.tech']  # Allow all hosts for development; restrict in production
+ALLOWED_HOSTS = ['tztoabroad.tech', 'www.tztoabroad.tech', '.ts.net']  # Allow all hosts for development; restrict in production
 
 
 # Application definition
@@ -251,3 +251,5 @@ RAG_CORPUS_ID = os.getenv('RAG_CORPUS_ID')
 
 # Build full corpus name
 RAG_CORPUS_NAME = f"projects/{GOOGLE_AI_PROJECT_ID}/locations/{GOOGLE_AI_REGION}/ragCorpora/{RAG_CORPUS_ID}"
+# CSRF_TRUSTED_ORIGINS = ['https://*.ts.net']
+CSRF_TRUSTED_ORIGINS = ['https://gift.tail48f043.ts.net:8443']
