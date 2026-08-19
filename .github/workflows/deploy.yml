@@ -44,10 +44,14 @@ jobs:
         with:
           authkey: ${{ secrets.TS_AUTHKEY }}
 
-      - name: Verify tailnet connectivity to deploy host
+      - name: Warm up tailnet connectivity to deploy host
+        # tailscale ping exits non-zero when it can't get a *direct* peer
+        # connection, even though a relayed (DERP) path -- which is all we
+        # need for SSH -- is up. We just want to force that relayed path
+        # to establish before the SSH step tries to use it.
         run: |
           tailscale status
-          tailscale ping -c 3 "${{ secrets.DEPLOY_HOST }}"
+          tailscale ping -c 3 "${{ secrets.DEPLOY_HOST }}" || true
 
       - name: Pull latest code on server
         uses: appleboy/ssh-action@v1.2.0
