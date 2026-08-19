@@ -171,3 +171,7 @@ bright-meridian-470215-h2-bebe697286b0.json
 /.claude/
 
 .DS_Store
+
+# Deploy artifacts (generated on the server by the deploy workflow)
+/staticfiles/
+/tmp/
