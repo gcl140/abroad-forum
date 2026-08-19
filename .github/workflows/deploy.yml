@@ -44,6 +44,11 @@ jobs:
         with:
           authkey: ${{ secrets.TS_AUTHKEY }}
 
+      - name: Verify tailnet connectivity to deploy host
+        run: |
+          tailscale status
+          tailscale ping -c 3 "${{ secrets.DEPLOY_HOST }}"
+
       - name: Pull latest code on server
         uses: appleboy/ssh-action@v1.2.0
         with:
