@@ -188,69 +188,6 @@ def landing(request):
     return render(request, 'yuzzaz/landing.html', context)
 
   
-def context_to_extend(request):
-    online_users, online_count, everyone_count = get_online_users()  # session-based
-    tag_choices = get_tag_choices()
-    posts = Post.objects.all().order_by('-created_at')
-
-    user = request.user
-    if user.is_authenticated:
-        # Get all post IDs user has upvoted
-        upvoted_post_ids = set(
-            UserPostInteraction.objects.filter(
-                user=user, interaction_type='upvote'
-            ).values_list('post_id', flat=True)
-        )
-    else:
-        upvoted_post_ids = set()
-
-    # Attach a flag on each post object
-    for post in posts:
-        post.user_has_upvoted = post.id in upvoted_post_ids
-
-
-
-
-    replies = Reply.objects.filter(post__in=posts).select_related('replyier')
-    if user.is_authenticated:
-        upvoted_reply_ids = set(
-            ReplyInteraction.objects.filter(
-                user=user, interaction_type='upvote'
-            ).values_list('reply_id', flat=True)
-        )
-    else:
-        upvoted_reply_ids = set()
-
-    # Attach the flag
-    for reply in replies:
-        reply.user_has_upvoted = reply.id in upvoted_reply_ids
-
-    # If you have a threaded_replies property, assign them
-    replies_by_post = {}
-    for reply in replies:
-        replies_by_post.setdefault(reply.post_id, []).append(reply)
-
-    for post in posts:
-        post.annotated_replies = replies_by_post.get(post.id, [])
-
-    notifications = Notification.objects.filter(user=request.user).order_by('-created_at')
-    unreadnotificationcount = Notification.objects.filter(
-            statuses__user=request.user,
-            statuses__is_read=False
-        ).count()
-
-    return {
-        'online_users': online_users,
-        'online_count': online_count,
-        'everyone_count': everyone_count,
-        'tag_choices': tag_choices,
-        'posts': posts,
-        'replies': replies,
-        'notifications': notifications,
-        'user': request.user,
-        'unreadnotificationcount': unreadnotificationcount
-    }
-
 def get_online_users(use_last_seen=False, minutes=5):
     User = get_user_model()
     all_users = User.objects.all()
@@ -333,11 +270,23 @@ def search_content(request):
 def questions(request):
     if not request.user.is_authenticated:
         return redirect(f"/accounts/login/?next={request.path}")
-    online_users, online_count, everyone_count = get_online_users()  # session-based
-    filter_option = request.GET.get('filter', 'recent')
-    posts = Post.objects.all()
-    
+
     tag = request.GET.get('tag')  # get tag from query params
+
+    if not request.headers.get("Hx-Request"):
+        # Shell render: no post/reply queries here. The list itself is
+        # fetched asynchronously (see below) so the page paints instantly
+        # and shows a skeleton while the real query runs.
+        context = {
+            'viewing_user': request.user,
+            'tag_choices': get_tag_choices(),
+            'tag': tag,
+        }
+        return render(request, 'discussion/questions-land.html', context)
+
+    filter_option = request.GET.get('filter', 'recent')
+    posts = Post.objects.select_related('author')
+
     if tag:
         posts = posts.filter(tag=tag)
 
@@ -378,74 +327,23 @@ def questions(request):
         ).order_by('-total_votes', '-created_at')
     else:  # 'recent' or unknown filter
         posts = posts.order_by('-created_at')
-    
-    user = request.user
-    if user.is_authenticated:
-        # Get all post IDs user has upvoted
-        upvoted_post_ids = set(
-            UserPostInteraction.objects.filter(
-                user=user, interaction_type='upvote'
-            ).values_list('post_id', flat=True)
-        )
-    else:
-        upvoted_post_ids = set()
 
-    # Attach a flag on each post object
-    for post in posts:
-        post.user_has_upvoted = post.id in upvoted_post_ids
-    replies = Reply.objects.filter(post__in=posts).select_related('replyier')
-    if user.is_authenticated:
-        upvoted_reply_ids = set(
-            ReplyInteraction.objects.filter(
-                user=user, interaction_type='upvote'
-            ).values_list('reply_id', flat=True)
-        )
-    else:
-        upvoted_reply_ids = set()
-
-    # Attach the flag
-    for reply in replies:
-        reply.user_has_upvoted = reply.id in upvoted_reply_ids
-
-    # If you have a threaded_replies property, assign them
-    replies_by_post = {}
-    for reply in replies:
-        replies_by_post.setdefault(reply.post_id, []).append(reply)
-
-    for post in posts:
-        post.annotated_replies = replies_by_post.get(post.id, [])
-
-    notifications = Notification.objects.filter(user=request.user).order_by('-created_at')
-    unreadnotificationcount = Notification.objects.filter(
-            statuses__user=request.user,
-            statuses__is_read=False
-        ).count()
-    
-
-    # detect AJAX/HTMX request to return only the new chunk
-
+    # Paginate before touching individual rows so we only ever fetch and
+    # annotate the ~10 posts actually being rendered, not the whole table.
     paginator = Paginator(posts, 10)  # Show 10 posts per page
     page_number = request.GET.get('page', 1)
     page_obj = paginator.get_page(page_number)
 
+    user = request.user
+    upvoted_post_ids = set(
+        UserPostInteraction.objects.filter(
+            user=user, interaction_type='upvote', post__in=page_obj.object_list
+        ).values_list('post_id', flat=True)
+    )
+    for post in page_obj:
+        post.user_has_upvoted = post.id in upvoted_post_ids
 
-    if request.headers.get("Hx-Request"):  
-        return render(request, "partials/question_list_items.html", {"page_obj": page_obj})
-
-    context = {
-        # 'posts': posts,
-        'page_obj': page_obj,
-        'viewing_user': request.user,
-        # 'user': request.user,
-        'tag_choices': get_tag_choices(),
-        "notifications": notifications,
-        'unreadnotificationcount': unreadnotificationcount,
-        'online_users': online_users,
-        'online_count': online_count,
-        'everyone_count': everyone_count,
-        'tag': tag,
-    }
-    return render(request, 'discussion/questions-land.html', context)
+    return render(request, "partials/question_list_items.html", {"page_obj": page_obj})
 
 
 def view_profile(request, id):
@@ -471,8 +369,7 @@ def view_profile(request, id):
 
 def post_detail(request, id):
     post = get_object_or_404(Post, id=id)
-    all_other_posts = Post.objects.exclude(id=post.id)
-    random_posts = random.sample(list(all_other_posts), min(5, all_other_posts.count()))  # max 3 or whatever is available
+    random_posts = list(Post.objects.select_related('author').exclude(id=post.id).order_by('?')[:5])
 
     post.user_has_upvoted = post.has_user_upvoted(request.user)
 
@@ -500,6 +397,16 @@ def post_detail(request, id):
         'user_has_upvoted': post.user_has_upvoted
     }
     return render(request, 'discussion/post_detail.html', context)
+
+
+def post_replies_partial(request, post_id):
+    post = get_object_or_404(Post, id=post_id)
+    threaded_replies = post.replies.select_related('replyier').order_by('created_at')
+    return render(request, 'partials/post_replies_list.html', {
+        'post': post,
+        'threaded_replies': threaded_replies,
+    })
+
 
 @login_required
 def add_post(request):

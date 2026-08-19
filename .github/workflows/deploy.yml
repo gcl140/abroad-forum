@@ -1,0 +1,86 @@
+name: Deploy to production
+
+# Pushes to main auto-deploy to tztoabroad.tech over SSH (git pull + restart).
+# Requires these repo secrets (Settings -> Secrets and variables -> Actions):
+#   DEPLOY_HOST     server's Tailscale IP or MagicDNS name (e.g. 100.72.99.98)
+#   DEPLOY_USER     SSH username
+#   DEPLOY_SSH_KEY  private key with access to that user (PEM format)
+#   DEPLOY_PATH     absolute path to the app on the server, e.g. /home/user/tztoabroad.tech
+#   DEPLOY_PORT     SSH port (optional, defaults to 22)
+#   TS_AUTHKEY      Tailscale auth key -- the server only accepts SSH over the
+#                   tailnet, so the runner joins it first. Generate a reusable,
+#                   ephemeral key at https://login.tailscale.com/admin/settings/keys
+#
+# Assumes the server already has this repo checked out at DEPLOY_PATH with
+# a `venv/` virtualenv next to manage.py, and that Passenger restarts on
+# `touch tmp/restart.txt` (standard cPanel Python App convention). Adjust
+# the script steps below if your server's layout differs.
+#
+# Test it first with the "Run workflow" button (workflow_dispatch) before
+# relying on the automatic push trigger.
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Build Tailwind CSS
+        run: |
+          npm ci
+          npm run build
+
+      - name: Connect to Tailscale
+        uses: tailscale/github-action@v3
+        with:
+          authkey: ${{ secrets.TS_AUTHKEY }}
+
+      - name: Pull latest code on server
+        uses: appleboy/ssh-action@v1.2.0
+        with:
+          host: ${{ secrets.DEPLOY_HOST }}
+          username: ${{ secrets.DEPLOY_USER }}
+          key: ${{ secrets.DEPLOY_SSH_KEY }}
+          port: ${{ secrets.DEPLOY_PORT || 22 }}
+          script: |
+            set -e
+            cd "${{ secrets.DEPLOY_PATH }}"
+            git fetch origin main
+            git reset --hard origin/main
+
+      - name: Upload freshly-built CSS
+        uses: appleboy/scp-action@v0.1.7
+        with:
+          host: ${{ secrets.DEPLOY_HOST }}
+          username: ${{ secrets.DEPLOY_USER }}
+          key: ${{ secrets.DEPLOY_SSH_KEY }}
+          port: ${{ secrets.DEPLOY_PORT || 22 }}
+          source: "static/css/output.css"
+          target: "${{ secrets.DEPLOY_PATH }}/static/css/"
+          strip_components: 2
+
+      - name: Install deps, migrate, collectstatic, restart
+        uses: appleboy/ssh-action@v1.2.0
+        with:
+          host: ${{ secrets.DEPLOY_HOST }}
+          username: ${{ secrets.DEPLOY_USER }}
+          key: ${{ secrets.DEPLOY_SSH_KEY }}
+          port: ${{ secrets.DEPLOY_PORT || 22 }}
+          script: |
+            set -e
+            cd "${{ secrets.DEPLOY_PATH }}"
+            source venv/bin/activate
+            pip install -r req.txt
+            python manage.py migrate --noinput
+            python manage.py collectstatic --noinput
+            mkdir -p tmp
+            touch tmp/restart.txt

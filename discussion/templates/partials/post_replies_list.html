@@ -1,0 +1,5 @@
+{% for group in threaded_replies %}
+{% include "partials/threaded_replies.html" %}
+{% empty %}
+<p class="text-gray-500 text-center">No replies yet.</p>
+{% endfor %}

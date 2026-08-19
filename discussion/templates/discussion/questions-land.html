@@ -36,8 +36,11 @@
           <option value="controversial">Controversial</option>
         </select>
 </div>
-<div id="questions-container">
-  {% include "partials/question_list_items.html" %}
+<div id="questions-container"
+     hx-get="{% url 'questions' %}?{{ request.GET.urlencode }}"
+     hx-trigger="load"
+     hx-swap="innerHTML">
+  {% include "partials/question_skeleton.html" %}
 </div>
 
 

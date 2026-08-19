@@ -203,13 +203,16 @@
         <!-- Reply Form -->
         {% include "partials/reply-form.html" %}
         <!-- Replies List -->
-        <!-- Replies container -->
-        <div id="replies-container-{{post.id}}" class="hidden">
-          {% for group in post.threaded_replies %} 
-            {% include "partials/threaded_replies.html" with group=group %}
-          {% empty %}
-          <p class="text-gray-500 text-center">No replies yet.</p>
-          {% endfor %}
+        <!-- Replies container: fetched lazily on first expand -->
+        <div id="replies-container-{{post.id}}" class="hidden"
+             hx-get="{% url 'post_replies_partial' post.id %}"
+             hx-trigger="click once from:.toggle-replies[data-target='replies-container-{{ post.id }}']"
+             hx-swap="innerHTML">
+          <div class="animate-pulse space-y-2 pl-2 border-l-2 border-gray-800">
+            <div class="h-3 w-28 bg-gray-800 rounded"></div>
+            <div class="h-3 w-full bg-gray-800 rounded"></div>
+            <div class="h-3 w-2/3 bg-gray-800 rounded"></div>
+          </div>
         </div>
       </div>
     </div>

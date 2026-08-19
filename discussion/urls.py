@@ -27,6 +27,7 @@ urlpatterns = [
     path('profile/', RedirectView.as_view(url='/accounts/login/'), name='profile_no_id'),
     path('profile/<int:id>/', views.view_profile, name='view_profile'),
     path('post/<int:id>/', views.post_detail, name='post_detail'),
+    path('post/<int:post_id>/replies/', views.post_replies_partial, name='post_replies_partial'),
     path('add-post/', views.add_post, name='add_post'),
     path('search/', views.search_content, name='search_content'),
 
